@@ -1,0 +1,26 @@
+.cards{
+    margin: auto;
+    margin-top: 50px;
+    text-align: center;
+    width: 90%;
+    height: 50vh;
+    border: 1px solid #000;
+}
+.elegir-card{
+    width: 90%;
+    margin: 20px auto;
+}
+.jugadores{
+    width: 90%;
+    border: 1px solid #000;
+    margin: auto;
+    display: flex;
+    text-align: left;
+}
+.jugador1, .jugador2{
+    width: 40%;
+    height: 20vh;
+    border: 1px solid #000;
+    margin: 20px auto;
+    padding: 20px;
+}

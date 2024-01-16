@@ -1,0 +1,36 @@
+<div class="body">
+    <div>
+        <div class="form-user" *ngIf="!user">
+            <h1>Ingrese usuario</h1>
+            <div [formGroup]="formUser" class="form-block">
+                <label for="name">Nombre</label>
+                <input formControlName="name" type="text" id="name">
+                <label for="credito">Créditos</label>
+                <input formControlName="credito" type="text" id="credito">
+                <button (click)="userSend()">Ingresar</button>
+            </div>
+        </div>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <div class="salas" *ngIf="user">
+            <div class="form-block" [formGroup]="formSala">
+                <label for="sala">Crear sala</label>
+                <input formControlName="name" type="text" id="name">
+                <label for="apuesta">Apuesta:</label>
+                <input formControlName="apuesta" type="number">
+                <button (click)="createSala()">Crear</button>
+            </div>
+            <div class="form-block">
+                <label for="sala">Ingresar a una sala:</label>
+                <br>
+                <ng-container *ngFor="let item of salas">
+                    <button (click)="sala(item)">{{item.name}}</button>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
