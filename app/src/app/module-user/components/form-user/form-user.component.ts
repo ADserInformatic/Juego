@@ -56,7 +56,10 @@ export class FormUserComponent implements OnInit {
     const datos = {
       name: this.formSala.value.name,
       apuesta: this.formSala.value.apuesta,
-      usuarios: [this.cookie.get('jugador')]
+      usuarios: [{
+        id: this.cookie.get('jugador'),
+        valores: [1, 5, 7],
+        name: 'Jugador 1'}]
     }
     this.servCons.createSala(datos).subscribe(res=>{
       this.datosSala(res)
@@ -65,7 +68,10 @@ export class FormUserComponent implements OnInit {
   }
 
   sala(e: any){
-    const dato = {dato: this.user}
+    const dato = {
+      id: this.cookie.get('jugador'),
+      valores: [7, 5, 4],
+      name: 'Jugador 2'}
     this.servCons.addUserToSala(e._id, dato).subscribe(res=>{
       this.datosSala(res)
     })
@@ -81,6 +87,7 @@ export class FormUserComponent implements OnInit {
       console.log(res)
       const datos = {
         sala: res.data.name,
+        idSala: res.data._id,
         user: this.user}
     if(res.denegado){return}
     this.route.navigate(['/sala', datos])

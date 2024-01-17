@@ -76,7 +76,8 @@ const addUser = async (req, res)=>{
     //En el parámetro viene el id de la sala
     const id = req.params.id
     //En el dato viene el id del usuario
-    const _id = req.body.dato
+    const _id = req.body.id
+    console.log(_id)
     //Busco el usuario a partir del id
     const buscar = await user.findOne({_id})
     console.log('El jugador 2 es: ', buscar)
@@ -85,7 +86,7 @@ const addUser = async (req, res)=>{
         //Una vez que se sabe que existe el usuario se busca la sala a la que quiere ingresar
         const actual = await sala.findOne({_id: id})
         //Si en la sala ya hay 2 jugadores y el que está intentando ingresar es distinto al primer jugador retorna un error
-        if(actual.usuarios.length > 1 && actual.usuarios[0].toHexString() !== buscar._id.toHexString()){
+        if(actual.usuarios.length > 1 && actual.usuarios[0].id.toHexString() !== buscar._id.toHexString()){
             return res.json({
                     error: false,
                     data: actual,
@@ -94,13 +95,19 @@ const addUser = async (req, res)=>{
                 })
         }
         //Si el usuario ya está en la sala lo deja ingresar
-        if (actual.usuarios[0].toHexString() === buscar._id.toHexString()) {
+        if (actual.usuarios[0].id.toHexString() === buscar._id.toHexString()) {
             return res.json({
                 error: false,
+                data: actual
             });
         }
         //Hechas las comprobaciones anteriores, se guarda al usuario en la sala
-        actual.usuarios.push(buscar._id)
+        const dato = {
+            name: req.body.name,
+            id: buscar._id,
+            valores: req.body.valores
+        }
+        actual.usuarios.push(dato)
         const resultado = await sala.findByIdAndUpdate({_id: id}, {$set: {usuarios: actual.usuarios}})
         try {
             res.json({

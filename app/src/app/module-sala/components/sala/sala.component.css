@@ -1,0 +1,46 @@
+.body{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding: 5% 0px;
+}
+.jugadores{
+    border: solid 1px #000;
+    width: 80%;
+    margin: 20px auto;
+    display: flex;
+}
+.jugador{
+    width: 40%;
+    min-height: 30vh;
+    border: solid 1px rgb(17, 62, 243);
+    margin: 20px auto;
+    padding: 0px 20px;
+}
+.jugadas{
+    text-align: left;
+}
+.card{
+    margin: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    border: solid 1px rgb(121, 15, 15);
+    background: rgb(241, 30, 30);
+    color: #fff;
+    border-radius: 6px;
+    padding: 20px 15px;
+    cursor: pointer;
+}
+.juego{
+    display: flex;
+}
+.jugoC{
+    margin: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    border: solid 1px rgb(4, 3, 29);
+    background: rgb(28, 94, 218);
+    border-radius: 6px;
+    padding: 20px 15px;
+    color: #000;
+}

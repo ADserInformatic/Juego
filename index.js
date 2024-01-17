@@ -38,16 +38,23 @@ app.use('/', user)
 app.use('/sala', sala)
 //Wwbsocket
 io.on('connection', (socket) => {
-    console.log('New client connected');
-    socket.on('tirar', async (s)=>{
-      const salaOn = await salaM.findOne({name: s.sala})
-      console.log(s, salaOn)
+  console.log('New client connected');
+  socket.on('sala', async (id)=>{
+    const sala = await salaM.findOne({_id: id})
+    io.sockets.emit('sala', sala)
+  })
+    socket.on('tirar', async (jugada)=>{
+      const salaOn = await salaM.findOne({name: jugada.sala})
+      console.log(jugada, salaOn)
       const users = salaOn.usuarios
-      if (s.id === users[0].toHexString()) {
-        io.sockets.emit('muestra', 'Jugador 1')
-      } else {
-        io.sockets.emit('muestra', 'Jugador 2')
-      }
+      users.forEach(async (element)=>{
+        if (jugada.idUser === element.id.toHexString()) {
+          element.jugada.push(jugada.valor)
+          const resultante = await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
+          const otra = await salaM.findOne({_id: salaOn._id})
+          io.sockets.emit('muestra', otra)
+        }else{console.log('nada')}
+      })
     })
 });
     
