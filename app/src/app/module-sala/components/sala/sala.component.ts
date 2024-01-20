@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { io } from 'socket.io-client';
@@ -11,11 +11,8 @@ import { Jugador } from 'src/app/interfaces/jugador';
   styleUrls: ['./sala.component.css']
 })
 export class SalaComponent implements OnInit {
-  @Output() mostrar: EventEmitter<any> = new EventEmitter<any>()
   public nameSala!: string;
-  public nameUser!: string;
   private socket: any;
-  public dato: any;
   public sala: any;
   public jugador!: Jugador;
 
@@ -25,17 +22,20 @@ export class SalaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.socket = io('http://localhost:3006')
     this.routeAct.params.subscribe((res:any)=>{
+      this.socket = io('http://localhost:3006',
+       {
+        query: {sala: res.sala}
+      })
       this.socket.emit('connection', res)
+      console.log(res)
       this.nameSala = res.sala;
-      this.nameUser = res.user
       this.socket.emit('sala', res.idSala)
     })
-    this.mostrar.subscribe(res=>{
-      this.sala = res;
-    })
+    
     this.socket.on('sala', (res:any)=>{
+      
+      if(this.nameSala !== res.name){return}
       this.sala = res;
       console.log(res)
       this.sala.usuarios.forEach((element:any) => {
@@ -45,17 +45,19 @@ export class SalaComponent implements OnInit {
       });
     })
     this.socket.on('muestra', (res: any)=>{
-      console.log(res)
-      this.mostrar.emit(res)
+      if(this.nameSala !== res.name){return}
+      this.sala = res;
     })
   }
 
+  //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: number){
     const data: Jugada = {
       sala: this.nameSala,
       valor: val,
       idUser: this.cookies.get('jugador')
     }
+    console.log(data)
     this.socket.emit('tirar', data)
   }
 

@@ -19,9 +19,19 @@ const getSalas = async (req, res)=>{
 }
 
 const saveSala = async (req, res)=>{
+    const salaExiste = await sala.findOne({name})
+    if(salaExiste){
+        return res.json({
+            error: false,
+            data: salaExiste,
+            mensaje: 'No pueden existir dos salas con el mismo nombre'
+        })
+    }
     const {name, apuesta, usuarios} = req.body
+    const usuario = await user.findOne({_id: usuarios[0].id})
+    usuarios[0].name = usuario.name
     const creado = await sala.create({name, apuesta, usuarios})
-    console.log('El jugador 1 es: ', usuarios[0])
+    
     try {
         res.json({
             error: false,
@@ -103,7 +113,7 @@ const addUser = async (req, res)=>{
         }
         //Hechas las comprobaciones anteriores, se guarda al usuario en la sala
         const dato = {
-            name: req.body.name,
+            name: buscar.name,
             id: buscar._id,
             valores: req.body.valores
         }
