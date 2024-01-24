@@ -1,0 +1,56 @@
+.body{
+    width: 100%;
+    height: 100vh;
+    padding: 10%;
+    background: rgb(196, 144, 4);
+}
+.forms{
+    display: flex;
+    margin: auto;
+    width: 100%;
+}
+
+.form-user, .salas{
+    width: 35%;
+    margin: 20px auto;
+    padding: 20px;
+    border: solid 1px #fff;
+    border-radius: 5px;
+    box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.795),
+                -2px -2px 12px rgba(255, 255, 255, 0.788);
+    color: #fff;
+    background: #000;
+}
+.form-block{
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+}
+.form-block input{
+    background-color: transparent;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: none;
+    outline: none;
+    padding: 3px;
+    border-radius: 3px;
+    border-bottom: solid 1px rgb(250, 124, 6);
+}
+.form-block button{
+    width: 100%;
+    color: #fff;
+    background: rgb(151, 92, 3);
+    padding: 5px;
+    border: solid .7px transparent;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .5s ease-in-out;
+}
+.form-block button:hover{
+    background: #000;
+    border: solid .7px #fff;
+}
+.ocultar{
+    display: none;
+}

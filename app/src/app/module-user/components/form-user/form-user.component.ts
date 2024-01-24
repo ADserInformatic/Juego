@@ -13,7 +13,7 @@ export class FormUserComponent implements OnInit {
   public formUser!: FormGroup;
   public formSala!: FormGroup;
   public salas: Array<any>= [];
-  public user: any;
+  public user!: string;
 
   constructor(
     private servCons: ConsultasService,

@@ -45,16 +45,22 @@ io.on('connection', (socket) => {
   })
 
   socket.on('tirar', async (jugada)=>{
+    //LLega un objeto con los datos de la jugada (sala, id del usuario y valor jugado)
+    //Se busca la sala en la que se está jugando a partir del nombre
     const salaOn = await salaM.findOne({name: jugada.sala})
-      
+    //Se guarda los usuarios que están jugando en esa sala en un array
     const users = salaOn.usuarios
     users.forEach(async (element)=>{
-      
+      //Recorro los usuarios en esa sala y al que coincide con el id del que hizo la jugada se le actualizan los datos
       if (jugada.idUser === element.id.toHexString()) {
+        //Agregamos la nueva jugada al usuario en cuestión
         element.jugada.push(jugada.valor)
-        const resultante = await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
-        const otra = await salaM.findOne({_id: salaOn._id})
-        io.sockets.emit('muestra', otra)
+        //Una vez actualizado el usuario se actualiza la sala
+        await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
+        //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
+        const salaActualizada = await salaM.findOne({_id: salaOn._id})
+        //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
+        io.sockets.emit('muestra', salaActualizada)
       }else{console.log('nada')}
     })
   })

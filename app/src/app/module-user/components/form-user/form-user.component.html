@@ -1,6 +1,6 @@
 <div class="body">
-    <div>
-        <div class="form-user" *ngIf="!user">
+    <div class="forms">
+        <div class="form-user" [ngClass]="{'ocultar': user !== ''}">
             <h1>Ingrese usuario</h1>
             <div [formGroup]="formUser" class="form-block">
                 <label for="name">Nombre</label>
@@ -10,12 +10,8 @@
                 <button (click)="userSend()">Ingresar</button>
             </div>
         </div>
-        <hr>
-        <hr>
-        <hr>
-        <hr>
-        <hr>
-        <div class="salas" *ngIf="user">
+        
+        <div class="salas" [ngClass]="{'ocultar': user === ''}">
             <div class="form-block" [formGroup]="formSala">
                 <label for="sala">Crear sala</label>
                 <input formControlName="name" type="text" id="name">
