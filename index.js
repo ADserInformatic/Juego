@@ -55,18 +55,38 @@ io.on('connection', (socket) => {
       if (jugada.idUser === element.id.toHexString()) {
         //Agregamos la nueva jugada al usuario en cuestión
         element.jugada.push(jugada.valor)
-        //Una vez actualizado el usuario se actualiza la sala
-        await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
-        //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
-        const salaActualizada = await salaM.findOne({_id: salaOn._id})
-        //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
-        io.sockets.emit('muestra', salaActualizada)
       }else{console.log('nada')}
     })
+    compararValores(users[0], users[1])
+    //Una vez actualizado el usuario se actualiza la sala
+    await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
+    //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
+    const salaActualizada = await salaM.findOne({_id: salaOn._id})
+    //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
+    io.sockets.emit('muestra', salaActualizada)
   })
 });
     
-
+//Acá tengo que pasar los dos jugadores que están en la sala cada vez que se tira
+function compararValores(jugador1, jugador2){
+  console.log('--------', jugador1.jugada.length, jugador2.jugada.length, '----------')
+  const jugada1 = jugador1.jugada[jugador1.jugada.length - 1]
+  const jugada2 = jugador2.jugada[jugador2.jugada.length - 1]
+  if(jugador1.jugada.length === jugador2.jugada.length){
+    
+    console.log('comparar', jugada1, jugada2 )
+    if(jugada1 === jugada2){
+      return console.log('empate')
+    }
+    if(jugada1 > jugada2){
+      return console.log('Gana ', jugador1.name)
+    }else{
+      return console.log('Gana ', jugador2.name)
+    }
+  }else{
+    console.log('falta una carta')
+  }
+}
 
 
 

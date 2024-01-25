@@ -19,6 +19,7 @@ const getSalas = async (req, res)=>{
 }
 
 const saveSala = async (req, res)=>{
+    const {name, apuesta, usuarios} = req.body
     const salaExiste = await sala.findOne({name})
     if(salaExiste){
         return res.json({
@@ -27,7 +28,6 @@ const saveSala = async (req, res)=>{
             mensaje: 'No pueden existir dos salas con el mismo nombre'
         })
     }
-    const {name, apuesta, usuarios} = req.body
     const usuario = await user.findOne({_id: usuarios[0].id})
     usuarios[0].name = usuario.name
     const creado = await sala.create({name, apuesta, usuarios})
