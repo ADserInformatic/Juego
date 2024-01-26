@@ -25,6 +25,7 @@ const saveSala = async (req, res)=>{
         return res.json({
             error: false,
             data: salaExiste,
+            denegado: true,
             mensaje: 'No pueden existir dos salas con el mismo nombre'
         })
     }

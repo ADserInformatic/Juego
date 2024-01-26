@@ -36,6 +36,10 @@
     border-radius: 3px;
     border-bottom: solid 1px rgb(250, 124, 6);
 }
+.form-block input:focus-visible{
+    background: #fff;
+    border: solid 1px rgb(250, 124, 6);
+  }
 .form-block button{
     width: 100%;
     color: #fff;
