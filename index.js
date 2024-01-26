@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
 });
     
 //Acá tengo que pasar los dos jugadores que están en la sala cada vez que se tira
-function compararValores(jugador1, jugador2){
+const compararValores = async (jugador1, jugador2)=>{
   console.log('--------', jugador1.jugada.length, jugador2.jugada.length, '----------')
   const jugada1 = jugador1.jugada[jugador1.jugada.length - 1]
   const jugada2 = jugador2.jugada[jugador2.jugada.length - 1]
@@ -79,9 +79,12 @@ function compararValores(jugador1, jugador2){
       return console.log('empate')
     }
     if(jugada1 > jugada2){
-      return console.log('Gana ', jugador1.name)
+      jugador1.tantosPartida += 1
+      return console.log('Gana ', jugador1.name, 'Tiene ', jugador1.tantosPartida)
+
     }else{
-      return console.log('Gana ', jugador2.name)
+      jugador2.tantosPartida += 1
+      return console.log('Gana ', jugador2.name, 'Tiene ', jugador2.tantosPartida)
     }
   }else{
     console.log('falta una carta')
