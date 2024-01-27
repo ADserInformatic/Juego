@@ -6,7 +6,7 @@
     <div class="jugadores">
         <div *ngFor="let item of sala?.usuarios" class="jugador">
             <h4>Nombre: {{item.name}}</h4>
-            <!-- <p>Créditos: {{item.credito}}</p> -->
+            <p>Créditos: {{item.creditos | currency}}</p>
             <div class="jugadas">
                 <p>Carta jugada:</p>
                 <div class="juego">
@@ -16,7 +16,6 @@
         </div>
     </div>
     <div class="cards">
-        <h4>Mis créditos: {{jugador?.creditos | currency}}</h4>
         <h3>Cartas de: {{jugador?.name}}</h3>
         <button class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">{{valor}}</button>
     </div>
