@@ -47,6 +47,11 @@ export class SalaComponent implements OnInit {
     this.socket.on('muestra', (res: any)=>{
       if(this.nameSala !== res.name){return}
       this.sala = res;
+      this.sala.usuarios.forEach((element:any) => {
+        if(element.id == this.cookies.get('jugador')){
+          this.jugador = element
+        }
+      });
     })
   }
 

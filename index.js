@@ -58,11 +58,11 @@ io.on('connection', (socket) => {
       }else{console.log('nada')}
     })
     compararValores(users[0], users[1])
+    terminar(users[0], users[1])
     //Una vez actualizado el usuario se actualiza la sala
     await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
     //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
     const salaActualizada = await salaM.findOne({_id: salaOn._id})
-    terminar(users[0], users[1])
     //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
     io.sockets.emit('muestra', salaActualizada)
   })
@@ -74,6 +74,8 @@ const compararValores = async (jugador1, jugador2)=>{
   const jugada2 = jugador2.jugada[jugador2.jugada.length - 1]
   if(jugador1.jugada.length === jugador2.jugada.length){  
     if(jugada1 === jugada2){
+      jugador1.tantosPartida += 1
+      jugador2.tantosPartida += 1
       return console.log('empate')
     }
     if(jugada1 > jugada2){
@@ -92,16 +94,42 @@ const terminar = (jugador1, jugador2)=>{
   if (jugador1.jugada.length === jugador2.jugada.length) {
     if(jugador1.jugada.length === 3){
       if (jugador1.tantosPartida > jugador2.tantosPartida ) {
-        ////Sumar en la base de datos falta//////
+        jugador1.tantos += 1
+        jugador1.valores = []
+        jugador2.valores = []
+        jugador1.jugada = []
+        jugador2.jugada = []
+        for (let i = 0; i < 3; i++) {
+          getRandomInt(1, 10)
+          jugador1.valores.push(valor)
+          getRandomInt(1, 10)
+          jugador2.valores.push(valor)
+        }
         return console.log('Ganador de la partida: ', jugador1.name)
       } else {
-        ////Sumar en la base de datos falta//////
+        jugador2.tantos += 1
+        jugador1.valores = []
+        jugador2.valores = []
+        jugador1.jugada = []
+        jugador2.jugada = []
+        for (let i = 0; i < 3; i++) {
+          getRandomInt(1, 10)
+          jugador1.valores.push(valor)
+          getRandomInt(1, 10)
+          jugador2.valores.push(valor)
+        }
         return console.log('Ganador de la partida: ', jugador2.name)
       }
     }
   } else {
     console.log('Siga')
   }
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  valor = Math.floor(Math.random() * (max - min) + min);
 }
 
 

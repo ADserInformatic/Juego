@@ -16,8 +16,10 @@
         </div>
     </div>
     <div class="cards">
+        <h4>Mis créditos: {{jugador?.creditos | currency}}</h4>
         <h3>Cartas de: {{jugador?.name}}</h3>
         <button class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">{{valor}}</button>
     </div>
+    <h2>Tantos: {{jugador.tantos}}</h2>
 
 </div>

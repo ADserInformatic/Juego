@@ -31,6 +31,7 @@ const saveSala = async (req, res)=>{
     }
     const usuario = await user.findOne({_id: usuarios[0].id})
     usuarios[0].name = usuario.name
+    usuarios[0].creditos = usuario.credito
     const creado = await sala.create({name, apuesta, usuarios})
     
     try {
@@ -115,6 +116,7 @@ const addUser = async (req, res)=>{
         //Hechas las comprobaciones anteriores, se guarda al usuario en la sala
         const dato = {
             name: buscar.name,
+            creditos: buscar.credito,
             id: buscar._id,
             valores: req.body.valores
         }
