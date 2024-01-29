@@ -1,46 +1,91 @@
 .body{
-    width: 100%;
-    height: 100%;
+    max-width: 1240px;
+    margin: auto;
+    height: 100vh;
     text-align: center;
     padding: 5% 0px;
+    background-image: url('../../../../assets/bar.jpg');
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
 }
-.jugadores{
-    border: solid 1px #000;
+.jugadores, .cards, .titulo{
+    border: solid 1px #f8f5f5;
     width: 80%;
     margin: 20px auto;
     display: flex;
+    background: #fc91045b;
+    box-shadow: 2px 2px 10px #fff,
+    -2px -2px 10px #fff;
+    border-radius: 7px;
+    color: #fff;
+}
+.cards, .titulo{
+    display: block;
+}
+.titulo{
+    padding: 10px 0px;
+}
+.dataTitle, .cards h3{
+    width: 95%;
+    padding: 10px 5px;
+    text-align: left;
+    margin: 10px auto;
+    border-radius: 3px;
+    background: #3d392c;
+    box-shadow: 2px 2px 12px #000000cb,
+                -2px -2px 12px #000000cb;
+}
+.cards h3{
+    text-align: center;
 }
 .jugador{
     width: 40%;
-    min-height: 30vh;
-    border: solid 1px rgb(17, 62, 243);
+    background: #fc91047c;
+    min-height: 50vh;
+    border: solid 1px rgb(2, 2, 2);
     margin: 20px auto;
-    padding: 0px 20px;
+    padding: 10px 20px;
+    box-shadow: inset 2px 2px 6px #070707,
+    inset -2px -2px 6px #080808;
 }
 .jugadas{
     text-align: left;
 }
-.card{
+.card, .jugoC{
     margin: 10px;
-    font-size: 20px;
+    width: 20%;
+    /* font-size: 20px;
     font-weight: bold;
     border: solid 1px rgb(121, 15, 15);
     background: rgb(241, 30, 30);
     color: #fff;
-    border-radius: 6px;
-    padding: 20px 15px;
+    padding: 20px 15px; */
     cursor: pointer;
+    border-radius: 16px;
+    overflow: hidden;
+}
+.card img, .jugoC img{
+    width: 100%;
+    object-fit: contain;
 }
 .juego{
     display: flex;
+    justify-content: center;
+    padding-top: 15px;
 }
 .jugoC{
+    border-radius: 6px;
+    margin: auto;
+}
+/*.jugoC{
     margin: 10px;
-    font-size: 20px;
+     font-size: 20px;
     font-weight: bold;
     border: solid 1px rgb(4, 3, 29);
-    background: rgb(28, 94, 218);
-    border-radius: 6px;
+    background: rgb(28, 94, 218); 
+    border-radius: 16px;
     padding: 20px 15px;
     color: #000;
-}
+}*/

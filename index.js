@@ -2,6 +2,7 @@ const express = require('express') ;
 const app = express();
 const user = require('./rutas/user');
 const sala = require('./rutas/sala');
+const carta = require('./rutas/cartas')
 const userM = require('./modelos/user');
 const salaM = require('./modelos/sala');
 const mongoose = require('mongoose');
@@ -36,6 +37,7 @@ const io = socketIo(server, {
 
 app.use('/', user)
 app.use('/sala', sala)
+app.use('/carta', carta)
 //Wwbsocket
 io.on('connection', (socket) => {
   
