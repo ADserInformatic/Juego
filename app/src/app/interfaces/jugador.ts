@@ -3,5 +3,5 @@ export interface Jugador {
     name: string,
     tantos: number,
     creditos: number,
-    valores: Array<number>
+    valores: [{name: string, valor: number}]
 }

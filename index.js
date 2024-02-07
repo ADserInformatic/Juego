@@ -5,6 +5,7 @@ const sala = require('./rutas/sala');
 const carta = require('./rutas/cartas')
 const userM = require('./modelos/user');
 const salaM = require('./modelos/sala');
+const cartaM = require('./modelos/carta')
 const mongoose = require('mongoose');
 const cors = require('cors');
 
@@ -46,6 +47,17 @@ io.on('connection', (socket) => {
     io.sockets.emit('sala', sala)
   })
 
+  socket.on('repartir', async (_sala)=>{
+    const salaOn = await salaM.findOne({_id: _sala._id})
+    const users = salaOn.usuarios
+    await repartir(users[0], users[1])
+    
+    await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
+    
+    const salaActualizada = await salaM.findOne({_id: salaOn._id})
+    io.sockets.emit('repartir', salaActualizada)
+  })
+
   socket.on('tirar', async (jugada)=>{
     //LLega un objeto con los datos de la jugada (sala, id del usuario y valor jugado)
     //Se busca la sala en la que se está jugando a partir del nombre
@@ -55,8 +67,9 @@ io.on('connection', (socket) => {
     users.forEach(async (element)=>{
       //Recorro los usuarios en esa sala y al que coincide con el id del que hizo la jugada se le actualizan los datos
       if (jugada.idUser === element.id.toHexString()) {
+        element.valores = element.valores.filter(e => e.name != jugada.carta)
         //Agregamos la nueva jugada al usuario en cuestión
-        element.jugada.push(jugada.valor)
+        element.jugada.push(jugada)
       }else{console.log('nada')}
     })
     compararValores(users[0], users[1])
@@ -75,12 +88,12 @@ const compararValores = async (jugador1, jugador2)=>{
   const jugada1 = jugador1.jugada[jugador1.jugada.length - 1]
   const jugada2 = jugador2.jugada[jugador2.jugada.length - 1]
   if(jugador1.jugada.length === jugador2.jugada.length){  
-    if(jugada1 === jugada2){
+    if(jugada1.valor === jugada2.valor){
       jugador1.tantosPartida += 1
       jugador2.tantosPartida += 1
       return console.log('empate')
     }
-    if(jugada1 > jugada2){
+    if(jugada1.valor > jugada2.valor){
       jugador1.tantosPartida += 1
       return console.log('Gana ', jugador1.name, 'Tiene ', jugador1.tantosPartida)
     }else{
@@ -97,29 +110,10 @@ const terminar = (jugador1, jugador2)=>{
     if(jugador1.jugada.length === 3){
       if (jugador1.tantosPartida > jugador2.tantosPartida ) {
         jugador1.tantos += 1
-        jugador1.valores = []
-        jugador2.valores = []
-        jugador1.jugada = []
-        jugador2.jugada = []
-        for (let i = 0; i < 3; i++) {
-          getRandomInt(1, 10)
-          jugador1.valores.push(valor)
-          getRandomInt(1, 10)
-          jugador2.valores.push(valor)
-        }
+        
         return console.log('Ganador de la partida: ', jugador1.name)
       } else {
         jugador2.tantos += 1
-        jugador1.valores = []
-        jugador2.valores = []
-        jugador1.jugada = []
-        jugador2.jugada = []
-        for (let i = 0; i < 3; i++) {
-          getRandomInt(1, 10)
-          jugador1.valores.push(valor)
-          getRandomInt(1, 10)
-          jugador2.valores.push(valor)
-        }
         return console.log('Ganador de la partida: ', jugador2.name)
       }
     }
@@ -135,3 +129,40 @@ function getRandomInt(min, max) {
 }
 
 
+const repartir = async (jugador1, jugador2)=>{
+  jugador1.valores = []
+  jugador2.valores = []
+  jugador1.jugada = []
+  jugador2.jugada = []
+  jugador2.tantosPartida = 0
+  jugador1.tantosPartida = 0
+  let values = []
+  for (let i = 0; i < 6; i++) {
+    getRandomInt(1, 40)
+    values.forEach(e =>{
+      if(e === valor){
+        var index = values.indexOf(e);
+        values.splice(index, 1)
+        i--
+      }
+    })
+    values.push(valor)
+  }
+  const allCartas = await cartaM.find({})
+  console.log()
+  for (let i = 0; i < 3; i++) {
+    let card = {
+      name: allCartas[values[i]].name,
+      valor: allCartas[values[i]].valor
+    }
+    jugador1.valores.push(allCartas[values[i]])
+  }
+  for (let i = 3; i < 6; i++) {
+    let card = {
+      name: allCartas[values[i]].name,
+      valor: allCartas[values[i]].valor
+    }
+    jugador2.valores.push(allCartas[values[i]])
+  }
+  console.log(jugador1, jugador2)
+}

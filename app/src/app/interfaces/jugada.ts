@@ -1,5 +1,6 @@
 export interface Jugada {
     sala: string,
     idUser: string,
-    valor: number
+    valor: number,
+    carta: string
 }

@@ -15,6 +15,7 @@ export class SalaComponent implements OnInit {
   private socket: any;
   public sala: any;
   public jugador!: Jugador;
+  public jugadorCont!: Jugador;
 
   constructor(
     private routeAct: ActivatedRoute,
@@ -34,36 +35,44 @@ export class SalaComponent implements OnInit {
     })
     
     this.socket.on('sala', (res:any)=>{
-      
-      if(this.nameSala !== res.name){return}
-      this.sala = res;
-      console.log(res)
-      this.sala.usuarios.forEach((element:any) => {
-        if(element.id == this.cookies.get('jugador')){
-          this.jugador = element
-        }
-      });
+      this.resetSala(res)
     })
     this.socket.on('muestra', (res: any)=>{
-      if(this.nameSala !== res.name){return}
-      this.sala = res;
-      this.sala.usuarios.forEach((element:any) => {
-        if(element.id == this.cookies.get('jugador')){
-          this.jugador = element
-        }
-      });
+      this.resetSala(res)
+    })
+
+    this.socket.on('repartir', (res: any)=>{
+      this.resetSala(res)
     })
   }
 
+  resetSala(res:any){
+    if(this.nameSala !== res.name){return}
+    this.sala = res;
+    console.log(res)
+    this.sala.usuarios.forEach((element:any) => {
+      if(element.id == this.cookies.get('jugador')){
+        this.jugador = element
+      }else{
+        this.jugadorCont = element
+      }
+    });
+  }
+
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
-  juega(val: number){
+  juega(val: any){
     const data: Jugada = {
       sala: this.nameSala,
-      valor: val,
+      valor: val.valor,
+      carta: val.name,
       idUser: this.cookies.get('jugador')
     }
     console.log(data)
     this.socket.emit('tirar', data)
+  }
+
+  repartir(){
+    this.socket.emit('repartir', this.sala)
   }
 
 }

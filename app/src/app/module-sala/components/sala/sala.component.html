@@ -3,6 +3,12 @@
         <h2>Bienvenidos a la sala: {{nameSala | uppercase}}</h2>
         <h4>La apuesta es de: {{sala?.apuesta | currency}}</h4>
     </div>
+    <div class="cards">
+        <h3>Cartas de: {{jugadorCont.name}}</h3>
+        <div class="card" *ngFor="let valor of jugadorCont?.valores">
+            <img src="../../../../assets/trasera.jpg" alt="">
+        </div>
+    </div>
     <div class="jugadores">
         <div *ngFor="let item of sala?.usuarios" class="jugador">
             <div class="dataTitle">
@@ -11,7 +17,7 @@
             </div>
             <div class="jugadas">
                 <div class="juego">
-                    <p class="jugoC" *ngFor="let carta of item?.jugada"><img src="../../../../assets/{{carta}}.jpg" alt=""></p>
+                    <p class="jugoC" *ngFor="let carta of item?.jugada"><img src="../../../../assets/{{carta.carta}}.jpg" alt=""></p>
 
                 </div>
             </div>
@@ -20,9 +26,16 @@
     <div class="cards">
         <h3>Cartas de: {{jugador.name}}</h3>
         <button class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
-            <img src="../../../../assets/{{valor}}.jpg" alt="">
+            <img src="../../../../assets/{{valor.name}}.jpg" alt="">
         </button>
     </div>
     <h2>Tantos: {{jugador.tantos}}</h2>
+    <button (click)="repartir()">Repartir</button>
 
+</div>
+
+<div class="standBy" *ngIf="sala?.usuarios.length === 1">
+    <div class="texto">
+        <h1>Esperando<b>r</b>rival...</h1>
+    </div>
 </div>
