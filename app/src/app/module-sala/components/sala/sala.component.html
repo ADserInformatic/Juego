@@ -23,6 +23,11 @@
             </div>
         </div>
     </div>
+    <div class="cantos">
+        <button (click)="canto('envido')">Envido</button>
+        <button (click)="canto('truco')">Truco</button>
+        <button (click)="canto('flor')">Flor</button>
+    </div>
     <div class="cards">
         <h3>Cartas de: {{jugador.name}}</h3>
         <button class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
@@ -30,12 +35,21 @@
         </button>
     </div>
     <h2>Tantos: {{jugador.tantos}}</h2>
-    <button (click)="repartir()">Repartir</button>
+    <button *ngIf="sala.usuarios[0].valores === [] && sala.usuarios[1].valores === []" (click)="repartir()">Repartir</button>
 
 </div>
 
 <div class="standBy" *ngIf="sala?.usuarios.length === 1">
     <div class="texto">
         <h1>Esperando<b>r</b>rival...</h1>
+    </div>
+</div>
+<div class="canto" *ngIf="cantoConf">
+    <div class="texto">
+        <h1>{{cantora}}</h1>
+    </div>
+    <div class="btns">
+        <button>Quiero</button>
+        <button>No quiero</button>
     </div>
 </div>

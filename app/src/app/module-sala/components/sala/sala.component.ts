@@ -16,6 +16,8 @@ export class SalaComponent implements OnInit {
   public sala: any;
   public jugador!: Jugador;
   public jugadorCont!: Jugador;
+  public cantoConf: boolean = false;
+  public cantora: string = ''
 
   constructor(
     private routeAct: ActivatedRoute,
@@ -44,10 +46,27 @@ export class SalaComponent implements OnInit {
     this.socket.on('repartir', (res: any)=>{
       this.resetSala(res)
     })
+
+    this.socket.on('cantando', (res: any)=>{
+      let respuesta = {
+        jugador: this.jugador.name,
+        canto: res.canto,
+        mensaje: ''
+      };
+      this.cantoConf = true
+      this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
+      // if (confirm()) {
+      //   respuesta.mensaje = 'Quiero'
+      //   this.socket.emit('respuestaCanto', respuesta)
+      // }else{
+      //   respuesta.mensaje = 'No quiero'
+      //   this.socket.emit('respuestaCanto', respuesta)
+      // }
+    })
   }
 
   resetSala(res:any){
-    if(this.nameSala !== res.name){return}
+    // if(this.nameSala !== res.name){return}
     this.sala = res;
     console.log(res)
     this.sala.usuarios.forEach((element:any) => {
@@ -73,6 +92,16 @@ export class SalaComponent implements OnInit {
 
   repartir(){
     this.socket.emit('repartir', this.sala)
+  }
+
+  canto(canto: string){
+    console.log(this.jugador, canto)
+    let data = {
+      sala: this.nameSala,
+      jugador: this.jugador,
+      canto
+    }
+    this.socket.emit('canto', data)
   }
 
 }

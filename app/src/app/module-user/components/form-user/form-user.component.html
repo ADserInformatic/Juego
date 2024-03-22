@@ -23,7 +23,10 @@
                 <label for="sala">Ingresar a una sala:</label>
                 <br>
                 <ng-container *ngFor="let item of salas">
-                    <button (click)="sala(item)">{{item.name}}</button>
+                    <div class="salaItem">
+                        <button (click)="sala(item)">{{item.name}}</button>
+                        <button (click)="deleteSala(item._id)">x</button>
+                    </div>
                 </ng-container>
             </div>
         </div>

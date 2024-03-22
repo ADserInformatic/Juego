@@ -18,6 +18,10 @@ export class ConsultasService {
     return this.http.get(`${this.uri}/sala/${id}`)
   }
 
+  deleteSala(id: any): Observable<any>{
+    return this.http.delete(`${this.uri}/sala/${id}`)
+  }
+
   saveUser(dato: any): Observable<any>{
     return this.http.post(this.uri, dato)
   }

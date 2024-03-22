@@ -32,10 +32,14 @@ export class FormUserComponent implements OnInit {
       name: '',
       apuesta: ''
     })
-    this.servCons.getSalas().subscribe(res=>{
-        this.salas = res.data
-      })
+    
+    this.traeSalas()
 
+  }
+  traeSalas(){
+    this.servCons.getSalas().subscribe(res=>{
+      this.salas = res.data
+    })
   }
   
   userSend(){
@@ -91,5 +95,12 @@ export class FormUserComponent implements OnInit {
         user: this.user}
     if(res.denegado){return}
     this.route.navigate(['/sala', datos])
+  }
+
+  deleteSala(id: any){
+    this.servCons.deleteSala(id).subscribe(res=>{
+      alert(res.mensaje)
+      this.traeSalas()
+    })
   }
 }

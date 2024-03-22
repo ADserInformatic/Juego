@@ -41,10 +41,12 @@ app.use('/sala', sala)
 app.use('/carta', carta)
 //Wwbsocket
 io.on('connection', (socket) => {
-  
+  console.log(socket.id)
   socket.on('sala', async (id)=>{
     const sala = await salaM.findOne({_id: id})
-    io.sockets.emit('sala', sala)
+    socket.join(sala.name)
+    
+    io.to(sala.name).emit('sala', sala)
   })
 
   socket.on('repartir', async (_sala)=>{
@@ -55,7 +57,7 @@ io.on('connection', (socket) => {
     await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
     
     const salaActualizada = await salaM.findOne({_id: salaOn._id})
-    io.sockets.emit('repartir', salaActualizada)
+    io.to(salaOn.name).emit('repartir', salaActualizada)
   })
 
   socket.on('tirar', async (jugada)=>{
@@ -79,7 +81,16 @@ io.on('connection', (socket) => {
     //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
     const salaActualizada = await salaM.findOne({_id: salaOn._id})
     //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
-    io.sockets.emit('muestra', salaActualizada)
+    
+    io.to(salaOn.name).emit('muestra', salaActualizada)
+  })
+
+  socket.on('canto', (res)=>{
+    socket.to(res.sala).emit('cantando', res)
+  })
+
+  socket.on('respuestaCanto', (res)=>{
+    console.log(res)
   })
 });
     
