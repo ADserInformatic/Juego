@@ -81,7 +81,79 @@
     border-radius: 6px;
     margin: auto;
 }
-
+.cantos{
+    width: 80%;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0px;
+    margin: auto;
+}
+.cantos button{
+    color: #000;
+    background: #fff;
+    padding: 5px 0px;
+    width: 25%;
+    border: solid .8px #000000;
+    border-radius: 3px;
+    outline: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all .6s ease-in-out;
+}
+.cantos button:hover{
+    color: #fff;
+    background: #000;
+}
+.cantos .noPuede{
+    filter: brightness(0.5);
+}
+.canto{
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: flex;
+}
+.canto .contCanto{
+    margin: auto;
+    background: #fff;
+    width: max-content;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+}
+.canto .contCanto .btns{
+    margin: 15px auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.canto .contCanto .flor{
+    justify-content: center;
+}
+.canto .contCanto .btns button{
+    background: #f30101b6;
+    color: #fff;
+    padding: 5px;
+    border: solid .7px #000;
+    border-radius: 4px;
+    outline: none;
+    text-transform: uppercase;
+    width: 30%;
+}
+.canto .contCanto .btns button:nth-child(1){
+    background: rgba(0, 88, 0, 0.719);
+}
+.canto .contCanto .btns button:nth-child(2){
+    background: rgba(202, 139, 2, 0.719);
+    font-weight: bold;
+}
+.canto .contCanto .flor button:nth-child(1){
+    width: 80%;
+    background: #000;
+}
 .standBy{
     position: absolute;
     top: 0;
@@ -112,4 +184,25 @@
 @keyframes esperando {
     0%{width: 0px;}
      100%{width: 110%;}
+}
+
+.mensaje{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff63;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all .5s ease-in-out;
+}
+.mensaje h1{
+    margin: auto;
+    border: 1px solid #000;
+    border-radius: 6px;
+    outline: none;
+    padding: 10px;
+    background: #dfa403;
 }

@@ -1,0 +1,11 @@
+APLICACIÓN DEL TRUCO
+
+-Tendría que hacer un registro de los cantos (para deshabilitar botones por ejemplo). En la sala guardar registro de qué se va cantando y qué no, con esto también puedo calcular los puntos al finalizar.
+
+-Tengo que controlar a quien le toca tirar
+
+-Me falta la finalización (ver si había truco, retruco, etc.). En el back ya sé quien gana.
+
+-Falta la opción de vale cuatro
+
+-Falta la lógica de la flor y del truco.

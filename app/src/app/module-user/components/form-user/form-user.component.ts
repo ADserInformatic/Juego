@@ -62,7 +62,7 @@ export class FormUserComponent implements OnInit {
       apuesta: this.formSala.value.apuesta,
       usuarios: [{
         id: this.cookie.get('jugador'),
-        valores: ['1e', '5c', '2b'],
+        valores: [],
         name: 'Jugador 1'}]
     }
     this.servCons.createSala(datos).subscribe(res=>{
@@ -74,7 +74,7 @@ export class FormUserComponent implements OnInit {
   sala(e: any){
     const dato = {
       id: this.cookie.get('jugador'),
-      valores: ['7o', '12c', '4c'],
+      valores: [],
       name: 'Jugador 2'}
     this.servCons.addUserToSala(e._id, dato).subscribe(res=>{
       this.datosSala(res)

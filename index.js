@@ -41,7 +41,6 @@ app.use('/sala', sala)
 app.use('/carta', carta)
 //Wwbsocket
 io.on('connection', (socket) => {
-  console.log(socket.id)
   socket.on('sala', async (id)=>{
     const sala = await salaM.findOne({_id: id})
     socket.join(sala.name)
@@ -61,6 +60,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('tirar', async (jugada)=>{
+    console.log(jugada)
     //LLega un objeto con los datos de la jugada (sala, id del usuario y valor jugado)
     //Se busca la sala en la que se está jugando a partir del nombre
     const salaOn = await salaM.findOne({name: jugada.sala})
@@ -89,8 +89,90 @@ io.on('connection', (socket) => {
     socket.to(res.sala).emit('cantando', res)
   })
 
-  socket.on('respuestaCanto', (res)=>{
-    console.log(res)
+  //Esto está recibiendo tanto envido como truco y flor. ¡Tener eso en cuenta!
+  socket.on('respuestaCanto', async (res)=>{
+    if(res.canto === 'envido'){
+      //Si quiere se suman los puntos y directamente se da al ganador
+      const sala = await salaM.findOne({name: res.sala})
+      const users = sala.usuarios
+      if (res.respuesta === 'quiero') {
+        //Acá paso los usuarios a la función que calcula los puntos
+        const resultado = calcularPuntos(users[0].valores, users[1].valores)
+        if(resultado.jug1.puntos > resultado.jug2.puntos){
+          users[0].tantosPartida += 2
+          await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
+         
+          let mensaje = `Gana ${users[0].name} con ${resultado.jug1.puntos} puntos`
+          let datos = {
+            mensaje,
+            sala
+          } 
+          io.to(res.sala).emit('resultadoDeCanto', datos)
+        }
+        if(resultado.jug1.puntos < resultado.jug2.puntos){
+          users[1].tantosPartida += 2
+          await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
+          let mensaje = `Gana ${users[1].name} con ${resultado.jug2.puntos} puntos`
+          let datos = {
+            mensaje,
+            sala
+          } 
+          io.to(res.sala).emit('resultadoDeCanto', datos)
+        }
+      } else {
+        console.log('No quiere ', res)
+        users.forEach(us=>{
+          if(us.name === res.jugador.name){
+            us.tantosPartida += 2
+          }else{
+            m = `${us.name} no quiere`
+          }
+        })
+        await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
+        let datos = {
+          mensaje: m,
+          sala
+        } 
+        io.to(res.sala).emit('resultadoDeCanto', datos)
+      }
+      //Si no quiere se muestra la respuesta y se continúa
+      // socket.to(res.sala).emit('respuestaCanto', res.respuesta)
+    }
+    if(res.canto === 'reenvido'){
+      if(res.respuesta === 'quiero'){
+        console.log('Se juega por 4')
+        const sala = await salaM.findOne({name: res.sala})
+        const users = sala.usuarios
+
+        const resultado = calcularPuntos(users[0].valores, users[1].valores)
+        if(resultado.jug1.puntos > resultado.jug2.puntos){
+          users[0].tantosPartida += 4
+          await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
+         
+          let mensaje = `Gana ${users[0].name} con ${resultado.jug1.puntos} puntos`
+          let datos = {
+            mensaje,
+            sala
+          } 
+          io.to(res.sala).emit('resultadoDeCanto', datos)
+        }
+        if(resultado.jug1.puntos < resultado.jug2.puntos){
+          users[1].tantosPartida += 2
+          await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
+          let mensaje = `Gana ${users[1].name} con ${resultado.jug2.puntos} puntos`
+          let datos = {
+            mensaje,
+            sala
+          } 
+          io.to(res.sala).emit('resultadoDeCanto', datos)
+        }
+
+      }
+      if(res.respuesta === 'noquiero'){
+        console.log('Son 2')
+      }
+      socket.to(res.sala).emit('cantando', res)
+    }
   })
 });
     
@@ -160,7 +242,7 @@ const repartir = async (jugador1, jugador2)=>{
     values.push(valor)
   }
   const allCartas = await cartaM.find({})
-  console.log()
+
   for (let i = 0; i < 3; i++) {
     let card = {
       name: allCartas[values[i]].name,
@@ -175,5 +257,82 @@ const repartir = async (jugador1, jugador2)=>{
     }
     jugador2.valores.push(allCartas[values[i]])
   }
-  console.log(jugador1, jugador2)
+}
+
+const calcularPuntos = (valoresJ1, valoresJ2)=>{
+  
+  let jug1 = tieneEnvido(valoresJ1, 1)
+  let jug2 = tieneEnvido(valoresJ2, 2)
+  return {jug1, jug2}
+  // for (let index = 0; index < valoresJ1.length; index++) {
+  //   const element = valoresJ1[index].charAt(1);
+  //   valores1.push()
+  // }
+  // if(valores1 > valores2){
+  //   console.log(`Gana el 1 con: ${valores1} puntos`)
+  // }
+}
+
+const tieneEnvido = (val, num)=>{
+  let pts;
+
+  let palo1 = val[0].name.match(/[a-zA-Z]+/g).join('');
+  let palo2 = val[1].name.match(/[a-zA-Z]+/g).join('');
+  let palo3 = val[2].name.match(/[a-zA-Z]+/g).join('');
+
+  if(palo1 === palo2 || palo1 === palo3 || palo2 === palo3 ){
+    console.log(`Hay envido para ${num}`)
+    let primRes = sumaPts(palo1, palo2, val[0].name, val[1].name, num)
+    let segRes = sumaPts(palo1, palo3, val[0].name, val[2].name, num)
+    let terRes = sumaPts(palo2, palo3, val[1].name, val[2].name, num)
+    if(primRes){ return primRes}
+    if(segRes){ return segRes}
+    if(terRes){ return terRes}
+  }else{
+    console.log(`No hay envido para ${num}`)
+    let val0 = parseInt(val[0].name)
+    let val1 = parseInt(val[1].name)
+    let val2 = parseInt(val[2].name)
+    let max = Math.max(...[val0, val1, val2])
+    if(max > 10){
+      max = 10
+    }
+    let puntosFinales = {
+      mensaje: `El jugador ${num} tiene ${max} puntos`,
+      jugadorNum: num,
+      puntos: max
+    }
+    console.log(max)
+    return puntosFinales
+  }
+  //Devuelve un array solo con los números
+  //variable.match(/\d+/g)
+  //Solo devuelve letras
+  //cadena.match(/[a-zA-Z]+/g).join('');
+}
+
+const sumaPts = (carta1, carta2, valor1, valor2, num)=>{
+  if(carta1 === carta2){
+    let priValor = parseInt(valor1)
+    let segValor = parseInt(valor2)
+    if(parseInt(valor1) > 10){
+      priValor = 10
+    }
+    if(parseInt(valor2) > 10){
+      segValor = 10
+    }
+    pts = priValor + segValor + 10
+    if(parseInt(valor2) < 10 && parseInt(valor1) < 10){
+      pts += 10
+    }
+    if(parseInt(valor2) > 9 && parseInt(valor1) > 9){
+      pts = 20
+    }
+    let puntosFinales = {
+      mensaje: `El jugador ${num} tiene ${pts} puntos`,
+      jugadorNum: num,
+      puntos: pts
+    }
+    return puntosFinales
+  }
 }

@@ -9,7 +9,7 @@
             <img src="../../../../assets/trasera.jpg" alt="">
         </div>
     </div>
-    <div class="jugadores">
+    <div *ngIf="sala?.usuarios" class="jugadores">
         <div *ngFor="let item of sala?.usuarios" class="jugador">
             <div class="dataTitle">
                 <h4>Nombre: {{item.name}}</h4>
@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="cantos">
-        <button (click)="canto('envido')">Envido</button>
+        <button [disabled]="!envido" [ngClass]="{'noPuede': !envido}" (click)="canto('envido')">Envido</button>
         <button (click)="canto('truco')">Truco</button>
         <button (click)="canto('flor')">Flor</button>
     </div>
@@ -34,22 +34,32 @@
             <img src="../../../../assets/{{valor.name}}.jpg" alt="">
         </button>
     </div>
-    <h2>Tantos: {{jugador.tantos}}</h2>
-    <button *ngIf="sala.usuarios[0].valores === [] && sala.usuarios[1].valores === []" (click)="repartir()">Repartir</button>
+    <h2>Tantos: {{jugador.tantosPartida}}</h2>
+    <button (click)="repartir()">Repartir</button>
 
 </div>
 
-<div class="standBy" *ngIf="sala?.usuarios.length === 1">
+<div class="standBy" *ngIf="!jugadorCont.name">
     <div class="texto">
         <h1>Esperando<b>r</b>rival...</h1>
     </div>
 </div>
 <div class="canto" *ngIf="cantoConf">
-    <div class="texto">
-        <h1>{{cantora}}</h1>
+    <div class="contCanto">
+        <div class="texto">
+            <h1>{{cantora | uppercase}}</h1>
+        </div>
+        <div class="btns flor" *ngIf="respuesta.canto === 'flor'">
+            <button (click)="contestarCanto('aceptar')" >Aceptar</button>
+        </div>
+        <div class="btns" *ngIf="respuesta.canto !== 'flor'">
+            <button (click)="contestarCanto('quiero')" >Quiero</button>
+            <button *ngIf="respuesta.canto === 'truco'" (click)="contestarCanto('retruco')">Retruco</button>
+            <button *ngIf="respuesta.canto === 'envido'" (click)="contestarCanto('reenvido')">Envido</button>
+            <button (click)="contestarCanto('noquiero')">No quiero</button>
+        </div>
     </div>
-    <div class="btns">
-        <button>Quiero</button>
-        <button>No quiero</button>
-    </div>
+</div>
+<div *ngIf="mensaje" class="mensaje">
+    <h1>{{mensaje}}</h1>
 </div>
