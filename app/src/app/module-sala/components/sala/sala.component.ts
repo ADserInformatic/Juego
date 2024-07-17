@@ -15,7 +15,10 @@ export class SalaComponent implements OnInit {
   private jugadorVacio: Jugador = { 
     id: '',
     name: '',
-    tantosPartida: 0,
+    juega: false,
+    puedeCantar: true,
+    canto: '',
+    tantos: 0,
     creditos: 0,
     valores: [{name: '', valor: 0}]
   };
@@ -44,7 +47,6 @@ export class SalaComponent implements OnInit {
         query: {sala: res.sala}
       })
       this.socket.emit('connection', res)
-      console.log(res)
       this.nameSala = res.sala;
       this.socket.emit('sala', res.idSala)
     })
@@ -54,10 +56,12 @@ export class SalaComponent implements OnInit {
     })
     this.socket.on('muestra', (res: any)=>{
       this.resetSala(res)
+      console.log(res)
     })
 
     this.socket.on('repartir', (res: any)=>{
       this.resetSala(res)
+      console.log(this.jugador.juega)
     })
     
     
@@ -66,7 +70,7 @@ export class SalaComponent implements OnInit {
         console.log(`El jugador ${this.jugadorCont.name} dice: ${res.respuesta} ${res.canto}`)
         return
       }else{
-        console.log('bueeee')
+        console.log('bueeee', )
       }
       res.jugador = this.jugadorCont
       this.respuesta = {
@@ -93,11 +97,8 @@ export class SalaComponent implements OnInit {
     //desactivar el boton de envido
     this.verCartas.subscribe(res=>{
       this.envido = this.jugador.valores.length > 2 && !this.mentira
-      console.log(this.envido)
     })
   }
-  
-  
   
   resetSala(res:any){
     // if(this.nameSala !== res.name){return}

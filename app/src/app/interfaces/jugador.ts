@@ -1,7 +1,10 @@
 export interface Jugador {
     id: string,
     name: string,
-    tantosPartida: number,
+    juega: boolean,
+    tantos: number,
+    puedeCantar: boolean,
+    canto: string,
     creditos: number,
     valores: [{name: string, valor: number}]
 }

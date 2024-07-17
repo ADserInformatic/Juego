@@ -62,6 +62,14 @@ io.on('connection', (socket) => {
     //A esos usuarios los pasamos como argumento a la función repartir que es la que va a asignar 3 cartas a cada jugador
     await repartir(users[0], users[1])
 
+    if (salaOn.partida % 2 === 0) {
+      users[1].juega = true;
+      users[0].juega = false;
+    }else{
+      users[0].juega = true;
+      users[1].juega = false;
+    }
+
     //Una vez que cada jugador tiene sus cartas se actualiza la sala
     await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
 
@@ -77,10 +85,11 @@ io.on('connection', (socket) => {
     //Se busca la sala en la que se está jugando a partir del nombre
     const salaOn = await salaM.findOne({name: jugada.sala})
     //Se guarda los usuarios que están jugando en esa sala en un array
-    const users = salaOn.usuarios
+    let users = salaOn.usuarios
     users.forEach(async (element)=>{
       //Recorro los usuarios en esa sala y al que coincide con el id del que hizo la jugada se le actualizan los datos
       if (jugada.idUser === element.id.toHexString()) {
+        //Esto lo que hace es filtrar todas la cartas que no coinciden con la que tiró, ya que son las que le quedan
         element.valores = element.valores.filter(e => e.name != jugada.carta)
         //Agregamos la nueva jugada al usuario en cuestión
         element.jugada.push(jugada)
@@ -89,13 +98,12 @@ io.on('connection', (socket) => {
     //Una vez que se actualiza la jugada al usuario que la realizá, se compara los valores. La función compararValores compara las últimas jugadas de los jugadores y actualiza el puntaje dependiendo del resultado de la comparación.
     compararValores(users[0], users[1])
     //La función terminar determina si una partida entre dos jugadores ha terminado basándose en el número de jugadas realizadas y declara al ganador
-    terminar(users[0], users[1])
+    terminar(users[0], users[1], salaOn)
     //Una vez actualizado el usuario se actualiza la sala
-    await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: { usuarios: users}})
+    await salaM.findByIdAndUpdate({_id: salaOn._id}, {$set: {usuarios: users, partida: salaOn.partida}})
     //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
     const salaActualizada = await salaM.findOne({_id: salaOn._id})
     //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
-    
     io.to(salaOn.name).emit('muestra', salaActualizada)
   })
 
@@ -106,15 +114,16 @@ io.on('connection', (socket) => {
 
   //Esto está recibiendo tanto envido como truco y flor. ¡Tener eso en cuenta!
   socket.on('respuestaCanto', async (res)=>{
+    const sala = await salaM.findOne({name: res.sala})
+    const users = sala.usuarios
+    //
     if(res.canto === 'envido'){
       //Si quiere se suman los puntos y directamente se da al ganador
-      const sala = await salaM.findOne({name: res.sala})
-      const users = sala.usuarios
       if (res.respuesta === 'quiero') {
         //Acá paso los usuarios a la función que calcula los puntos
         const resultado = calcularPuntos(users[0].valores, users[1].valores)
         if(resultado.jug1.puntos > resultado.jug2.puntos){
-          users[0].tantosPartida += 2
+          users[0].tantos += 2
           await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
          
           let mensaje = `Gana ${users[0].name} con ${resultado.jug1.puntos} puntos`
@@ -125,7 +134,7 @@ io.on('connection', (socket) => {
           io.to(res.sala).emit('resultadoDeCanto', datos)
         }
         if(resultado.jug1.puntos < resultado.jug2.puntos){
-          users[1].tantosPartida += 2
+          users[1].tantos += 2
           await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
           let mensaje = `Gana ${users[1].name} con ${resultado.jug2.puntos} puntos`
           let datos = {
@@ -136,34 +145,35 @@ io.on('connection', (socket) => {
         }
       } else {
         console.log('No quiere ', res)
+        var me;
         users.forEach(us=>{
           if(us.name === res.jugador.name){
-            us.tantosPartida += 2
+            us.tantos += 1
           }else{
-            m = `${us.name} no quiere`
+            me = `${us.name} no quiere`
           }
         })
         await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
         let datos = {
-          mensaje: m,
+          mensaje: me,
           sala
         } 
         io.to(res.sala).emit('resultadoDeCanto', datos)
       }
       //Si no quiere se muestra la respuesta y se continúa
       // socket.to(res.sala).emit('respuestaCanto', res.respuesta)
+      //socket.to(res.sala).emit('cantando', res)
     }
+    //
     if(res.canto === 'reenvido'){
       if(res.respuesta === 'quiero'){
         console.log('Se juega por 4')
         const sala = await salaM.findOne({name: res.sala})
         const users = sala.usuarios
-
         const resultado = calcularPuntos(users[0].valores, users[1].valores)
         if(resultado.jug1.puntos > resultado.jug2.puntos){
-          users[0].tantosPartida += 4
+          users[0].tantos += 4
           await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
-         
           let mensaje = `Gana ${users[0].name} con ${resultado.jug1.puntos} puntos`
           let datos = {
             mensaje,
@@ -172,7 +182,7 @@ io.on('connection', (socket) => {
           io.to(res.sala).emit('resultadoDeCanto', datos)
         }
         if(resultado.jug1.puntos < resultado.jug2.puntos){
-          users[1].tantosPartida += 2
+          users[1].tantos += 2
           await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
           let mensaje = `Gana ${users[1].name} con ${resultado.jug2.puntos} puntos`
           let datos = {
@@ -185,8 +195,59 @@ io.on('connection', (socket) => {
       }
       if(res.respuesta === 'noquiero'){
         console.log('Son 2')
+        var me;
+        users.forEach(us=>{
+          if(us.name === res.jugador.name){
+            us.tantos += 2
+          }else{
+            me = `${us.name} no quiere`
+          }
+        })
+        await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
+        let datos = {
+          mensaje: me,
+          sala
+        } 
+        io.to(res.sala).emit('resultadoDeCanto', datos)
       }
       socket.to(res.sala).emit('cantando', res)
+    }
+    //////----------
+    if(res.canto === 'truco'){
+      let mensaje;
+      if(res.respuesta == 'quiero'){
+        users[0].canto = res.canto
+        users[1].canto = res.canto
+        mensaje = `${res.jugador} dice: ${res.respuesta}`
+        let datos= {mensaje, jugador: res.jugador}
+        users.forEach(element=>{
+          if (element.id == res.jugador.id) {
+            element.puedeCantar = false
+          }else{
+            element.puedeCantar = true
+          }
+        })
+        //await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
+
+        console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+      }else{
+        console.log('No se quiere')
+      }
+    }
+    if(res.canto === 'retruco'){
+      console.log(res)
+      if(res.respuesta == 'quiero'){
+        users[0].canto = res.canto
+        users[1].canto = res.canto
+      }
+    }
+    if(res.canto === 'valeCuatro'){
+      if(res.respuesta == 'quiero'){
+        users[0].canto = res.canto
+        users[1].canto = res.canto
+      }else{
+        console.log()
+      }
     }
   })
 });
@@ -207,36 +268,65 @@ const compararValores = (jugador1, jugador2)=>{
     //Si el valor de la última jugada del jugador 1 es mayor que el del jugador 2, se incrementa el puntaje del jugador 1 
     if(jugada1.valor > jugada2.valor){
       jugador1.tantosPartida += 1
+      jugador1.juega = true;
+      jugador2.juega = false;
       return console.log('Gana ', jugador1.name, 'Tiene ', jugador1.tantosPartida)
     }else{
       //Si el valor de la última jugada del jugador 2 es mayor, se incrementa el puntaje del jugador 2 
       jugador2.tantosPartida += 1
+      jugador2.juega = true;
+      jugador1.juega = false;
       return console.log('Gana ', jugador2.name, 'Tiene ', jugador2.tantosPartida)
     }
   }else{
     //Si los jugadores no tienen el mismo número de jugadas no se puede hacer la comparación.
     console.log('falta una carta')
+    jugador2.juega = !jugador2.juega;
+    jugador1.juega = !jugador1.juega;
   }
 }
 
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
-const terminar = (jugador1, jugador2)=>{
+const terminar = (jugador1, jugador2, sala)=>{
   if (jugador1.jugada.length === jugador2.jugada.length) {
     //Se verifica si cada jugador ha realizado 3 jugadas. Si no es así, no se hace nada y no se declara un ganador.
     if(jugador1.jugada.length === 3){
+      sala.partida += 1
       //Si el puntaje de la partida (tantosPartida) del jugador 1 es mayor que el del jugador 2, se incrementa el puntaje total (tantos) del jugador 1 y se imprime un mensaje indicando que el jugador 1 es el ganador de la partida.
       if (jugador1.tantosPartida > jugador2.tantosPartida ) {
-        jugador1.tantos += 1
+        cuantosPuntos(jugador1)
         return console.log('Ganador de la partida: ', jugador1.name)
       } else {
         //Si el puntaje de la partida del jugador 2 es mayor o igual, se incrementa el puntaje total del jugador 2 y se imprime un mensaje indicando que el jugador 2 es el ganador de la partida.
-        jugador2.tantos += 1
+        cuantosPuntos(jugador2)
         return console.log('Ganador de la partida: ', jugador2.name)
       }
     }
   } else {
     console.log('Siga')
   }
+}
+
+function cuantosPuntos(jugador){
+  switch (jugador.canto) {
+    case 'noHay':
+      console.log('1')
+      jugador.tantos += 1
+      break;
+    case 'truco':
+      console.log('2')
+      jugador.tantos += 2
+      break;
+    case 'retruco':
+      console.log('3')
+      jugador.tantos += 3
+      break;
+    case 'valeCuatro':
+      console.log('2')
+      jugador.tantos += 4
+      break;
+  }
+
 }
 
 //La función getRandomInt está diseñada para generar un número entero aleatorio entre dos valores, min (incluido) y max (excluido).

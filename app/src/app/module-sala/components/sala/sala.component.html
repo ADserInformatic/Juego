@@ -25,16 +25,16 @@
     </div>
     <div class="cantos">
         <button [disabled]="!envido" [ngClass]="{'noPuede': !envido}" (click)="canto('envido')">Envido</button>
-        <button (click)="canto('truco')">Truco</button>
+        <button [disabled]="!jugador.puedeCantar" (click)="canto('truco')">Truco</button>
         <button (click)="canto('flor')">Flor</button>
     </div>
     <div class="cards">
         <h3>Cartas de: {{jugador.name}}</h3>
-        <button class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
+        <button [disabled]="!jugador.juega" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
             <img src="../../../../assets/{{valor.name}}.jpg" alt="">
         </button>
     </div>
-    <h2>Tantos: {{jugador.tantosPartida}}</h2>
+    <h2>Tantos: {{jugador.tantos}}</h2>
     <button (click)="repartir()">Repartir</button>
 
 </div>
