@@ -14,7 +14,7 @@ const sala = new Schema({
         tantosPartida: {type: Number, default: 0}, //Estos serían los tantos particulares de cada partida (se vacía cada vez que se reparten las cartas).
         canto: {type: String, default: 'noHay'}, //Este es para saber si estamos en truco, re o vale cua
         tantos: {type: Number,  default: 0}, //Estos son los puntos generales
-        puedeCantar: {type: boolean, default: true}, //
+        puedeCantar: {type: Boolean, default: true}, //
         id:{type: Schema.ObjectId, ref: user}}]
 })
 
