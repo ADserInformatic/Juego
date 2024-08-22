@@ -25,6 +25,7 @@ const sala = new Schema({
         puedeflor: { type: Boolean, default: true },
 
     }]
+
 })
 
 module.exports = model('sala', sala)
