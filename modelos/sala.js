@@ -9,6 +9,15 @@ const sala = new Schema({
         boolenvido: { type: Boolean, default: false },
         boolreenvido: { type: Boolean, default: false },
         boolrealenvido: { type: Boolean, default: false },
+        boolfaltaenvido: { type: Boolean, default: false },
+        boolflor: { type: Boolean, default: false },
+        boolflorflor: { type: Boolean, default: false },
+        boolflormeachico: { type: Boolean, default: false },
+        boolcontraflor: { type: Boolean, default: false },
+        booltruco: { type: Boolean, default: false },
+        boolretruco: { type: Boolean, default: false },
+        boolvalecuatro: { type: Boolean, default: false },
+
     },
     usuarios: [{
         name: { type: String },
@@ -22,7 +31,7 @@ const sala = new Schema({
         puedeCantar: { type: Boolean, default: true }, //
         id: { type: Schema.ObjectId, ref: user },
         mano: { type: Boolean, default: false }, //true si el jugador es mano,
-        puedeflor: { type: Boolean, default: true },
+        puedeflor: { type: Boolean, default: false },//true si puede cantar flor
 
     }]
 
