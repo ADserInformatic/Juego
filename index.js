@@ -151,6 +151,7 @@ io.on('connection', (socket) => {
         sala.cantosenmano.boolvalecuatro = true; break;
     }
     res.cantosenmano = sala.cantosenmano;
+    sala.save();
     socket.to(res.sala).emit('cantando', res)
   })
 
