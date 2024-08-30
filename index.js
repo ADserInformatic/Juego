@@ -125,7 +125,6 @@ io.on('connection', (socket) => {
 
   //Cuando un jugador canta (envido, flor o truco), se emite al otro jugador el canto y, en caso de requerirse, se espera una respuesta.
   socket.on('canto', async (res) => {
-    console.log(res)
     const sala = await salaM.findOne({ name: res.sala })
     switch (res.canto) {
       case 'envido':
@@ -151,6 +150,7 @@ io.on('connection', (socket) => {
       case 'valecuatro':
         sala.cantosenmano.boolvalecuatro = true; break;
     }
+    res.cantosenmano = sala.cantosenmano;
     socket.to(res.sala).emit('cantando', res)
   })
 
@@ -159,10 +159,11 @@ io.on('connection', (socket) => {
     const sala = await salaM.findOne({ name: res.sala })
     const users = sala.usuarios
     let datos;
+    res.cantosenmano = sala.cantosenmano;
+    console.log(res)
     //
     switch (res.canto) {
       case 'envido':
-        sala.cantosenmano.boolenvido = true;
         switch (res.respuesta) {
           case 'quiero':
             //Acá paso los usuarios a la función que calcula los puntos
