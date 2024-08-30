@@ -36,6 +36,16 @@ export class SalaComponent implements OnInit {
   public reEnvido: boolean = false;
   public realEnvido: boolean = false;
   public faltaEnvido: boolean = false;
+  public flor: boolean = false;
+  public florFlor: boolean = false;
+  public contraFlor: boolean = false;
+  public florMeachico: boolean = false;
+  public truco: boolean = false;
+  public reTruco: boolean = false;
+  public valeCuatro: boolean = false;
+
+
+
 
   private verCartas: BehaviorSubject<any> = new BehaviorSubject<any>(this.jugador.valores)
 
@@ -83,8 +93,20 @@ export class SalaComponent implements OnInit {
         canto: res.canto,
         mensaje: ''
       };
+      this.envido = res.sala.cantosenmano.boolenvido;
+      this.reEnvido = res.sala.cantosenmano.boolreenvido;
+      this.realEnvido = res.sala.cantosenmano.boolrealenvido;
+      this.faltaEnvido = res.sala.cantosenmano.boolfaltaenvido;
+      this.flor = res.sala.cantosenmano.boolflor;
+      this.florFlor = res.sala.cantosenmano.boolflorflor;
+      this.contraFlor = res.sala.cantosenmano.boolcontraflor;
+      this.florMeachico = res.sala.cantosenmano.boolflormeachico;
+      this.truco = res.sala.cantosenmano.booltruco;
+      this.reTruco = res.sala.cantosenmano.boolretruco;
+      this.valeCuatro = res.sala.cantosenmano.boolvalecuatro;
+      
       this.cantoConf = true
-      this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
+      this.cantora = `El jugador ${res.jugador.name} dice: ${res.res.canto}`
     })
     this.socket.on('respuestaCanto', (res: any)=>{
       confirm(`Tu oponente dice ${res}`)
