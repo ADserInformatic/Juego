@@ -93,20 +93,20 @@ export class SalaComponent implements OnInit {
         canto: res.canto,
         mensaje: ''
       };
-      this.envido = res.sala.cantosenmano.boolenvido;
-      this.reEnvido = res.sala.cantosenmano.boolreenvido;
-      this.realEnvido = res.sala.cantosenmano.boolrealenvido;
-      this.faltaEnvido = res.sala.cantosenmano.boolfaltaenvido;
-      this.flor = res.sala.cantosenmano.boolflor;
-      this.florFlor = res.sala.cantosenmano.boolflorflor;
-      this.contraFlor = res.sala.cantosenmano.boolcontraflor;
-      this.florMeachico = res.sala.cantosenmano.boolflormeachico;
-      this.truco = res.sala.cantosenmano.booltruco;
-      this.reTruco = res.sala.cantosenmano.boolretruco;
-      this.valeCuatro = res.sala.cantosenmano.boolvalecuatro;
+      this.envido = res.cantosenmano.boolenvido;
+      this.reEnvido = res.cantosenmano.boolreenvido;
+      this.realEnvido = res.cantosenmano.boolrealenvido;
+      this.faltaEnvido = res.cantosenmano.boolfaltaenvido;
+      this.flor = res.cantosenmano.boolflor;
+      this.florFlor = res.cantosenmano.boolflorflor;
+      this.contraFlor = res.cantosenmano.boolcontraflor;
+      this.florMeachico = res.cantosenmano.boolflormeachico;
+      this.truco = res.cantosenmano.booltruco;
+      this.reTruco = res.cantosenmano.boolretruco;
+      this.valeCuatro = res.cantosenmano.boolvalecuatro;
       
       this.cantoConf = true
-      this.cantora = `El jugador ${res.jugador.name} dice: ${res.res.canto}`
+      this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
     })
     this.socket.on('respuestaCanto', (res: any)=>{
       confirm(`Tu oponente dice ${res}`)
