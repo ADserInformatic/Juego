@@ -26,6 +26,7 @@ const sala = new Schema({
         valores: { type: Array }, //Estas son las cartas
         jugada: { type: Array }, //Esas son cada una de las jugadas (cada carta tirada)
         tantosPartida: { type: Number, default: 0 }, //Estos serían los tantos particulares de cada partida (se vacía cada vez que se reparten las cartas).
+        puntosMentira: { type: Number, default: 0 },//puntos de la mentira de cada partida
         canto: { type: String, default: 'noHay' }, //Este es para saber si estamos en truco, re o vale cua
         tantos: { type: Number, default: 0 }, //Estos son los puntos generales
         puedeCantar: { type: Boolean, default: true }, //
