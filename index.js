@@ -126,46 +126,7 @@ io.on('connection', (socket) => {
 
   //Cuando un jugador canta (envido, flor o truco), se emite al otro jugador el canto y, en caso de requerirse, se espera una respuesta.
   socket.on('canto', async (res) => {
-    console.log(res)
-    const sala = await salaM.findOne({ name: res.sala })
-    console.log(sala)
-    switch (res.canto) {
-      case 'envido':
-        sala.cantosenmano.boolenvido = true; break;
-
-      case 'reenvido':
-
-        sala.cantosenmano.boolreenvido = true; break;
-      case 'realEnvido':
-
-        sala.cantosenmano.boolrealenvido = true; break;
-      case 'faltaEnvido':
-
-        sala.cantosenmano.boolfaltaenvido = true; break;
-      case 'flor':
-
-        sala.cantosenmano.boolflor = true; break;
-      case 'florFlor':
-
-        sala.cantosenmano.boolflorflor = true; break;
-      case 'flormeachico':
-
-        sala.cantosenmano.boolflormeachico = true; break;
-      case 'contraFlor':
-
-        sala.cantosenmano.boolcontraflor = true; break;
-      case 'truco':
-
-        sala.cantosenmano.booltruco = true; break;
-      case 'retruco':
-
-        sala.cantosenmano.boolretruco = true; break;
-      case 'valecuatro':
-
-        sala.cantosenmano.boolvalecuatro = true; break;
-    }
-    res.cantosenmano = sala.cantosenmano;
-    sala.save();
+    res = await booleanos(res);
     console.log('cantando: ', res)
     socket.to(res.sala).emit('cantando', res)
   })
@@ -175,10 +136,12 @@ io.on('connection', (socket) => {
     const sala = await salaM.findOne({ name: res.sala })
     const users = sala.usuarios
     let datos;
+    let canto = res.canto
+    res = await booleanos(res);
     console.log('respondio el canto que fue: ', res.canto);
     console.log('y la respuesta fue: ', res.respuesta);
     //
-    switch (res.canto) {
+    switch (canto) {
       case 'envido':
         switch (res.respuesta) {
           case 'quiero':
@@ -238,7 +201,6 @@ io.on('connection', (socket) => {
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
-          case 'reenvido': console.log('respondio envido'); break;
         }
         socket.to(res.sala).emit('cantando', res)
         break;
@@ -302,23 +264,7 @@ io.on('connection', (socket) => {
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
-
-          /* default:
-            let Onsala = await salaM.findOne({ name: res.sala })
-            let mensaje = `envido`;
-            Onsala.cantosenmano.boolreenvido = true;
-            Onsala.save()
-            res.cantosenmano = Onsala.cantosenmano;
-            let dato = {
-              mensaje,
-              Onsala
-            }
-            console.log('datos: ', dato)
-            io.to(res.sala).emit('resultadoDeCanto', dato)
-            break; */
-
         }
-
         socket.to(res.sala).emit('cantando', res)
         break;
       case 'realEnvido':
@@ -534,10 +480,52 @@ io.on('connection', (socket) => {
         }
         break;
     }
+    console.log(res)
   }////////////////////////////////////////////////////////////////////
   )
 });
+const booleanos = async (res) => {
+  const sala = await salaM.findOne({ name: res.sala })
+  console.log(sala)
+  switch (res.canto) {
+    case 'envido':
+      sala.cantosenmano.boolenvido = true; break;
 
+    case 'reenvido':
+
+      sala.cantosenmano.boolreenvido = true; break;
+    case 'realEnvido':
+
+      sala.cantosenmano.boolrealenvido = true; break;
+    case 'faltaEnvido':
+
+      sala.cantosenmano.boolfaltaenvido = true; break;
+    case 'flor':
+
+      sala.cantosenmano.boolflor = true; break;
+    case 'florFlor':
+
+      sala.cantosenmano.boolflorflor = true; break;
+    case 'flormeachico':
+
+      sala.cantosenmano.boolflormeachico = true; break;
+    case 'contraFlor':
+
+      sala.cantosenmano.boolcontraflor = true; break;
+    case 'truco':
+
+      sala.cantosenmano.booltruco = true; break;
+    case 'retruco':
+
+      sala.cantosenmano.boolretruco = true; break;
+    case 'valecuatro':
+
+      sala.cantosenmano.boolvalecuatro = true; break;
+  }
+  res.cantosenmano = sala.cantosenmano;
+  sala.save();
+  return (res)
+}
 //Acá tengo que pasar los dos jugadores que están en la sala cada vez que se tira
 const compararValores = (jugador1, jugador2) => {
   //Aquí, se obtienen las últimas jugadas de cada jugador. 
@@ -679,9 +667,6 @@ const repartir = async (jugador1, jugador2) => {
   jugador1.puedeflor = temp1.flor;
   jugador2.puedeflor = temp2.flor;
 
-  console.log('jugador 1: ', jugador1);
-  console.log('jugador 2: ', jugador2);
-  // console.log('jugador 2: ', jugador2);
 }
 //La función tieneEnvido determina si hay "envido" en una mano de cartas, y calcula los puntos de envido para un jugador específico.
 const tieneEnvido = (val, num) => {
