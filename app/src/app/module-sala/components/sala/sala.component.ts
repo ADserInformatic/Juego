@@ -32,7 +32,21 @@ export class SalaComponent implements OnInit {
   public cantora: string = '';
   public respuesta: any;
   public mensaje: string = '';
-  public envido: boolean = true;
+  public envido: boolean = false;
+  public reEnvido: boolean = false;
+  public realEnvido: boolean = false;
+  public faltaEnvido: boolean = false;
+  public flor: boolean = false;
+  public florFlor: boolean = false;
+  public contraFlor: boolean = false;
+  public florMeachico: boolean = false;
+  public truco: boolean = false;
+  public reTruco: boolean = false;
+  public valeCuatro: boolean = false;
+
+
+
+
   private verCartas: BehaviorSubject<any> = new BehaviorSubject<any>(this.jugador.valores)
 
   constructor(
@@ -66,6 +80,7 @@ export class SalaComponent implements OnInit {
     
     
     this.socket.on('cantando', (res:any)=>{
+      console.log(res)
       if(res.respuesta === 'quiero' || res.respuesta === 'noquiero' ){
         console.log(`El jugador ${this.jugadorCont.name} dice: ${res.respuesta} ${res.canto}`)
         return
@@ -78,6 +93,18 @@ export class SalaComponent implements OnInit {
         canto: res.canto,
         mensaje: ''
       };
+      this.envido = res.cantosenmano.boolenvido;
+      this.reEnvido = res.cantosenmano.boolreenvido;
+      this.realEnvido = res.cantosenmano.boolrealenvido;
+      this.faltaEnvido = res.cantosenmano.boolfaltaenvido;
+      this.flor = res.cantosenmano.boolflor;
+      this.florFlor = res.cantosenmano.boolflorflor;
+      this.contraFlor = res.cantosenmano.boolcontraflor;
+      this.florMeachico = res.cantosenmano.boolflormeachico;
+      this.truco = res.cantosenmano.booltruco;
+      this.reTruco = res.cantosenmano.boolretruco;
+      this.valeCuatro = res.cantosenmano.boolvalecuatro;
+      
       this.cantoConf = true
       this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
     })
@@ -103,6 +130,12 @@ export class SalaComponent implements OnInit {
   resetSala(res:any){
     // if(this.nameSala !== res.name){return}
     this.sala = res;
+    console.log(res.cantosenmano)
+    this.envido = res.cantosenmano.boolenvido
+    this.reEnvido = res.cantosenmano.boolreenvido
+    this.realEnvido = res.cantosenmano.boolrealenvido
+    //this.faltaEnvido = res.cantosenmano.boolfaltaenvido
+
     this.sala.usuarios.forEach((element:any) => {
       if(element.id == this.cookies.get('jugador')){
         this.jugador = element
