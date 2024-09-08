@@ -85,7 +85,7 @@ io.on('connection', (socket) => {
       users[0].juega = true;
       users[1].juega = false;
     }
-
+    salaOn.save();
     //Una vez que cada jugador tiene sus cartas se actualiza la sala
     await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users } })
 
@@ -126,9 +126,9 @@ io.on('connection', (socket) => {
 
   //Cuando un jugador canta (envido, flor o truco), se emite al otro jugador el canto y, en caso de requerirse, se espera una respuesta.
   socket.on('canto', async (res) => {
-    res = await booleanos(res);
-    console.log('cantando: ', res)
-    socket.to(res.sala).emit('cantando', res)
+    let ores = await booleanos(res);
+    // console.log('cantando: ', ores)
+    socket.to(res.sala).emit('cantando', ores)
   })
 
   //Esto está recibiendo tanto envido como truco y flor. ¡Tener eso en cuenta!
@@ -473,40 +473,28 @@ io.on('connection', (socket) => {
 });
 const booleanos = async (res) => {
   const sala = await salaM.findOne({ name: res.sala })
-  console.log(sala)
   switch (res.canto) {
     case 'envido':
       sala.cantosenmano.boolenvido = true; break;
-
     case 'reenvido':
-
       sala.cantosenmano.boolreenvido = true; break;
     case 'realEnvido':
-
       sala.cantosenmano.boolrealenvido = true; break;
     case 'faltaEnvido':
-
       sala.cantosenmano.boolfaltaenvido = true; break;
     case 'flor':
-
       sala.cantosenmano.boolflor = true; break;
     case 'florFlor':
-
       sala.cantosenmano.boolflorflor = true; break;
     case 'flormeachico':
-
       sala.cantosenmano.boolflormeachico = true; break;
     case 'contraFlor':
-
       sala.cantosenmano.boolcontraflor = true; break;
     case 'truco':
-
       sala.cantosenmano.booltruco = true; break;
     case 'retruco':
-
       sala.cantosenmano.boolretruco = true; break;
     case 'valecuatro':
-
       sala.cantosenmano.boolvalecuatro = true; break;
   }
   res.cantosenmano = sala.cantosenmano;

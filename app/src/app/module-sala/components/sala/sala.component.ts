@@ -12,7 +12,7 @@ import { Jugador } from 'src/app/interfaces/jugador';
   styleUrls: ['./sala.component.css']
 })
 export class SalaComponent implements OnInit {
-  private jugadorVacio: Jugador = { 
+  private jugadorVacio: Jugador = {
     id: '',
     name: '',
     juega: false,
@@ -20,7 +20,7 @@ export class SalaComponent implements OnInit {
     canto: '',
     tantos: 0,
     creditos: 0,
-    valores: [{name: '', valor: 0}]
+    valores: [{ name: '', valor: 0 }]
   };
   public nameSala!: string;
   private mentira!: any;
@@ -55,37 +55,37 @@ export class SalaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.routeAct.params.subscribe((res:any)=>{
+    this.routeAct.params.subscribe((res: any) => {
       this.socket = io('http://localhost:3006',
-       {
-        query: {sala: res.sala}
-      })
+        {
+          query: { sala: res.sala }
+        })
       this.socket.emit('connection', res)
       this.nameSala = res.sala;
       this.socket.emit('sala', res.idSala)
     })
-    
-    this.socket.on('sala', (res:any)=>{
+
+    this.socket.on('sala', (res: any) => {
       this.resetSala(res)
     })
-    this.socket.on('muestra', (res: any)=>{
+    this.socket.on('muestra', (res: any) => {
       this.resetSala(res)
       console.log(res)
     })
 
-    this.socket.on('repartir', (res: any)=>{
+    this.socket.on('repartir', (res: any) => {
       this.resetSala(res)
       console.log(this.jugador.juega)
     })
-    
-    
-    this.socket.on('cantando', (res:any)=>{
-      console.log(res)
-      if(res.respuesta === 'quiero' || res.respuesta === 'noquiero' ){
+
+
+    this.socket.on('cantando', (res: any) => {
+      console.log("dentro de cantando: ", res)
+      if (res.respuesta === 'quiero' || res.respuesta === 'noquiero') {
         console.log(`El jugador ${this.jugadorCont.name} dice: ${res.respuesta} ${res.canto}`)
         return
-      }else{
-        console.log('bueeee', )
+      } else {
+        console.log('bueeee',)
       }
       res.jugador = this.jugadorCont
       this.respuesta = {
@@ -104,30 +104,31 @@ export class SalaComponent implements OnInit {
       this.truco = res.cantosenmano.booltruco;
       this.reTruco = res.cantosenmano.boolretruco;
       this.valeCuatro = res.cantosenmano.boolvalecuatro;
-      
+
       this.cantoConf = true
       this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
     })
-    this.socket.on('respuestaCanto', (res: any)=>{
+    this.socket.on('respuestaCanto', (res: any) => {
+      console.log("tu oponente dice: ", res)
       confirm(`Tu oponente dice ${res}`)
     })
-    
-    this.socket.on('resultadoDeCanto', (res: any)=>{
+
+    this.socket.on('resultadoDeCanto', (res: any) => {
       this.mensaje = res.mensaje
-      setTimeout(()=>{
+      setTimeout(() => {
         this.mensaje = ''
       }, 2000)
       this.resetSala(res.sala)
       this.envido = false
     })
-    
+
     //desactivar el boton de envido
-    this.verCartas.subscribe(res=>{
+    this.verCartas.subscribe(res => {
       this.envido = this.jugador.valores.length > 2 && !this.mentira
     })
   }
-  
-  resetSala(res:any){
+
+  resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
     this.sala = res;
     console.log(res.cantosenmano)
@@ -136,10 +137,10 @@ export class SalaComponent implements OnInit {
     this.realEnvido = res.cantosenmano.boolrealenvido
     //this.faltaEnvido = res.cantosenmano.boolfaltaenvido
 
-    this.sala.usuarios.forEach((element:any) => {
-      if(element.id == this.cookies.get('jugador')){
+    this.sala.usuarios.forEach((element: any) => {
+      if (element.id == this.cookies.get('jugador')) {
         this.jugador = element
-      }else{
+      } else {
         this.jugadorCont = element
       }
     });
@@ -147,7 +148,7 @@ export class SalaComponent implements OnInit {
   }
 
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
-  juega(val: any){
+  juega(val: any) {
     console.log(val)
     const data: Jugada = {
       sala: this.nameSala,
@@ -159,12 +160,12 @@ export class SalaComponent implements OnInit {
     this.socket.emit('tirar', data)
   }
 
-  repartir(){
+  repartir() {
     this.socket.emit('repartir', this.sala)
   }
 
-  canto(canto: string){
-    if(canto == 'envido'){
+  canto(canto: string) {
+    if (canto == 'envido') {
       this.mentira = canto
     }
     let data = {
@@ -175,7 +176,7 @@ export class SalaComponent implements OnInit {
     this.socket.emit('canto', data)
   }
 
-  contestarCanto(resp: string){
+  contestarCanto(resp: string) {
     const respons = {
       jugador: this.jugadorCont,
       respuesta: resp,
