@@ -78,15 +78,8 @@ export class SalaComponent implements OnInit {
       console.log(this.jugador.juega)
     })
 
-
     this.socket.on('cantando', (res: any) => {
-      console.log("dentro de cantando: ", res)
-      if (res.respuesta === 'quiero' || res.respuesta === 'noquiero') {
-        console.log(`El jugador ${this.jugadorCont.name} dice: ${res.respuesta} ${res.canto}`)
-        return
-      } else {
-        console.log('bueeee',)
-      }
+      console.log(res)
       res.jugador = this.jugadorCont
       this.respuesta = {
         jugador: this.jugador.name,
@@ -104,6 +97,14 @@ export class SalaComponent implements OnInit {
       this.truco = res.cantosenmano.booltruco;
       this.reTruco = res.cantosenmano.boolretruco;
       this.valeCuatro = res.cantosenmano.boolvalecuatro;
+
+      if (res.respuesta === 'quiero' || res.respuesta === 'noquiero') {
+        console.log(`El jugador ${this.jugadorCont.name} dice: ${res.respuesta} ${res.canto}`)
+        return
+      } else {
+        console.log('bueeee',)
+        this.contestarCanto(res.respuesta)
+      }
 
       this.cantoConf = true
       this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`

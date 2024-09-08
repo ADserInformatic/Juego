@@ -25,8 +25,8 @@
     </div>
     <div class="cantos">
         <button [disabled]="!envido" [ngClass]="{'noPuede': !envido}" (click)="canto('envido')">Envido</button>
-        <button [disabled]="!envido" [ngClass]="{'noPuede': !envido}" (click)="canto('realenvido')">Real envido</button>
-        <button [disabled]="!envido" [ngClass]="{'noPuede': !envido}" (click)="canto('faltaenvido')">Falta envido</button>
+        <button [disabled]="!envido" [ngClass]="{'noPuede': !envido}" (click)="canto('realEnvido')">Real envido</button>
+        <button [disabled]="!envido" [ngClass]="{'noPuede': !envido}" (click)="canto('faltaEnvido')">Falta envido</button>
         <button [disabled]="!jugador.puedeCantar" (click)="canto('truco')">Truco</button>
         <button (click)="canto('flor')">Flor</button>
     </div>
