@@ -103,12 +103,13 @@ export class SalaComponent implements OnInit {
         return
       } else {
         console.log('bueeee',)
-        this.contestarCanto(res.respuesta)
+        //this.contestarCanto(res.respuesta)
       }
 
       this.cantoConf = true
       this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
     })
+
     this.socket.on('respuestaCanto', (res: any) => {
       console.log("tu oponente dice: ", res)
       confirm(`Tu oponente dice ${res}`)

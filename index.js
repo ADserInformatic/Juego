@@ -432,24 +432,33 @@ io.on('connection', (socket) => {
 
         break;
       case 'truco':
-        let mensaje;
-        if (res.respuesta == 'quiero') {
-          users[0].canto = res.canto
-          users[1].canto = res.canto
-          mensaje = `${res.jugador} dice: ${res.respuesta}`
-          let datos = { mensaje, jugador: res.jugador }
-          users.forEach(element => {
-            if (element.id == res.jugador.id) {
-              element.puedeCantar = false
-            } else {
-              element.puedeCantar = true
-            }
-          })
-          //await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
-          console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
-        } else {
-          console.log('No se quiere')
+        switch (res.respuesta) {
+          case 'quiero':
+            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            let datos = { mensaje, jugador: res.jugador }
+            users.forEach(element => {
+              if (element.id == res.jugador.id) {
+                element.puedeCantar = false
+              } else {
+                element.puedeCantar = true
+              }
+            })
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            socket.to(res.sala).emit('cantando', datos)
+            break;
+          case 'no quiero': break;
         }
+        /* let mensaje;
+        if (res.respuesta == 'quiero') {
+
+          
+          
+         
+          //
+        } else {
+          
+        } */
         break;
       case 'retruco':
         console.log(res)
