@@ -85,7 +85,7 @@ io.on('connection', (socket) => {
       users[0].juega = true;
       users[1].juega = false;
     }
-
+    salaOn.save();
     //Una vez que cada jugador tiene sus cartas se actualiza la sala
     await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users } })
 
@@ -126,9 +126,9 @@ io.on('connection', (socket) => {
 
   //Cuando un jugador canta (envido, flor o truco), se emite al otro jugador el canto y, en caso de requerirse, se espera una respuesta.
   socket.on('canto', async (res) => {
-    res = await booleanos(res);
-    console.log('cantando: ', res)
-    socket.to(res.sala).emit('cantando', res)
+    let ores = await booleanos(res);
+    // console.log('cantando: ', ores)
+    socket.to(res.sala).emit('cantando', ores)
   })
 
   //Esto está recibiendo tanto envido como truco y flor. ¡Tener eso en cuenta!
@@ -432,38 +432,94 @@ io.on('connection', (socket) => {
 
         break;
       case 'truco':
-        let mensaje;
-        if (res.respuesta == 'quiero') {
-          users[0].canto = res.canto
-          users[1].canto = res.canto
-          mensaje = `${res.jugador} dice: ${res.respuesta}`
-          let datos = { mensaje, jugador: res.jugador }
-          users.forEach(element => {
-            if (element.id == res.jugador.id) {
-              element.puedeCantar = false
-            } else {
-              element.puedeCantar = true
-            }
-          })
-          //await salaM.findOneAndUpdate({name: res.sala}, {$set: {usuarios: users}})
-          console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
-        } else {
-          console.log('No se quiere')
+        switch (res.respuesta) {
+          case 'quiero':
+            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            let datos = { mensaje, jugador: res.jugador }
+            users.forEach(element => {
+              if (element.id == res.jugador.id) {
+                element.puedeCantar = false
+              } else {
+                element.puedeCantar = true
+              }
+            })
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            socket.to(res.sala).emit('cantando', datos)
+            break;  //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
+          case 'no quiero':
+            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            let data = { mensaje, jugador: res.jugador }
+            users.forEach(element => {
+              if (element.id == res.jugador.id) {
+                element.tantos += 1;
+              }
+            })
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            socket.to(res.sala).emit('cantando', data)
+            break;
         }
         break;
       case 'retruco':
-        console.log(res)
-        if (res.respuesta == 'quiero') {
-          users[0].canto = res.canto
-          users[1].canto = res.canto
+        switch (res.respuesta) {
+          case 'quiero':
+            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            let datos = { mensaje, jugador: res.jugador }
+            users.forEach(element => {
+              if (element.id == res.jugador.id) {
+                element.puedeCantar = false
+              } else {
+                element.puedeCantar = true
+              }
+            })
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            socket.to(res.sala).emit('cantando', datos)
+            break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
+          case 'no quiero':
+            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            let data = { mensaje, jugador: res.jugador }
+            users.forEach(element => {
+              if (element.id == res.jugador.id) {
+                element.tantos += 2;
+              }
+            })
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            socket.to(res.sala).emit('cantando', data)
+            break;
         }
+
         break;
       case 'valeCuatro':
-        if (res.respuesta == 'quiero') {
-          users[0].canto = res.canto
-          users[1].canto = res.canto
-        } else {
-          console.log()
+        switch (res.respuesta) {
+          case 'quiero':
+            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            let datos = { mensaje, jugador: res.jugador }
+            users.forEach(element => {
+              if (element.id == res.jugador.id) {
+                element.puedeCantar = false
+              } else {
+                element.puedeCantar = true
+              }
+            })
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            socket.to(res.sala).emit('cantando', datos)
+            break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
+          case 'no quiero':
+            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            let data = { mensaje, jugador: res.jugador }
+            users.forEach(element => {
+              if (element.id == res.jugador.id) {
+                element.tantos += 3;
+              }
+            })
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            socket.to(res.sala).emit('cantando', data)
+            break;
         }
         break;
     }
@@ -473,40 +529,28 @@ io.on('connection', (socket) => {
 });
 const booleanos = async (res) => {
   const sala = await salaM.findOne({ name: res.sala })
-  console.log(sala)
   switch (res.canto) {
     case 'envido':
       sala.cantosenmano.boolenvido = true; break;
-
     case 'reenvido':
-
       sala.cantosenmano.boolreenvido = true; break;
     case 'realEnvido':
-
       sala.cantosenmano.boolrealenvido = true; break;
     case 'faltaEnvido':
-
       sala.cantosenmano.boolfaltaenvido = true; break;
     case 'flor':
-
       sala.cantosenmano.boolflor = true; break;
     case 'florFlor':
-
       sala.cantosenmano.boolflorflor = true; break;
     case 'flormeachico':
-
       sala.cantosenmano.boolflormeachico = true; break;
     case 'contraFlor':
-
       sala.cantosenmano.boolcontraflor = true; break;
     case 'truco':
-
       sala.cantosenmano.booltruco = true; break;
     case 'retruco':
-
       sala.cantosenmano.boolretruco = true; break;
     case 'valecuatro':
-
       sala.cantosenmano.boolvalecuatro = true; break;
   }
   res.cantosenmano = sala.cantosenmano;
