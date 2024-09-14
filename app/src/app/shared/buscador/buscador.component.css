@@ -1,0 +1,41 @@
+.buscador{
+    /* width: 100%; */
+    position: relative;
+    margin-left: 10px;
+}
+.buscador .inpu{
+    border-radius: 3px;
+    border-bottom: .5px solid var(--colorSec);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.inpu input{
+    flex: 1;
+}
+.inpu input, .inpu span{
+    outline: none;
+    border: none;
+    background: var(--border);
+    padding: 5px;
+    font-size: 14px;
+}
+.inpu span{
+    font-size: 16px;
+}
+.buscador ul{
+    position: absolute;
+    top: 20px;
+    background: var(--border);
+    padding: 5px;
+    width: 100%;
+    z-index: 5;
+}
+.buscador ul li{
+    cursor: pointer;
+    color: #000;
+}
+.buscador ul li:hover{
+    background: var(--colorSec);
+}
