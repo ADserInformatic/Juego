@@ -136,6 +136,7 @@ io.on('connection', (socket) => {
     const sala = await salaM.findOne({ name: res.sala })
     const users = sala.usuarios
     let datos;
+    let mensaje;
     let canto = res.canto
     res = await booleanos(res);
     console.log('respondio el canto que fue: ', res.canto);
@@ -150,8 +151,8 @@ io.on('connection', (socket) => {
               users[0].tantos += 2
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
 
-              let mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
-              let datos = {
+              mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+              datos = {
                 mensaje,
                 sala
               }
@@ -160,15 +161,14 @@ io.on('connection', (socket) => {
             if (users[0].puntosMentira < users[1].puntosMentira) {
               users[1].tantos += 2
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              let mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
-              let datos = {
+              mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+              datos = {
                 mensaje,
                 sala
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira == users[1].puntosMentira) {
-              let mensaje;
               if (users[1].mano == true) {
                 users[1].tantos += 2;
                 mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
@@ -177,7 +177,7 @@ io.on('connection', (socket) => {
                 mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              let datos = {
+              datos = {
                 mensaje,
                 sala
               }
@@ -202,17 +202,19 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
-            let mensaje = "";
+            mensaje = "";
             let recanto = res.respuesta;
-            let datos = {
+            let booleanos = sala.cantosenmano;
+            datos = {
               mensaje,
               sala,
-              recanto
+              recanto,
+              booleanos
             }
-            io.to(res.sala).emit('resultadoDeCanto', datos)
+            socket.to(res.sala).emit('cantando', datos)
             break;
         }
-        socket.to(res.sala).emit('cantando', res)
+        //socket.to(res.sala).emit('cantando', res)
         break;
       case 'reenvido':
         switch (res.respuesta) {
@@ -223,8 +225,8 @@ io.on('connection', (socket) => {
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 4
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              let mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
-              let datos = {
+              mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+              datos = {
                 mensaje,
                 sala
               }
@@ -233,15 +235,14 @@ io.on('connection', (socket) => {
             if (users[0].puntosMentira < users[1].puntosMentira) {
               users[1].tantos += 4
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              let mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
-              let datos = {
+              mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+              datos = {
                 mensaje,
                 sala
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira == users[1].puntosMentira) {
-              let mensaje;
               if (users[1].mano == true) {
                 users[1].tantos += 4;
                 mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
@@ -250,7 +251,7 @@ io.on('connection', (socket) => {
                 mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              let datos = {
+              datos = {
                 mensaje,
                 sala
               }
@@ -258,7 +259,6 @@ io.on('connection', (socket) => {
             }
             break;
           case 'no quiero':
-            console.log('Son 2')
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -268,24 +268,26 @@ io.on('connection', (socket) => {
               }
             })
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            let datos = {
+            datos = {
               mensaje: me,
               sala
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
-            let mensaje = "";
+            mensaje = "";
             let recanto = res.respuesta;
-            let datoss = {
+            let booleanos = sala.cantosenmano;
+            datos = {
               mensaje,
               sala,
-              recanto
+              recanto,
+              booleanos
             }
-            io.to(res.sala).emit('resultadoDeCanto', datoss)
+            socket.to(res.sala).emit('cantando', datos)
             break;
         }
-        socket.to(res.sala).emit('cantando', res)
+        //socket.to(res.sala).emit('cantando', res)
         break;
       case 'realEnvido':
         switch (res.respuesta) {
@@ -299,8 +301,8 @@ io.on('connection', (socket) => {
                 else { users[0].tantos += 3 } //solo se cantó real envido
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              let mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
-              let datos = {
+              mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+              datos = {
                 mensaje,
                 sala
               }
@@ -313,15 +315,14 @@ io.on('connection', (socket) => {
                 else { users[1].tantos += 3 }
               }//solo se cantó real envido}
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              let mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
-              let datos = {
+              mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+              datos = {
                 mensaje,
                 sala
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira == users[1].puntosMentira) {
-              let mensaje;
               let tantos;
               if (sala.usuarios.boolreenvido) { tantos = 7 } //se cantó envido envido realenvido
               else {
@@ -337,7 +338,7 @@ io.on('connection', (socket) => {
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
 
-              let datos = {
+              datos = {
                 mensaje,
                 sala
               }
@@ -359,21 +360,23 @@ io.on('connection', (socket) => {
               }
             })
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            let datos = {
+            datos = {
               mensaje: me,
               sala
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
-            let mensaje = "";
+            mensaje = "";
             let recanto = res.respuesta;
-            let datoss = {
+            let booleanos = sala.cantosenmano;
+            datos = {
               mensaje,
               sala,
-              recanto
+              recanto,
+              booleanos
             }
-            io.to(res.sala).emit('resultadoDeCanto', datoss)
+            socket.to(res.sala).emit('cantando', datos)
             break;
         }
         //socket.to(res.sala).emit('cantando', res)
@@ -390,8 +393,8 @@ io.on('connection', (socket) => {
                 else { users[0].tantos += 3 } //solo se cantó real envido
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              let mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
-              let datos = {
+              mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+              datos = {
                 mensaje,
                 sala
               }
@@ -404,15 +407,14 @@ io.on('connection', (socket) => {
                 else { users[1].tantos += 3 }
               }//solo se cantó real envido}
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              let mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
-              let datos = {
+              mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+              datos = {
                 mensaje,
                 sala
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira == users[1].puntosMentira) {
-              let mensaje;
               let tantos;
               if (sala.usuarios.boolreenvido) { tantos = 7 } //se cantó envido envido realenvido
               else {
@@ -428,7 +430,7 @@ io.on('connection', (socket) => {
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
 
-              let datos = {
+              datos = {
                 mensaje,
                 sala
               }
@@ -450,7 +452,7 @@ io.on('connection', (socket) => {
               }
             })
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            let datos = {
+            datos = {
               mensaje: me,
               sala
             }
