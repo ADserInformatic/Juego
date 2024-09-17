@@ -204,14 +204,8 @@ io.on('connection', (socket) => {
           default:
             mensaje = "";
             let recanto = res.respuesta;
-            let booleanos = sala.cantosenmano;
-            datos = {
-              mensaje,
-              sala,
-              recanto,
-              booleanos
-            }
-            socket.to(res.sala).emit('cantando', datos)
+            res.recanto = recanto;
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         //socket.to(res.sala).emit('cantando', res)
@@ -277,14 +271,8 @@ io.on('connection', (socket) => {
           default:
             mensaje = "";
             let recanto = res.respuesta;
-            let booleanos = sala.cantosenmano;
-            datos = {
-              mensaje,
-              sala,
-              recanto,
-              booleanos
-            }
-            socket.to(res.sala).emit('cantando', datos)
+            res.recanto = recanto;
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         //socket.to(res.sala).emit('cantando', res)
@@ -369,14 +357,8 @@ io.on('connection', (socket) => {
           default:
             mensaje = "";
             let recanto = res.respuesta;
-            let booleanos = sala.cantosenmano;
-            datos = {
-              mensaje,
-              sala,
-              recanto,
-              booleanos
-            }
-            socket.to(res.sala).emit('cantando', datos)
+            res.recanto = recanto;
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         //socket.to(res.sala).emit('cantando', res)
