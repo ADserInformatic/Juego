@@ -43,6 +43,8 @@ export class SalaComponent implements OnInit {
   public truco: boolean = false;
   public reTruco: boolean = false;
   public valeCuatro: boolean = false;
+  private cantoI: string = '';
+  private respI: string = '';
 
 
 
@@ -75,11 +77,22 @@ export class SalaComponent implements OnInit {
 
     this.socket.on('repartir', (res: any) => {
       this.resetSala(res)
-      console.log(this.jugador.juega)
+
+      console.log(res)
     })
 
     this.socket.on('cantando', (res: any) => {
       console.log(res)
+      if( this.cantoI === res.canto){
+        this.cantoI = res.respuesta
+        console.log(this.cantoI)
+      }else{
+        this.cantoI = res.canto
+        console.log(this.cantoI)
+
+      }
+      console.log(this.cantoI)
+      
       res.jugador = this.jugadorCont
       this.respuesta = {
         jugador: this.jugador.name,
@@ -183,12 +196,13 @@ export class SalaComponent implements OnInit {
       jugador: this.jugadorCont,
       respuesta: resp,
       sala: this.nameSala,
-      canto: this.respuesta.canto
+      canto: this.cantoI
     }
-    if (resp === 'reenvido') {
-      respons.canto = 'reenvido'
+    
+    // if (resp === 'reenvido') {
+    //   respons.canto = 'reenvido'
 
-    }
+    // }
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
   }
