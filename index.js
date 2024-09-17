@@ -202,9 +202,6 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
-            mensaje = "";
-            let recanto = res.respuesta;
-            res.recanto = recanto;
             res.canto = res.respuesta;
             res = await booleanos(res);
             console.log(res)
@@ -271,9 +268,6 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
-            mensaje = "";
-            let recanto = res.respuesta;
-            res.recanto = recanto;
             res.canto = res.respuesta;
             res = await booleanos(res);
             console.log(res)
@@ -359,9 +353,6 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
-            mensaje = "";
-            let recanto = res.respuesta;
-            res.recanto = recanto;
             res.canto = res.respuesta;
             res = await booleanos(res);
             console.log(res)
