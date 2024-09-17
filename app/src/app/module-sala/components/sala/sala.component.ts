@@ -83,15 +83,7 @@ export class SalaComponent implements OnInit {
 
     this.socket.on('cantando', (res: any) => {
       console.log(res)
-      if( this.cantoI === res.canto){
-        this.cantoI = res.respuesta
-        console.log(this.cantoI)
-      }else{
-        this.cantoI = res.canto
-        console.log(this.cantoI)
-
-      }
-      console.log(this.cantoI)
+      this.cantoI = res.canto
       
       res.jugador = this.jugadorCont
       this.respuesta = {
@@ -129,6 +121,9 @@ export class SalaComponent implements OnInit {
     })
 
     this.socket.on('resultadoDeCanto', (res: any) => {
+      if(res.recanto){
+        this.cantoI = res.recanto
+      }
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
