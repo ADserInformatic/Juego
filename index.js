@@ -205,10 +205,12 @@ io.on('connection', (socket) => {
             mensaje = "";
             let recanto = res.respuesta;
             res.recanto = recanto;
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            console.log(res)
             socket.to(res.sala).emit('cantando', res)
             break;
         }
-        //socket.to(res.sala).emit('cantando', res)
         break;
       case 'reenvido':
         switch (res.respuesta) {
@@ -272,10 +274,12 @@ io.on('connection', (socket) => {
             mensaje = "";
             let recanto = res.respuesta;
             res.recanto = recanto;
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            console.log(res)
             socket.to(res.sala).emit('cantando', res)
             break;
         }
-        //socket.to(res.sala).emit('cantando', res)
         break;
       case 'realEnvido':
         switch (res.respuesta) {
@@ -358,10 +362,12 @@ io.on('connection', (socket) => {
             mensaje = "";
             let recanto = res.respuesta;
             res.recanto = recanto;
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            console.log(res)
             socket.to(res.sala).emit('cantando', res)
             break;
         }
-        //socket.to(res.sala).emit('cantando', res)
         break;
       case 'faltaEnvido':
         switch (res.respuesta) {
