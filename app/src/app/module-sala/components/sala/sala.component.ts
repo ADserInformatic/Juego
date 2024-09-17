@@ -121,9 +121,6 @@ export class SalaComponent implements OnInit {
     })
 
     this.socket.on('resultadoDeCanto', (res: any) => {
-      if(res.recanto){
-        this.cantoI = res.recanto
-      }
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
