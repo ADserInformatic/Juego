@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConsultasService {
-  private uri: string = 'http://localhost:3006';
+  private uri: string = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -34,4 +35,9 @@ export class ConsultasService {
     console.log(dato)
     return this.http.put(`${this.uri}/sala/${id}`, dato)
   }
+
+  getUsers(): Observable<any>{
+    return this.http.get(`${this.uri}/getUsers`)
+  }
+
 }

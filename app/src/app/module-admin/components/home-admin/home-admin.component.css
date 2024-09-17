@@ -1,10 +1,12 @@
 .body{
     width: 100%;
-    background: var(--colorSec);
+    background: #000;
     display: flex;
+    color: #fff;
 }
 .container{
     width: 100%;
+    background: var(--colorPri);
     max-width: 1290px;
     margin: auto;
 }
@@ -12,8 +14,23 @@
     width: 100%;
     padding: 10px 15px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     border: 1px solid var(--border);
+}
+.head .title{
+    display: flex;
+}
+.closeSesion button{
+    cursor: pointer;
+    color: #fff;
+    background: #000;
+    border: none;
+    outline: none;
+    text-transform: uppercase;
+    box-shadow: 2px 2px 10px #88862f;
+    padding: 5px 10px;
+    border-radius: 3px;
 }
 .main{
     width: 100%;
@@ -21,4 +38,51 @@
     min-height: 70vh;
     border: 1px solid var(--border);
     margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+}
+.main .users{
+    width: 30%;
+    height: 100%;
+    padding: 20px 10px;
+    border: 1px solid var(--border);
+    background: var(--colorSec);
+}
+.users .up{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+.usersAndCredit li{
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    border: solid 1px var(--border);
+}
+.usersAndCredit li button{
+    color: #fff;
+    background: #f39;
+    border-radius: 3px;
+    border: solid .3px var(--border);
+    cursor: pointer;
+}
+.adduser{
+    width: 65%;
+    margin: 0px auto;
+    height: 100%;
+}
+.balances{
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+    border: solid 1px var(--border);
+}
+.balances div{
+    display: flex;
+    align-items: center;
+    padding: 10px;
 }

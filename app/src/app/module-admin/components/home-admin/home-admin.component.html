@@ -8,24 +8,42 @@
             <div class="range">
                 <h1>Administrador</h1>
             </div>
+            <div class="closeSesion">
+                <button>Salir</button>
+            </div>
         </div>
         <div class="main">
             <div class="users">
                 <div class="up">
-                    <h3>Usuarios</h3>
-                    <div class="search">
-                        //hacer buscador
-                        <input type="text">
-                    </div>
+                    <h3>USUARIOS:</h3>
+                    <app-buscador></app-buscador>
                 </div>
                 <div class="usersAndCredit">
-                    <li><span>User</span><i>crdit</i></li>
+                    <li *ngFor="let item of usuarios">
+                        <span>{{item.name}}</span>
+                        <i>{{item.credit | currency}}</i>
+                        <button>
+                            <span class="material-symbols-outlined">
+                                close
+                                </span>
+                        </button></li>
                 </div>
             </div>
             <div class="adduser">
                 <app-add-users></app-add-users>
+                <br>
+                <app-add-credit></app-add-credit>
             </div>
-            <div class="balances"></div>
+        </div>
+        <div class="balances">
+            <div class="rendimiento">
+                <h3>Rendiminto: </h3>
+                <span>$000</span>
+            </div>
+            <div class="ganacias">
+                <h3>Ganancia: </h3>
+                <span>$000</span>
+            </div>
         </div>
     </div>
 </div>

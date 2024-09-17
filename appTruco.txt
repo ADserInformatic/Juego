@@ -1,11 +1,23 @@
-APLICACIÓN DEL TRUCO
+Agregar usuario: POST
+Voy a mandar los siguientes campos:
+-name
+-credit
+-passAdmin
+Que la contraseña se cree automáticamente
+++++++Colocar ruta aqui: addUser
 
--Tendría que hacer un registro de los cantos (para deshabilitar botones por ejemplo). En la sala guardar registro de qué se va cantando y qué no, con esto también puedo calcular los puntos al finalizar.
+Cargar crédito: PUT
+Voy a mandar los siguientes campos:
+-Id del user como parámetro
+-credit
+-passAdmin
 
--Tengo que controlar a quien le toca tirar
++++++Colocar ruta aqui: addCredit/:id
 
--Me falta la finalización (ver si había truco, retruco, etc.). En el back ya sé quien gana.
+Obtener jugadores: GET
+Necesito una ruta que me trae los jugadores.
++++++Colocar ruta aqui: getUsers
 
--Falta la opción de vale cuatro
-
--Falta la lógica de la flor y del truco.
+Rendimiento: GET
+Necesito una ruta que me devuelva cuánto se va generando
++++++Colocar ruta aqui: getRender

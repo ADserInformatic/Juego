@@ -1,0 +1,11 @@
+<div class="buscador" [formGroup]="form">
+    <div class="inpu">
+      <input #inp type="text" formControlName="texto" placeholder="{{textoInput}}">
+      <span class="material-symbols-outlined">
+        search
+      </span>
+    </div>
+      <ul *ngIf="nuevoArray.length > 0">
+        <li *ngFor="let elemento of nuevoArray" (click)="verId(elemento)">{{ elemento.userLogin }}</li>
+      </ul>
+  </div>
