@@ -201,6 +201,16 @@ io.on('connection', (socket) => {
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
+          default:
+            let mensaje = "";
+            let recanto = res.respuesta;
+            let datos = {
+              mensaje,
+              sala,
+              recanto
+            }
+            io.to(res.sala).emit('resultadoDeCanto', datos)
+            break;
         }
         socket.to(res.sala).emit('cantando', res)
         break;
@@ -263,6 +273,16 @@ io.on('connection', (socket) => {
               sala
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
+            break;
+          default:
+            let mensaje = "";
+            let recanto = res.respuesta;
+            let datoss = {
+              mensaje,
+              sala,
+              recanto
+            }
+            io.to(res.sala).emit('resultadoDeCanto', datoss)
             break;
         }
         socket.to(res.sala).emit('cantando', res)
@@ -344,6 +364,16 @@ io.on('connection', (socket) => {
               sala
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
+            break;
+          default:
+            let mensaje = "";
+            let recanto = res.respuesta;
+            let datoss = {
+              mensaje,
+              sala,
+              recanto
+            }
+            io.to(res.sala).emit('resultadoDeCanto', datoss)
             break;
         }
         //socket.to(res.sala).emit('cantando', res)
