@@ -283,7 +283,7 @@ io.on('connection', (socket) => {
             if (users[0].puntosMentira > users[1].puntosMentira) {
               if (sala.usuarios.boolreenvido) { users[0].tantos += 7 } //se cantó envido envido realenvido
               else {
-                if (sala.usuarios.boolreenvido) { users[0].tantos += 5 } //se canto envido realenvido
+                if (sala.usuarios.boolenvido) { users[0].tantos += 5 } //se canto envido realenvido
                 else { users[0].tantos += 3 } //solo se cantó real envido
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -446,7 +446,7 @@ io.on('connection', (socket) => {
         switch (res.respuesta) {
           case 'quiero':
             mensaje = `${res.jugador} dice: ${res.respuesta}`
-            let datos = { mensaje, jugador: res.jugador }
+            datos = { mensaje, jugador: res.jugador }
             users.forEach(element => {
               if (element.id == res.jugador.id) {
                 element.puedeCantar = false
