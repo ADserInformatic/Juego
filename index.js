@@ -457,7 +457,7 @@ io.on('connection', (socket) => {
               }
             })
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            console.log('Jugador: ', res.jugador.name, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
           /*           default:
@@ -477,7 +477,7 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
-            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador }
             users.forEach(element => {
               if (element.id == res.jugador.id) {
@@ -508,7 +508,7 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
-            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador }
             users.forEach(element => {
               if (element.id == res.jugador.id) {
