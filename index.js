@@ -251,7 +251,7 @@ io.on('connection', (socket) => {
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             break;
-          case 'no quiero':
+          case 'noquiero':
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -331,7 +331,7 @@ io.on('connection', (socket) => {
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             break;
-          case 'no quiero':
+          case 'noquiero':
             console.log('Son depende q estaba cantado antes')
             var me;
             users.forEach(us => {
@@ -416,7 +416,7 @@ io.on('connection', (socket) => {
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             break;
-          case 'no quiero':
+          case 'noquiero':
             console.log('Son depende q estaba cantado antes')
             var me;
             users.forEach(us => {
@@ -458,7 +458,7 @@ io.on('connection', (socket) => {
             console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;  //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
-          case 'no quiero':
+          case 'noquiero':
             mensaje = `${res.jugador} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador }
             users.forEach(element => {
@@ -494,7 +494,7 @@ io.on('connection', (socket) => {
             console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
-          case 'no quiero':
+          case 'noquiero':
             mensaje = `${res.jugador} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador }
             users.forEach(element => {
@@ -531,7 +531,7 @@ io.on('connection', (socket) => {
             console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
-          case 'no quiero':
+          case 'noquiero':
             mensaje = `${res.jugador} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador }
             users.forEach(element => {
