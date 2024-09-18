@@ -283,7 +283,10 @@ io.on('connection', (socket) => {
               if (sala.cantosenmano.boolreenvido) { users[0].tantos += 7 } //se cantó envido envido realenvido
               else {
                 if (sala.cantosenmano.boolenvido) { users[0].tantos += 5 } //se canto envido realenvido
-                else { users[0].tantos += 3 } //solo se cantó real envido
+                else {
+                  console.log("solo real")
+                  users[0].tantos += 3
+                } //solo se cantó real envido
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
               mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
@@ -297,7 +300,10 @@ io.on('connection', (socket) => {
               if (sala.cantosenmano.boolreenvido) { users[1].tantos += 7 } //se cantó envido envido realenvido
               else {
                 if (sala.cantosenmano.boolreenvido) { users[1].tantos += 5 } //se canto envido realenvido
-                else { users[1].tantos += 3 }
+                else {
+                  console.log("solo real")
+                  users[1].tantos += 3
+                }
               }//solo se cantó real envido}
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
               mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
@@ -311,8 +317,11 @@ io.on('connection', (socket) => {
               let tantos;
               if (sala.cantosenmano.boolreenvido) { tantos = 7 } //se cantó envido envido realenvido
               else {
-                if (sala.usucantosenmanoarios.boolreenvido) { tantos = 5 } //se canto envido realenvido
-                else { tantos = 3 }
+                if (sala.cantosenmano.boolreenvido) { tantos = 5 } //se canto envido realenvido
+                else {
+                  console.log("solo real")
+                  tantos = 3
+                }
               }//solo se cantó real envido}
               if (users[1].mano == true) {
                 users[1].tantos += tantos;
