@@ -299,7 +299,7 @@ io.on('connection', (socket) => {
             if (users[0].puntosMentira < users[1].puntosMentira) {
               if (sala.cantosenmano.boolreenvido) { users[1].tantos += 7 } //se cantó envido envido realenvido
               else {
-                if (sala.cantosenmano.boolreenvido) { users[1].tantos += 5 } //se canto envido realenvido
+                if (sala.cantosenmano.boolenvido) { users[1].tantos += 5 } //se canto envido realenvido
                 else {
                   console.log("solo real")
                   users[1].tantos += 3
@@ -317,7 +317,7 @@ io.on('connection', (socket) => {
               let tantos;
               if (sala.cantosenmano.boolreenvido) { tantos = 7 } //se cantó envido envido realenvido
               else {
-                if (sala.cantosenmano.boolreenvido) { tantos = 5 } //se canto envido realenvido
+                if (sala.cantosenmano.boolenvido) { tantos = 5 } //se canto envido realenvido
                 else {
                   console.log("solo real")
                   tantos = 3
