@@ -27,7 +27,7 @@
         <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('envido')">Envido</button>
         <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
         <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
-        <button [disabled]="truco" (click)="canto('truco')">Truco</button>
+        <button [disabled]="truco" (click)="canto(cantoActual)">{{cantoActual}}</button>
         <button [disabled]="truco" (click)="canto('flor')">Flor</button>
     </div>
     <div class="cards">

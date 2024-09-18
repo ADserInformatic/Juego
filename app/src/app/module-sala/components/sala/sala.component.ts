@@ -22,6 +22,7 @@ export class SalaComponent implements OnInit {
     creditos: 0,
     valores: [{ name: '', valor: 0 }]
   };
+  public cantoActual: string = 'truco';
   public nameSala!: string;
   private mentira!: any;
   private socket: any;
@@ -128,6 +129,7 @@ export class SalaComponent implements OnInit {
       setTimeout(() => {
         this.mensaje = ''
       }, 2000)
+      console.log(res)
       this.resetSala(res.sala)
       // this.envido = false
     })
