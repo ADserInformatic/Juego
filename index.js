@@ -184,7 +184,7 @@ io.on('connection', (socket) => {
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             break;
-          case 'no quiero':
+          case 'noquiero':
             console.log('No quiere ', res)
             var me;
             users.forEach(us => {
