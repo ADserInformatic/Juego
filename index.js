@@ -284,7 +284,6 @@ io.on('connection', (socket) => {
               else {
                 if (sala.cantosenmano.boolenvido) { users[0].tantos += 5 } //se canto envido realenvido
                 else {
-                  console.log("solo real")
                   users[0].tantos += 3
                 } //solo se cantó real envido
               }
@@ -301,7 +300,6 @@ io.on('connection', (socket) => {
               else {
                 if (sala.cantosenmano.boolenvido) { users[1].tantos += 5 } //se canto envido realenvido
                 else {
-                  console.log("solo real")
                   users[1].tantos += 3
                 }
               }//solo se cantó real envido}
@@ -319,7 +317,6 @@ io.on('connection', (socket) => {
               else {
                 if (sala.cantosenmano.boolenvido) { tantos = 5 } //se canto envido realenvido
                 else {
-                  console.log("solo real")
                   tantos = 3
                 }
               }//solo se cantó real envido}
@@ -451,6 +448,7 @@ io.on('connection', (socket) => {
       case 'truco':
         switch (res.respuesta) {
           case 'quiero':
+            console.log(res.jugador.name)
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador }
 
@@ -470,11 +468,11 @@ io.on('connection', (socket) => {
             console.log('Jugador: ', res.jugador.name, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
-          /*           default:
-                      res.canto = res.respuesta;
-                      res = await booleanos(res);
-                      socket.to(res.sala).emit('cantando', res)
-                      break; */
+          default:
+            // res.canto = res.respuesta;
+            // res = await booleanos(res);
+            socket.to(res.sala).emit('cantando', res)
+            break;
         }
         break;
       case 'retruco':
@@ -498,12 +496,11 @@ io.on('connection', (socket) => {
             console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
-          // default:
-          //   res.canto = res.respuesta;
-          //   res = await booleanos(res);
-          //   socket.to(res.sala).emit('cantando', res)
-
-          //   break;
+          default:
+            //   res.canto = res.respuesta;
+            //   res = await booleanos(res);
+            socket.to(res.sala).emit('cantando', res)
+            break;
         }
 
         break;
@@ -532,7 +529,6 @@ io.on('connection', (socket) => {
         }
         break;
     }
-    console.log(res)
   }////////////////////////////////////////////////////////////////////
   )
 });
