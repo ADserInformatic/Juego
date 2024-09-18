@@ -283,7 +283,9 @@ io.on('connection', (socket) => {
               if (sala.cantosenmano.boolreenvido) { users[0].tantos += 7 } //se cantó envido envido realenvido
               else {
                 if (sala.cantosenmano.boolenvido) { users[0].tantos += 5 } //se canto envido realenvido
-                else { users[0].tantos += 3 } //solo se cantó real envido
+                else {
+                  users[0].tantos += 3
+                } //solo se cantó real envido
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
               mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
@@ -296,8 +298,10 @@ io.on('connection', (socket) => {
             if (users[0].puntosMentira < users[1].puntosMentira) {
               if (sala.cantosenmano.boolreenvido) { users[1].tantos += 7 } //se cantó envido envido realenvido
               else {
-                if (sala.cantosenmano.boolreenvido) { users[1].tantos += 5 } //se canto envido realenvido
-                else { users[1].tantos += 3 }
+                if (sala.cantosenmano.boolenvido) { users[1].tantos += 5 } //se canto envido realenvido
+                else {
+                  users[1].tantos += 3
+                }
               }//solo se cantó real envido}
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
               mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
@@ -311,8 +315,10 @@ io.on('connection', (socket) => {
               let tantos;
               if (sala.cantosenmano.boolreenvido) { tantos = 7 } //se cantó envido envido realenvido
               else {
-                if (sala.usucantosenmanoarios.boolreenvido) { tantos = 5 } //se canto envido realenvido
-                else { tantos = 3 }
+                if (sala.cantosenmano.boolenvido) { tantos = 5 } //se canto envido realenvido
+                else {
+                  tantos = 3
+                }
               }//solo se cantó real envido}
               if (users[1].mano == true) {
                 users[1].tantos += tantos;
@@ -442,6 +448,7 @@ io.on('connection', (socket) => {
       case 'truco':
         switch (res.respuesta) {
           case 'quiero':
+            console.log(res.jugador.name)
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador }
 
@@ -461,11 +468,11 @@ io.on('connection', (socket) => {
             console.log('Jugador: ', res.jugador.name, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
-          /*           default:
-                      res.canto = res.respuesta;
-                      res = await booleanos(res);
-                      socket.to(res.sala).emit('cantando', res)
-                      break; */
+          default:
+            // res.canto = res.respuesta;
+            // res = await booleanos(res);
+            socket.to(res.sala).emit('cantando', res)
+            break;
         }
         break;
       case 'retruco':
@@ -489,12 +496,11 @@ io.on('connection', (socket) => {
             console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
-          // default:
-          //   res.canto = res.respuesta;
-          //   res = await booleanos(res);
-          //   socket.to(res.sala).emit('cantando', res)
-
-          //   break;
+          default:
+            //   res.canto = res.respuesta;
+            //   res = await booleanos(res);
+            socket.to(res.sala).emit('cantando', res)
+            break;
         }
 
         break;
@@ -523,7 +529,6 @@ io.on('connection', (socket) => {
         }
         break;
     }
-    console.log(res)
   }////////////////////////////////////////////////////////////////////
   )
 });
