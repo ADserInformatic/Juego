@@ -185,7 +185,6 @@ io.on('connection', (socket) => {
             }
             break;
           case 'noquiero':
-            console.log('No quiere ', res)
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -212,9 +211,8 @@ io.on('connection', (socket) => {
       case 'reenvido':
         switch (res.respuesta) {
           case 'quiero':
-            console.log('Se juega por 4')
-            const sala = await salaM.findOne({ name: res.sala })
-            const users = sala.usuarios
+            // const sala = await salaM.findOne({ name: res.sala })
+            // const users = sala.usuarios
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 4
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -278,8 +276,8 @@ io.on('connection', (socket) => {
       case 'realEnvido':
         switch (res.respuesta) {
           case 'quiero':
-            const sala = await salaM.findOne({ name: res.sala })
-            const users = sala.usuarios
+            // const sala = await salaM.findOne({ name: res.sala })
+            // const users = sala.usuarios
             if (users[0].puntosMentira > users[1].puntosMentira) {
               if (sala.usuarios.boolreenvido) { users[0].tantos += 7 } //se cantó envido envido realenvido
               else {
@@ -332,7 +330,6 @@ io.on('connection', (socket) => {
             }
             break;
           case 'noquiero':
-            console.log('Son depende q estaba cantado antes')
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -363,8 +360,8 @@ io.on('connection', (socket) => {
       case 'faltaEnvido':
         switch (res.respuesta) {
           case 'quiero':
-            const sala = await salaM.findOne({ name: res.sala })
-            const users = sala.usuarios
+            // const sala = await salaM.findOne({ name: res.sala })
+            // const users = sala.usuarios
             if (users[0].puntosMentira > users[1].puntosMentira) {
               if (sala.usuarios.boolreenvido) { users[0].tantos += 7 } //se cantó envido envido realenvido
               else {
@@ -417,7 +414,6 @@ io.on('connection', (socket) => {
             }
             break;
           case 'noquiero':
-            console.log('Son depende q estaba cantado antes')
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -445,6 +441,9 @@ io.on('connection', (socket) => {
       case 'truco':
         switch (res.respuesta) {
           case 'quiero':
+            console.log(res)
+            const sala = await salaM.findOne({ name: res.sala })
+            const users = sala.usuarios
             mensaje = `${res.jugador} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador }
             users.forEach(element => {
@@ -570,7 +569,10 @@ const booleanos = async (res) => {
     case 'contraFlor':
       sala.cantosenmano.boolcontraflor = true; break;
     case 'truco':
-      sala.cantosenmano.booltruco = true; break;
+      sala.cantosenmano.booltruco = true;
+      res.jugador.puedeCantar = false;
+      break;
+
     case 'retruco':
       sala.cantosenmano.boolretruco = true; break;
     case 'valecuatro':
