@@ -43,6 +43,8 @@ export class SalaComponent implements OnInit {
   public truco: boolean = false;
   public reTruco: boolean = false;
   public valeCuatro: boolean = false;
+  private cantoI: string = '';
+  public btnMentiras: boolean = true;
 
 
 
@@ -75,11 +77,17 @@ export class SalaComponent implements OnInit {
 
     this.socket.on('repartir', (res: any) => {
       this.resetSala(res)
-      console.log(this.jugador.juega)
+
+      console.log(res)
     })
 
     this.socket.on('cantando', (res: any) => {
+      if(this.envido || this.realEnvido || this.faltaEnvido){
+        this.btnMentiras = false
+      }
       console.log(res)
+      this.cantoI = res.canto
+      
       res.jugador = this.jugadorCont
       this.respuesta = {
         jugador: this.jugador.name,
@@ -126,7 +134,7 @@ export class SalaComponent implements OnInit {
 
     //desactivar el boton de envido
     this.verCartas.subscribe(res => {
-      this.envido = this.jugador.valores.length > 2 && !this.mentira
+      this.btnMentiras = this.jugador.valores.length > 2 && !this.mentira
     })
   }
 
@@ -183,12 +191,13 @@ export class SalaComponent implements OnInit {
       jugador: this.jugadorCont,
       respuesta: resp,
       sala: this.nameSala,
-      canto: this.respuesta.canto
+      canto: this.cantoI
     }
-    if (resp === 'reenvido') {
-      respons.canto = 'reenvido'
+    
+    // if (resp === 'reenvido') {
+    //   respons.canto = 'reenvido'
 
-    }
+    // }
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
   }
