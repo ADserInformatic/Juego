@@ -279,9 +279,10 @@ io.on('connection', (socket) => {
             // const sala = await salaM.findOne({ name: res.sala })
             // const users = sala.usuarios
             if (users[0].puntosMentira > users[1].puntosMentira) {
-              if (sala.usuarios.boolreenvido) { users[0].tantos += 7 } //se cantó envido envido realenvido
+              console.log(sala.cantosenmano)
+              if (sala.cantosenmano.boolreenvido) { users[0].tantos += 7 } //se cantó envido envido realenvido
               else {
-                if (sala.usuarios.boolenvido) { users[0].tantos += 5 } //se canto envido realenvido
+                if (sala.cantosenmano.boolenvido) { users[0].tantos += 5 } //se canto envido realenvido
                 else { users[0].tantos += 3 } //solo se cantó real envido
               }
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -293,9 +294,9 @@ io.on('connection', (socket) => {
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira < users[1].puntosMentira) {
-              if (sala.usuarios.boolreenvido) { users[1].tantos += 7 } //se cantó envido envido realenvido
+              if (sala.cantosenmano.boolreenvido) { users[1].tantos += 7 } //se cantó envido envido realenvido
               else {
-                if (sala.usuarios.boolreenvido) { users[1].tantos += 5 } //se canto envido realenvido
+                if (sala.cantosenmano.boolreenvido) { users[1].tantos += 5 } //se canto envido realenvido
                 else { users[1].tantos += 3 }
               }//solo se cantó real envido}
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -308,9 +309,9 @@ io.on('connection', (socket) => {
             }
             if (users[0].puntosMentira == users[1].puntosMentira) {
               let tantos;
-              if (sala.usuarios.boolreenvido) { tantos = 7 } //se cantó envido envido realenvido
+              if (sala.cantosenmano.boolreenvido) { tantos = 7 } //se cantó envido envido realenvido
               else {
-                if (sala.usuarios.boolreenvido) { tantos = 5 } //se canto envido realenvido
+                if (sala.usucantosenmanoarios.boolreenvido) { tantos = 5 } //se canto envido realenvido
                 else { tantos = 3 }
               }//solo se cantó real envido}
               if (users[1].mano == true) {
