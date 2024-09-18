@@ -24,11 +24,11 @@
         </div>
     </div>
     <div class="cantos">
-        <button [disabled]="!btnMentiras" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('envido')">Envido</button>
-        <button [disabled]="!btnMentiras" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
-        <button [disabled]="!btnMentiras" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
-        <button [disabled]="!jugador.puedeCantar" (click)="canto('truco')">Truco</button>
-        <button (click)="canto('flor')">Flor</button>
+        <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('envido')">Envido</button>
+        <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
+        <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
+        <button [disabled]="truco" (click)="canto('truco')">Truco</button>
+        <button [disabled]="truco" (click)="canto('flor')">Flor</button>
     </div>
     <div class="cards">
         <h3>Cartas de: {{jugador.name}}</h3>
@@ -56,10 +56,11 @@
         </div>
         <div class="btns" *ngIf="respuesta.canto !== 'flor'">
             <button (click)="contestarCanto('quiero')" >Quiero</button>
-            <button *ngIf="respuesta.canto === 'truco'" (click)="contestarCanto('retruco')">Retruco</button>
+            <button *ngIf="truco && !reTruco" (click)="contestarCanto('retruco')">Retruco</button>
+            <button *ngIf="!valeCuatro && reTruco" (click)="contestarCanto('valeCuatro')">Vale cuatro</button>
             <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido" (click)="contestarCanto('reenvido')">Envido</button>
-            <button *ngIf="!realEnvido && !faltaEnvido" (click)="contestarCanto('realEnvido')">Real envido</button>
-            <button *ngIf="!faltaEnvido" (click)="contestarCanto('faltaEnvido')">Falta Envido</button>
+            <button *ngIf="!realEnvido && !faltaEnvido && !truco" (click)="contestarCanto('realEnvido')">Real envido</button>
+            <button *ngIf="!faltaEnvido && !truco" (click)="contestarCanto('faltaEnvido')">Falta Envido</button>
             <button (click)="contestarCanto('noquiero')">No quiero</button>
         </div>
     </div>

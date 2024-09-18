@@ -82,9 +82,6 @@ export class SalaComponent implements OnInit {
     })
 
     this.socket.on('cantando', (res: any) => {
-      if(this.envido || this.realEnvido || this.faltaEnvido){
-        this.btnMentiras = false
-      }
       console.log(res)
       this.cantoI = res.canto
       
@@ -106,6 +103,9 @@ export class SalaComponent implements OnInit {
       this.reTruco = res.cantosenmano.boolretruco;
       this.valeCuatro = res.cantosenmano.boolvalecuatro;
 
+      if(this.envido || this.realEnvido || this.faltaEnvido){
+        this.btnMentiras = false
+      }
       if (res.respuesta === 'quiero' || res.respuesta === 'noquiero') {
         console.log(`El jugador ${this.jugadorCont.name} dice: ${res.respuesta} ${res.canto}`)
         return
@@ -129,11 +129,12 @@ export class SalaComponent implements OnInit {
         this.mensaje = ''
       }, 2000)
       this.resetSala(res.sala)
-      this.envido = false
+      // this.envido = false
     })
 
     //desactivar el boton de envido
     this.verCartas.subscribe(res => {
+      this.mentira = this.envido || this.realEnvido || this.faltaEnvido
       this.btnMentiras = this.jugador.valores.length > 2 && !this.mentira
     })
   }
@@ -145,7 +146,15 @@ export class SalaComponent implements OnInit {
     this.envido = res.cantosenmano.boolenvido
     this.reEnvido = res.cantosenmano.boolreenvido
     this.realEnvido = res.cantosenmano.boolrealenvido
-    //this.faltaEnvido = res.cantosenmano.boolfaltaenvido
+    this.faltaEnvido = res.cantosenmano.boolfaltaenvido;
+    this.flor = res.cantosenmano.boolflor;
+    this.florFlor = res.cantosenmano.boolflorflor;
+    this.contraFlor = res.cantosenmano.boolcontraflor;
+    this.florMeachico = res.cantosenmano.boolflormeachico;
+    this.truco = res.cantosenmano.booltruco;
+    this.reTruco = res.cantosenmano.boolretruco;
+    this.valeCuatro = res.cantosenmano.boolvalecuatro;
+    
 
     this.sala.usuarios.forEach((element: any) => {
       if (element.id == this.cookies.get('jugador')) {
@@ -175,8 +184,11 @@ export class SalaComponent implements OnInit {
   }
 
   canto(canto: string) {
-    if (canto == 'envido') {
-      this.mentira = canto
+    if (canto === 'envido' || canto === 'realEnvido' || canto === 'faltaEnvido') {
+      this.btnMentiras = false
+    }
+    if(canto === 'truco'){
+      this.truco = true
     }
     let data = {
       sala: this.nameSala,
