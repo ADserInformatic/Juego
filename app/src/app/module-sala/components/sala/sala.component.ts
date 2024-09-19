@@ -144,7 +144,7 @@ export class SalaComponent implements OnInit {
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
     this.sala = res;
-    console.log(res.cantosenmano)
+    console.log(res)
     this.envido = res.cantosenmano.boolenvido
     this.reEnvido = res.cantosenmano.boolreenvido
     this.realEnvido = res.cantosenmano.boolrealenvido
@@ -186,6 +186,9 @@ export class SalaComponent implements OnInit {
   }
 
   canto(canto: string) {
+    if(this.truco && canto === 'envido'){
+
+    }
     if (canto === 'envido' || canto === 'realEnvido' || canto === 'faltaEnvido') {
       this.btnMentiras = false
     }
@@ -201,6 +204,16 @@ export class SalaComponent implements OnInit {
   }
 
   contestarCanto(resp: string) {
+    if(this.truco && resp === 'envido'){
+      let data = {
+        sala: this.nameSala,
+        jugador: this.jugador,
+        canto: resp
+      }
+      this.socket.emit('canto', data)
+      this.cantoConf = !this.cantoConf
+      return
+    }
     const respons = {
       jugador: this.jugadorCont,
       respuesta: resp,
