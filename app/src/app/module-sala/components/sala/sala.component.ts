@@ -204,7 +204,7 @@ export class SalaComponent implements OnInit {
   }
 
   contestarCanto(resp: string) {
-    if(this.truco && resp === 'envido'){
+    if(this.truco && resp === 'envido' || resp === 'realEnvido' || resp === 'faltaEnvido'){
       let data = {
         sala: this.nameSala,
         jugador: this.jugador,
@@ -227,6 +227,10 @@ export class SalaComponent implements OnInit {
     // }
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
+  }
+
+  ver(v: any){
+    console.log(v)
   }
 
 }

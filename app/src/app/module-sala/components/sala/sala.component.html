@@ -56,7 +56,18 @@
         </div>
         <div class="btns" *ngIf="respuesta.canto !== 'flor'">
             <button (click)="contestarCanto('quiero')" >Quiero</button>
-            <button *ngIf="btnMentiras && truco" (click)="contestarCanto('envido')">El envido va primero</button>
+            <select (change)="ver($event)" class="envido" *ngIf="btnMentiras && truco">
+                <option value="">El envido va primero</option>
+                <option >
+                    <button (click)="contestarCanto('envido')">Envido</button>
+                </option>
+                <option value="realEnvido">
+                    <button (click)="contestarCanto('realEnvido')">Real envido</button>
+                </option>
+                <option value="faltaEnvido">
+                    <button (click)="contestarCanto('faltaEnvido')">Falta envido</button>
+                </option>
+            </select>
             <button *ngIf="truco && !reTruco" (click)="contestarCanto('retruco')">Retruco</button>
             <button *ngIf="!valeCuatro && reTruco" (click)="contestarCanto('valeCuatro')">Vale cuatro</button>
             <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido" (click)="contestarCanto('reenvido')">Envido</button>
