@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -12,6 +12,7 @@ import { Jugador } from 'src/app/interfaces/jugador';
   styleUrls: ['./sala.component.css']
 })
 export class SalaComponent implements OnInit {
+  @ViewChild('slected') selected!: ElementRef;
   private jugadorVacio: Jugador = {
     id: '',
     name: '',
@@ -204,11 +205,15 @@ export class SalaComponent implements OnInit {
   }
 
   contestarCanto(resp: string) {
-    if(this.truco && resp === 'envido' || resp === 'realEnvido' || resp === 'faltaEnvido'){
+    if(this.truco && resp === 'primEnvido'){
+      if(this.selected.nativeElement.value === 'El envido va primero'){
+        console.log(this.selected.nativeElement.value)
+        return
+      }
       let data = {
         sala: this.nameSala,
         jugador: this.jugador,
-        canto: resp
+        canto: this.selected.nativeElement.value
       }
       this.socket.emit('canto', data)
       this.cantoConf = !this.cantoConf
@@ -221,16 +226,8 @@ export class SalaComponent implements OnInit {
       canto: this.cantoI
     }
     
-    // if (resp === 'reenvido') {
-    //   respons.canto = 'reenvido'
-
-    // }
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
-  }
-
-  ver(v: any){
-    console.log(v)
   }
 
 }
