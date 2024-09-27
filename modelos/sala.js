@@ -17,6 +17,7 @@ const sala = new Schema({
         booltruco: { type: Boolean, default: false },
         boolretruco: { type: Boolean, default: false },
         boolvalecuatro: { type: Boolean, default: false },
+        pardaprimera: { type: Boolean, default: false },
 
     },
     usuarios: [{
@@ -27,9 +28,10 @@ const sala = new Schema({
         jugada: { type: Array }, //Esas son cada una de las jugadas (cada carta tirada)
         tantosPartida: { type: Number, default: 0 }, //Estos serían los tantos particulares de cada partida (se vacía cada vez que se reparten las cartas).
         puntosMentira: { type: Number, default: 0 },//puntos de la mentira de cada partida
-        canto: { type: String, default: 'noHay' }, //Este es para saber si estamos en truco, re o vale cua
+        //canto: { type: String, default: 'noHay' }, //Este es para saber si estamos en truco, re o vale cua
         tantos: { type: Number, default: 0 }, //Estos son los puntos generales
-        puedeCantar: { type: Boolean, default: true }, //
+        puedeCantar: { type: Boolean, default: true }, //true si no se canto truco o si tiene el quiero
+        puedeMentir: { type: Boolean, default: true },//true si aun no tiro una carta o si tiene el quiero
         id: { type: Schema.ObjectId, ref: user },
         mano: { type: Boolean, default: false }, //true si el jugador es mano,
         puedeflor: { type: Boolean, default: false },//true si puede cantar flor
