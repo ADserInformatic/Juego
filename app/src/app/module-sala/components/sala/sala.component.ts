@@ -215,6 +215,7 @@ export class SalaComponent implements OnInit {
         jugador: this.jugador,
         canto: this.selected.nativeElement.value
       }
+      console.log(data)
       this.socket.emit('canto', data)
       this.cantoConf = !this.cantoConf
       return
