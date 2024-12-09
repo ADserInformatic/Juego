@@ -130,8 +130,8 @@ export class SalaComponent implements OnInit {
       setTimeout(() => {
         this.mensaje = ''
       }, 2000)
-      console.log(res)
-      this.resetSala(res.sala)
+      console.log(res.res)
+      this.resetSala(res.res)
       // this.envido = false
     })
 
@@ -183,6 +183,7 @@ export class SalaComponent implements OnInit {
   }
 
   repartir() {
+    console.log(this.sala)
     this.socket.emit('repartir', this.sala)
   }
 
