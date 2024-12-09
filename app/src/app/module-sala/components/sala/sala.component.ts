@@ -130,8 +130,8 @@ export class SalaComponent implements OnInit {
       setTimeout(() => {
         this.mensaje = ''
       }, 2000)
-      console.log(res.res)
-      this.resetSala(res.res)
+      console.log(res.sala)
+      this.resetSala(res.sala)
       // this.envido = false
     })
 
