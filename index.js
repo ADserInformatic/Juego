@@ -199,7 +199,7 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             datos = {
               mensaje: me,
-              res
+              sala
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
@@ -263,7 +263,7 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             datos = {
               mensaje: me,
-              res
+              sala
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
@@ -312,30 +312,8 @@ io.on('connection', (socket) => {
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
-            if (users[0].puntosMentira == users[1].puntosMentira) {
-              let tantos;
-              if (sala.cantosenmano.boolreenvido) { tantos = 7 } //se cantó envido envido realenvido
-              else {
-                if (sala.cantosenmano.boolenvido) { tantos = 5 } //se canto envido realenvido
-                else {
-                  tantos = 3
-                }
-              }//solo se cantó real envido}
-              if (users[1].mano == true) {
-                users[1].tantos += tantos;
-                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos de mano`
-              } else {
-                users[0].tantos += tantos;
-                mensaje = `Gana ${users[0].name} con ${resultado.jug2.puntos} puntos de mano`
-              }
-              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            io.to(res.sala).emit('resultadoDeCanto', datos)
 
-              datos = {
-                mensaje,
-                sala
-              }
-              io.to(res.sala).emit('resultadoDeCanto', datos)
-            }
             break;
           case 'noquiero':
             var me;
@@ -343,7 +321,7 @@ io.on('connection', (socket) => {
               if (us.name === res.jugador.name) {
                 if (sala.usuarios.boolreenvido) { us.tantos += 4 } //se cantó envido envido realenvido
                 else {
-                  if (sala.usuarios.boolreenvido) { us.tantos += 2 } //se canto envido realenvido
+                  if (sala.usuarios.boolenvido) { us.tantos += 2 } //se canto envido realenvido
                   else { us.tantos += 1 }
                 }//solo se cantó real envido
               } else {
@@ -353,7 +331,7 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             datos = {
               mensaje: me,
-              res
+              sala
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
@@ -367,67 +345,40 @@ io.on('connection', (socket) => {
       case 'faltaEnvido':
         switch (res.respuesta) {
           case 'quiero':
-            // const sala = await salaM.findOne({ name: res.sala })
-            // const users = sala.usuarios
-            if (users[0].puntosMentira > users[1].puntosMentira) {
-              if (sala.usuarios.boolreenvido) { users[0].tantos += 7 } //se cantó envido envido realenvido
-              else {
-                if (sala.usuarios.boolreenvido) { users[0].tantos += 5 } //se canto envido realenvido
-                else { users[0].tantos += 3 } //solo se cantó real envido
-              }
-              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
-              datos = {
-                mensaje,
-                res
-              }
-              io.to(res.sala).emit('resultadoDeCanto', datos)
-            }
-            if (users[0].puntosMentira < users[1].puntosMentira) {
-              if (sala.usuarios.boolreenvido) { users[1].tantos += 7 } //se cantó envido envido realenvido
-              else {
-                if (sala.usuarios.boolreenvido) { users[1].tantos += 5 } //se canto envido realenvido
-                else { users[1].tantos += 3 }
-              }//solo se cantó real envido}
-              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
-              datos = {
-                mensaje,
-                res
-              }
-              io.to(res.sala).emit('resultadoDeCanto', datos)
-            }
-            if (users[0].puntosMentira == users[1].puntosMentira) {
-              let tantos;
-              if (sala.usuarios.boolreenvido) { tantos = 7 } //se cantó envido envido realenvido
-              else {
-                if (sala.usuarios.boolreenvido) { tantos = 5 } //se canto envido realenvido
-                else { tantos = 3 }
-              }//solo se cantó real envido}
-              if (users[1].mano == true) {
-                users[1].tantos += tantos;
-                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos de mano`
-              } else {
-                users[0].tantos += tantos;
-                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos de mano`
-              }
-              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            const Indiceganador = await ganadorEnvido(users);
+            if (Indiceganador == 0) {
+              users[Indiceganador].tantos += 30 - users[1];
+            } else {
+              users[Indiceganador].tantos += 30 - users[0];
 
-              datos = {
-                mensaje,
-                res
-              }
-              io.to(res.sala).emit('resultadoDeCanto', datos)
             }
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+            datos = {
+              mensaje,
+              sala
+            }
+            io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           case 'noquiero':
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
-                if (sala.usuarios.boolreenvido) { us.tantos += 4 } //se cantó envido envido realenvido
+                if (sala.usuarios.boolrealenvido) {
+                  if (sala.usuarios.boolreenvido) { us.tantos += 7 } //se cantó envido envido realenvido y dsp la falta
+                  else {
+                    if (sala.usuarios.boolenvido) { us.tantos += 5 } //se canto envido realenvido y dsp la falta
+                    else { us.tantos += 3 } //se canto solo real envido y dsp la falta
+                  }
+                }
                 else {
-                  if (sala.usuarios.boolreenvido) { us.tantos += 2 } //se canto envido realenvido
-                  else { us.tantos += 1 }
+                  if (sala.usuarios.boolreenvido) { us.tantos += 4 } //se canto envido reenvido y dsp la falta
+                  else {
+                    if (sala.usuarios.boolenvido) { us.tantos += 2 } //se canto envido y dsp la falta
+                    else {
+                      us.tantos += 1  //solo se canto la falta
+                    }
+                  }
                 }//solo se cantó real envido
               } else {
                 me = `${us.name} no quiere`
@@ -436,7 +387,7 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             datos = {
               mensaje: me,
-              res
+              sala
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
@@ -531,6 +482,7 @@ io.on('connection', (socket) => {
   }////////////////////////////////////////////////////////////////////
   )
 });
+
 const booleanos = async (res) => {
   const sala = await salaM.findOne({ name: res.sala });
   const users = sala.usuarios;
