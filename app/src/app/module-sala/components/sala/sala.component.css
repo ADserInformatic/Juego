@@ -204,6 +204,7 @@ nav{
     outline: none;
     text-transform: uppercase;
     width: 30%;
+    cursor: pointer;
 }
 .canto .contCanto .btns button:nth-child(1){
     background: rgba(0, 88, 0, 0.719);
@@ -213,7 +214,7 @@ nav{
     font-weight: bold;
 }
 .canto .contCanto .flor button:nth-child(1){
-    width: 80%;
+    /* width: 80%; */
     background: #000;
 }
 .standBy{
