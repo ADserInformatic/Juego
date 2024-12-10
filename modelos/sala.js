@@ -5,6 +5,7 @@ const sala = new Schema({
     name: { type: String, required: true },
     apuesta: { type: Number, required: true },
     partida: { type: Number, default: 1 }, //Toda la partida arranca jugando el mismo
+    unaFalta: { type: Boolean, default: true },
     cantosenmano: {
         boolenvido: { type: Boolean, default: false },
         boolreenvido: { type: Boolean, default: false },

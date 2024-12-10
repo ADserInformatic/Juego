@@ -273,9 +273,20 @@ io.on('connection', (socket) => {
           case 'quiero':
             const Indiceganador = await ganadorEnvido(users);
             if (Indiceganador == 0) {
-              users[Indiceganador].tantos += 30 - users[1];
+              if (sala.unaFalta) {
+                users[Indiceganador].tantos += 30 - users[1].tantos;
+              } else {
+                if (user[1].tantos < 15) { users[Indiceganador].tantos += 15 - users[1].tantos; }
+                else { { users[Indiceganador].tantos += 30 - users[1].tantos; } }
+              }
+
             } else {
-              users[Indiceganador].tantos += 30 - users[0];
+              if (sala.unaFalta) {
+                users[Indiceganador].tantos += 30 - users[0].tantos;
+              } else {
+                if (user[0].tantos < 15) { users[Indiceganador].tantos += 15 - users[0].tantos; }
+                else { { users[Indiceganador].tantos += 30 - users[0].tantos; } }
+              }
             }
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
