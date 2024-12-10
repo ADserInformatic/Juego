@@ -1,20 +1,46 @@
+<nav>
+    <img src="logo" alt="">
+    <h2>A de ser truco</h2>
+    <button>opciones</button>
+</nav>
 <div class="body">
     <div class="titulo">
-        <h2>Bienvenidos a la sala: {{nameSala | uppercase}}</h2>
-        <h4>La apuesta es de: {{sala?.apuesta | currency}}</h4>
-    </div>
-    <div class="cards">
-        <h3>Cartas de: {{jugadorCont.name}}</h3>
-        <div class="card" *ngFor="let valor of jugadorCont?.valores">
-            <img src="../../../../assets/trasera.jpg" alt="">
+        <div class="datos">
+            <h4>SALA: {{nameSala | uppercase}}</h4>
+            <h4>APUESTA: {{sala?.apuesta | currency}}</h4>
+        </div>
+        <div class="tantos">
+            <h4>TANTOS</h4>
+            <hr>
+            <div class="puntos">
+                <h4>{{jugador.name}}:</h4>
+                <div class="cajas">
+                    <div class="caja"></div>
+                    <div class="caja"></div>
+                    <div class="caja"></div>
+                </div>
+            </div>
+            <div class="puntos">
+                <h4>{{jugadorCont.name}}:</h4>
+                <div class="cajas">
+                    <div class="caja"></div>
+                    <div class="caja"></div>
+                    <div class="caja"></div>
+                </div>
+            </div>
+        </div>
+        <div class="nombre">
+            <h5>USUARIO: {{jugador.name}}</h5>
         </div>
     </div>
     <div *ngIf="sala?.usuarios" class="jugadores">
-        <div *ngFor="let item of sala?.usuarios" class="jugador">
-            <div class="dataTitle">
-                <h4>Nombre: {{item.name}}</h4>
-                <p>Créditos: {{item.creditos | currency}}</p>
+        <div class="cardsCot">
+            <div class="cardCont" >
+                <img *ngFor="let valor of jugadorCont?.valores" src="../../../../assets/trasera.jpg" alt="">
             </div>
+        </div>
+        <div *ngFor="let item of sala?.usuarios" class="jugador">
+            
             <div class="jugadas">
                 <div class="juego">
                     <p class="jugoC" *ngFor="let carta of item?.jugada"><img src="../../../../assets/{{carta.carta}}.jpg" alt=""></p>
@@ -23,22 +49,23 @@
             </div>
         </div>
     </div>
-    <div class="cantos">
-        <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('envido')">Envido</button>
-        <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
-        <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
-        <button [disabled]="truco" (click)="canto(cantoActual)">{{cantoActual}}</button>
-        <button [disabled]="truco" (click)="canto('flor')">Flor</button>
-    </div>
     <div class="cards">
-        <h3>Cartas de: {{jugador.name}}</h3>
+        <!-- <h3>Cartas de: {{jugador.name}}</h3> -->
         <button [disabled]="!jugador.juega" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
             <img src="../../../../assets/{{valor.name}}.jpg" alt="">
         </button>
     </div>
-    <h2>Tantos: {{jugador.tantos}}</h2>
+    <!-- <h2>Tantos: {{jugador.tantos}}</h2> -->
     <button (click)="repartir()">Repartir</button>
-
+    <div class="botonesCanto">
+        <div class="cantos">
+            <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('envido')">Envido</button>
+            <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
+            <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
+            <button [disabled]="truco" (click)="canto(cantoActual)">{{cantoActual}}</button>
+            <button [disabled]="truco" (click)="canto('flor')">Flor</button>
+        </div>
+    </div>
 </div>
 
 <div class="standBy" *ngIf="!jugadorCont.name">
