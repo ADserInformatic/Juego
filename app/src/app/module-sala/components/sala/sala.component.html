@@ -86,7 +86,7 @@
         </div>
         <div class="btns" *ngIf="respuesta.canto !== 'flor'&& respuesta.canto !== 'contraFlor' && respuesta.canto !== 'florMeachico'">
             <button (click)="contestarCanto('quiero')" >Quiero</button>
-            <select #slected (change)="contestarCanto('envido')" class="envido" *ngIf="btnMentiras && truco && !reEnvido && !realEnvido && !faltaEnvido && !reTruco">
+            <select #slected (change)="contestarCanto('envido')" class="envido" *ngIf="btnMentiras && truco && !reTruco">
                 <option value="">El envido va primero</option>
                 <option value="envido">
                     Envido
