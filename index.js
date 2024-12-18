@@ -603,7 +603,7 @@ const compararValores = async (sala) => {
 
         }
 
-        //
+
       } //
 
       //Si el valor de la última jugada del jugador 1 es mayor que el del jugador 2, se incrementa el puntaje del jugador 1 
