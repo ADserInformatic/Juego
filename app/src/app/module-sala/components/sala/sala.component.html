@@ -39,6 +39,7 @@
                 <img *ngFor="let valor of jugadorCont?.valores" src="../../../../assets/trasera.jpg" alt="">
             </div>
         </div>
+        <h2>Tantos: {{jugador.tantos}}</h2>
         <div [ngClass]="{'invertir': invertCards}">
             <div *ngFor="let item of sala?.usuarios" class="jugador">
                 
@@ -58,7 +59,6 @@
             <img src="../../../../assets/{{valor.name}}.jpg" alt="">
         </button>
     </div>
-    <!-- <h2>Tantos: {{jugador.tantos}}</h2> -->
     <button (click)="repartir()">Repartir</button>
     <div class="botonesCanto">
         <div class="cantos">

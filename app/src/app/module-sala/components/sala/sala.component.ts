@@ -230,7 +230,7 @@ export class SalaComponent implements OnInit {
       sala: this.nameSala,
       canto: this.cantoI
     }
-    
+    console.log(respons)
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
   }
