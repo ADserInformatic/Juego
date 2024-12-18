@@ -46,10 +46,16 @@ app.use('/carta', carta)
 io.on('connection', (socket) => {
   socket.on('sala', async (id) => {
     const sala = await salaM.findOne({ _id: id })
-    socket.join(sala.name)
-    //Lo que está entre parentesis limita los usuarios a los que emito. En este los usuarios que esten en la sala con el mismo nombre.
-    //La diferencia entre io.to y socket.to es que, en el primer caso se emite para todos los usuarios que están dentro de la sala. En el siguiente caso se obvia a quien hizo la petición al back
-    io.to(sala.name).emit('sala', sala)
+
+    try {
+      socket.join(sala.name)
+      //Lo que está entre parentesis limita los usuarios a los que emito. En este los usuarios que esten en la sala con el mismo nombre.
+      //La diferencia entre io.to y socket.to es que, en el primer caso se emite para todos los usuarios que están dentro de la sala. En el siguiente caso se obvia a quien hizo la petición al back
+      io.to(sala.name).emit('sala', sala)
+    }
+    catch {
+      console.log("no existe la sala")
+    }
   })
 
   //Con socket.io se utiliza emit para emitir una acción y on para escuchar esa acción, lo que debe coinsidir es el nombre que va entre comillas
@@ -96,7 +102,6 @@ io.on('connection', (socket) => {
 
   //Cada vez que un usuario tira (presiona) una carta, se ejecuta esta acción
   socket.on('tirar', async (jugada) => {
-    console.log(jugada)
     //LLega un objeto con los datos de la jugada (sala, id del usuario y valor jugado)
     //Se busca la sala en la que se está jugando a partir del nombre
     const salaOn = await salaM.findOne({ name: jugada.sala })
@@ -111,10 +116,10 @@ io.on('connection', (socket) => {
         element.jugada.push(jugada)
         element.puedeflor = false;//al tirar una carta ya no puede cantar flor
         element.puedeMentir = false;//al tirar una carta ya no puede mentir
-      } else { console.log('nada') }
+      } else { console.log('nada en socket on tirar') }
     })
     //Una vez que se actualiza la jugada al usuario que la realizá, se compara los valores. La función compararValores compara las últimas jugadas de los jugadores y actualiza el puntaje dependiendo del resultado de la comparación.
-    compararValores(users[0], users[1])
+    compararValores(salaOn)
     //La función terminar determina si una partida entre dos jugadores ha terminado basándose en el número de jugadas realizadas y declara al ganador
     terminar(users[0], users[1], salaOn)
     //Una vez actualizado el usuario se actualiza la sala
@@ -128,6 +133,7 @@ io.on('connection', (socket) => {
   //Cuando un jugador canta (envido, flor o truco), se emite al otro jugador el canto y, en caso de requerirse, se espera una respuesta.
   socket.on('canto', async (res) => {
     let ores = await booleanos(res);
+    console.log("dentro de canto: ", res.sala)
     const sala = await salaM.findOne({ name: res.sala });
 
     if (res.canto == 'envido' || res.canto == 'reenvido' || res.canto == 'realEnvido' || res.canto == 'faltaEnvido' || res.canto == 'flor') {
@@ -182,7 +188,7 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', res)
+            socket.to(res.sala).emit('cantando', sala)
             break;
         }
         break;
@@ -218,7 +224,7 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', res)
+            socket.to(res.sala).emit('cantando', sala)
             break;
         }
         break;
@@ -264,7 +270,7 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', res)
+            socket.to(res.sala).emit('cantando', sala)
             break;
         }
         break;
@@ -336,28 +342,33 @@ io.on('connection', (socket) => {
         switch (res.respuesta) {
           case 'quiero':
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
-            datos = { mensaje, jugador: res.jugador, res }
+            datos = { mensaje, jugador: res.jugador, sala }
 
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;  //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
             mensaje = `${res.jugador} dice: ${res.respuesta}`
-            let data = { mensaje, jugador: res.jugador, res }
+            let data = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
               if (element.id == res.jugador.id) {
                 element.tantos += 1;
               }
             })
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            console.log('Jugador: ', res.jugador.name, 'Mensaje: ', mensaje)
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            //FIN DE LA MANO, LLAMAR A LA FUNCION PARA RESETEAR Y REPARTIR
+
+
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
           default:
             // res.canto = res.respuesta;
             // res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', res)
+            socket.to(res.sala).emit('cantando', sala)
             break;
         }
         break;
@@ -365,27 +376,31 @@ io.on('connection', (socket) => {
         switch (res.respuesta) {
           case 'quiero':
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
-            datos = { mensaje, jugador: res.jugador, res }
+            datos = { mensaje, jugador: res.jugador, sala }
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
-            let data = { mensaje, jugador: res.jugador, res }
+            let data = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
               if (element.id == res.jugador.id) {
                 element.tantos += 2;
               }
             })
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            //FIN DE LA MANO, LLAMAR A LA FUNCION PARA RESETEAR Y REPARTIR
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
           default:
             //   res.canto = res.respuesta;
             //   res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', res)
+            socket.to(res.sala).emit('cantando', sala)
             break;
         }
 
@@ -394,22 +409,25 @@ io.on('connection', (socket) => {
         switch (res.respuesta) {
           case 'quiero':
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
-            datos = { mensaje, jugador: res.jugador, res }
+            datos = { mensaje, jugador: res.jugador, sala }
 
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
-            datos = { mensaje, jugador: res.jugador, res }
+            datos = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
               if (element.id == res.jugador.id) {
                 element.tantos += 3;
               }
             })
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            console.log('Jugador: ', res.jugador, 'Mensaje: ', mensaje)
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            //FIN DE LA MANO, LLAMAR A LA FUNCION PARA RESETEAR Y REPARTIR
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
         }
@@ -468,18 +486,47 @@ const booleanos = async (res) => {
   return (res)
 }
 //Acá tengo que pasar los dos jugadores que están en la sala cada vez que se tira
-const compararValores = (jugador1, jugador2) => {
-  //Aquí, se obtienen las últimas jugadas de cada jugador. 
+const compararValores = async (sala) => {
+  //Aquí, se obtienen las últimas jugadas de cada jugador.
+  let users = sala.usuarios;
+  let jugador1 = users[0];
+  let jugador2 = users[1];
   const jugada1 = jugador1.jugada[jugador1.jugada.length - 1]
   const jugada2 = jugador2.jugada[jugador2.jugada.length - 1]
+  //console.log("jugada jugador 1: ", jugada1)
+  //console.log("\njugada jugador 2: ", jugada2)
+
   //Este if verifica que ambos jugadores tengan el mismo número de jugadas. Si no es así, se ejecutará el bloque else.
   if (jugador1.jugada.length === jugador2.jugada.length) {
     //Si los valores de las últimas jugadas son iguales, se incrementa el puntaje (tantosPartida) de ambos jugadores.
     if (jugada1.valor === jugada2.valor) {
-      jugador1.tantosPartida += 1
-      jugador2.tantosPartida += 1
-      return console.log('empate')
-    }
+      if (jugador2.jugada.length === 1) {//si son iguales y es la primer mano van parda en primer mano
+        sala.cantosenmano.pardaprimera = true;
+        await salaM.findOneAndUpdate({ _id: salaOn._id }, { $set: { cantosenmano: sala.cantosenmano } });
+        return console.log('empate parda en primera') //ya devuelve avisando que es primera y parda
+      }
+      //aca va si tienen el mismo valor pero no es la primera carta, puede ser la segunda o 3ra
+      if (jugador2.jugada.length === 2) {//comparo con 1 solo ya que tienen la misma cantidad de jugadas
+        if (sala.cantosenmano.pardaprimera) {
+          if (users[0].mano) {
+            return console.log('Gana ', users[0].name, 'Tiene ', users[0].tantosPartida)
+          }
+          else {
+            return console.log('Gana ', users[1].name, 'Tiene ', users[1].tantosPartida)
+          }
+
+
+
+        } else (
+          console.log('else de largo 2 y falso parda ')
+
+        )
+
+      }
+
+
+    } //
+
     //Si el valor de la última jugada del jugador 1 es mayor que el del jugador 2, se incrementa el puntaje del jugador 1 
     if (jugada1.valor > jugada2.valor) {
       jugador1.tantosPartida += 1

@@ -36,6 +36,7 @@ const sala = new Schema({
         id: { type: Schema.ObjectId, ref: user },
         mano: { type: Boolean, default: false }, //true si el jugador es mano,
         puedeflor: { type: Boolean, default: false },//true si puede cantar flor
+        ganoPrimera: { type: Boolean, default: false }, //quien gano primera 
 
     }]
 
