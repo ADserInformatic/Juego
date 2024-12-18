@@ -213,15 +213,17 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
+
             res.canto = res.respuesta;
             res = await booleanos(res);
+            console.log(res)
             me = `reenvido`
             datos = {
               mensaje: me,
-              sala
+              res
             }
-            console.log(sala)
-            socket.to(res.sala).emit('cantando', sala)
+
+            socket.to(res.sala).emit('cantando', datos)
             break;
         }
         break;
