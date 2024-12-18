@@ -147,6 +147,7 @@ io.on('connection', (socket) => {
 
   //Esto está recibiendo tanto envido como truco y flor. ¡Tener eso en cuenta!
   socket.on('respuestaCanto', async (res) => {
+    console.log(res)
     const sala = await salaM.findOne({ name: res.sala })
     const users = sala.usuarios
     let datos;
@@ -217,13 +218,7 @@ io.on('connection', (socket) => {
             res.canto = res.respuesta;
             res = await booleanos(res);
             console.log(res)
-            me = `reenvido`
-            datos = {
-              mensaje: me,
-              res
-            }
-
-            socket.to(res.sala).emit('cantando', datos)
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         break;
