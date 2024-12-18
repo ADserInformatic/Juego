@@ -47,6 +47,7 @@ export class SalaComponent implements OnInit {
   public valeCuatro: boolean = false;
   private cantoI: string = '';
   public btnMentiras: boolean = true;
+  public invertCards!: boolean;
 
 
 
@@ -167,6 +168,8 @@ export class SalaComponent implements OnInit {
       }
     });
     this.verCartas.next(this.jugador.valores)
+    this.invertCards = this.jugador.name == this.sala.usuarios[0].name
+    console.log(this.invertCards)
   }
 
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.

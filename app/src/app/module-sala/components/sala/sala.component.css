@@ -61,6 +61,7 @@ nav{
 .tantos .puntos{
     margin-top: 5px;
     display: flex;
+    justify-content: space-between;
 }
 .cajas{
     display: flex;
@@ -101,13 +102,13 @@ nav{
 .cards h3{
     text-align: center;
 }
+.invertir{
+    display: flex;
+    flex-flow: column-reverse wrap-reverse;
+}
 .jugador{
     width: 40%;
     min-height: 30vh;
-    /* background: #fc91047c;
-    box-shadow: inset 2px 2px 6px #070707,
-    inset -2px -2px 6px #080808;
-    border: solid 1px rgb(2, 2, 2); */
     margin: 0px auto;
     padding: 10px 20px;
 }
@@ -130,6 +131,7 @@ nav{
     display: flex;
     justify-content: center;
     padding-top: 15px;
+    flex-flow: row-reverse wrap-reverse;
 }
 .jugoC{
     border-radius: 6px;
