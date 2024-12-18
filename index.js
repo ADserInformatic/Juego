@@ -282,7 +282,7 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', sala)
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         break;
@@ -350,7 +350,7 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', sala)
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         break;
