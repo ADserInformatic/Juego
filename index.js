@@ -448,9 +448,9 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
           default:
-            // res.canto = res.respuesta;
-            // res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', sala)
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         break;
@@ -480,9 +480,9 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
           default:
-            //   res.canto = res.respuesta;
-            //   res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', sala)
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
 
