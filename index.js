@@ -527,35 +527,35 @@ const booleanos = async (res) => {
   switch (res.canto) {
     case 'envido':
       sala.cantosenmano.boolenvido = true;
-      await envidoPrimero(res)
+      sala.cantosenmano.booltruco = false;
       break;
     case 'reEnvido':
       sala.cantosenmano.boolreenvido = true;
-      await envidoPrimero(res);
+      sala.cantosenmano.booltruco = false;
       break;
     case 'realEnvido':
       sala.cantosenmano.boolrealenvido = true;
-      await envidoPrimero(res);
+      sala.cantosenmano.booltruco = false;
       break;
     case 'faltaEnvido':
       sala.cantosenmano.boolfaltaenvido = true;
-      await envidoPrimero(res);
+      sala.cantosenmano.booltruco = false;
       break;
     case 'flor':
       sala.cantosenmano.boolflor = true;
-      await envidoPrimero(res);
+      sala.cantosenmano.booltruco = false;
       break;
     case 'florFlor':
       sala.cantosenmano.boolflorflor = true;
-      await envidoPrimero(res);
+      sala.cantosenmano.booltruco = false;
       break;
     case 'florMeachico':
       sala.cantosenmano.boolflormeachico = true;
-      await envidoPrimero(res);
+      sala.cantosenmano.booltruco = false;
       break;
     case 'contraFlor':
       sala.cantosenmano.boolcontraflor = true;
-      await envidoPrimero(res);
+      sala.cantosenmano.booltruco = false;
       break;
     case 'truco':
       sala.cantosenmano.booltruco = true;
@@ -584,13 +584,6 @@ const booleanos = async (res) => {
   res.cantosenmano = sala.cantosenmano;
   sala.save();
   return (res)
-}
-const envidoPrimero = async (res) => {
-  const sala = await salaM.findOne({ name: res.sala });
-  sala.cantosenmano.booltruco = false;
-  res.cantosenmano = sala.cantosenmano;
-  sala.save();
-  return;
 }
 //Acá tengo que pasar los dos jugadores que están en la sala cada vez que se tira
 const compararValores = async (sala) => {
@@ -648,14 +641,34 @@ const compararValores = async (sala) => {
       jugador1.juega = true;
       jugador2.juega = false;
       if (jugador2.jugada.length === 1) {
+        jugador1.ganoPrimera = true;
+        //***********************************
+      }
+      if (jugador1.jugada.length === 2) {
+        jugador1.ganoPrimera = true;
+        //***********************************
+      }
+      if (jugador1.jugada.length === 3) {
+        jugador1.ganoPrimera = true;
         //***********************************
       }
       return console.log('Gana ', jugador1.name, 'Tiene ', jugador1.tantosPartida)
     } else {
       //Si el valor de la última jugada del jugador 2 es mayor, se incrementa el puntaje del jugador 2 
-      jugador2.tantosPartida += 1
       jugador2.juega = true;
       jugador1.juega = false;
+      if (jugador2.jugada.length === 1) {
+        jugador2.ganoPrimera = true;
+        //***********************************
+      }
+      if (jugador2.jugada.length === 2) {
+        jugador1.ganoPrimera = true;
+        //***********************************
+      }
+      if (jugador2.jugada.length === 3) {
+        jugador1.ganoPrimera = true;
+        //***********************************
+      }
       return console.log('Gana ', jugador2.name, 'Tiene ', jugador2.tantosPartida)
     }
 
