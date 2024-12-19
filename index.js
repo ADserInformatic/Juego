@@ -222,7 +222,7 @@ io.on('connection', (socket) => {
             break;
         }
         break;
-      case 'reenvido':
+      case 'reEnvido':
         switch (res.respuesta) {
           case 'quiero':
             // const sala = await salaM.findOne({ name: res.sala })
@@ -450,11 +450,12 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
+            console.log(res)
             socket.to(res.sala).emit('cantando', res)
             break;
         }
         break;
-      case 'retruco':
+      case 'reTruco':
         switch (res.respuesta) {
           case 'quiero':
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
@@ -482,6 +483,7 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
+            console.log(res)
             socket.to(res.sala).emit('cantando', res)
             break;
         }
@@ -524,21 +526,37 @@ const booleanos = async (res) => {
   const users = sala.usuarios;
   switch (res.canto) {
     case 'envido':
-      sala.cantosenmano.boolenvido = true; break;
-    case 'reenvido':
-      sala.cantosenmano.boolreenvido = true; break;
+      sala.cantosenmano.boolenvido = true;
+      await envidoPrimero(res)
+      break;
+    case 'reEnvido':
+      sala.cantosenmano.boolreenvido = true;
+      await envidoPrimero(res);
+      break;
     case 'realEnvido':
-      sala.cantosenmano.boolrealenvido = true; break;
+      sala.cantosenmano.boolrealenvido = true;
+      await envidoPrimero(res);
+      break;
     case 'faltaEnvido':
-      sala.cantosenmano.boolfaltaenvido = true; break;
+      sala.cantosenmano.boolfaltaenvido = true;
+      await envidoPrimero(res);
+      break;
     case 'flor':
-      sala.cantosenmano.boolflor = true; break;
+      sala.cantosenmano.boolflor = true;
+      await envidoPrimero(res);
+      break;
     case 'florFlor':
-      sala.cantosenmano.boolflorflor = true; break;
-    case 'flormeachico':
-      sala.cantosenmano.boolflormeachico = true; break;
+      sala.cantosenmano.boolflorflor = true;
+      await envidoPrimero(res);
+      break;
+    case 'florMeachico':
+      sala.cantosenmano.boolflormeachico = true;
+      await envidoPrimero(res);
+      break;
     case 'contraFlor':
-      sala.cantosenmano.boolcontraflor = true; break;
+      sala.cantosenmano.boolcontraflor = true;
+      await envidoPrimero(res);
+      break;
     case 'truco':
       sala.cantosenmano.booltruco = true;
       users.forEach(element => {
@@ -549,7 +567,7 @@ const booleanos = async (res) => {
         }
       })
       break;
-    case 'retruco':
+    case 'reTruco':
       sala.cantosenmano.boolretruco = true;
       users.forEach(element => {
         if (element.id == res.jugador.id) {
@@ -559,13 +577,20 @@ const booleanos = async (res) => {
         }
       })
       break;
-    case 'valecuatro':
+    case 'valeCuatro':
       sala.cantosenmano.boolvalecuatro = true;
       break;
   }
   res.cantosenmano = sala.cantosenmano;
   sala.save();
   return (res)
+}
+const envidoPrimero = async (res) => {
+  const sala = await salaM.findOne({ name: res.sala });
+  sala.cantosenmano.booltruco = false;
+  res.cantosenmano = sala.cantosenmano;
+  sala.save();
+  return;
 }
 //Acá tengo que pasar los dos jugadores que están en la sala cada vez que se tira
 const compararValores = async (sala) => {
