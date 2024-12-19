@@ -7,6 +7,16 @@ nav{
     background: #000;
     color: #fff;
 }
+nav .set{
+    background: #fff;
+    color: #000;
+    outline: none;
+    border: none;
+    border-radius: 3px;
+    padding: 0px 10px;
+    cursor: pointer;
+    margin-right: 10px;
+}
 .body{
     max-width: 1240px;
     margin: auto;
