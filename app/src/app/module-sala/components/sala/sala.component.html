@@ -1,7 +1,7 @@
 <nav>
     <img src="logo" alt="">
     <h2>A de ser truco</h2>
-    <button>opciones</button>
+    <button class="set">opciones</button>
 </nav>
 <div class="body">
     <div class="titulo">
@@ -101,9 +101,9 @@
                     Falta envido
                 </option>
             </select>
-            <button *ngIf="truco && !reTruco" (click)="contestarCanto('retruco')">Retruco</button>
+            <button *ngIf="truco && !reTruco" (click)="contestarCanto('reTruco')">Retruco</button>
             <button *ngIf="!valeCuatro && reTruco" (click)="contestarCanto('valeCuatro')">Vale cuatro</button>
-            <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido" (click)="contestarCanto('reenvido')">Envido</button>
+            <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido" (click)="contestarCanto('reEnvido')">Envido</button>
             <button *ngIf="!realEnvido && !faltaEnvido && !truco" (click)="contestarCanto('realEnvido')">Real envido</button>
             <button *ngIf="!faltaEnvido && !truco" (click)="contestarCanto('faltaEnvido')">Falta Envido</button>
             <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido" (click)="contestarCanto('flor')">Flor por atrevido</button>
