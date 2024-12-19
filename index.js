@@ -147,6 +147,7 @@ io.on('connection', (socket) => {
 
   //Esto está recibiendo tanto envido como truco y flor. ¡Tener eso en cuenta!
   socket.on('respuestaCanto', async (res) => {
+    console.log(res)
     const sala = await salaM.findOne({ name: res.sala })
     const users = sala.usuarios
     let datos;
@@ -213,9 +214,11 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
+
             res.canto = res.respuesta;
             res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', sala)
+            console.log(res)
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         break;
@@ -230,7 +233,7 @@ io.on('connection', (socket) => {
               mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
               datos = {
                 mensaje,
-                res
+                sala
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
@@ -240,7 +243,7 @@ io.on('connection', (socket) => {
               mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
               datos = {
                 mensaje,
-                res
+                sala
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
@@ -279,7 +282,7 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', sala)
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         break;
@@ -301,7 +304,7 @@ io.on('connection', (socket) => {
               mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
               datos = {
                 mensaje,
-                res
+                sala
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
@@ -347,7 +350,7 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', sala)
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         break;
@@ -445,9 +448,9 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
           default:
-            // res.canto = res.respuesta;
-            // res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', sala)
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
         break;
@@ -477,9 +480,9 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
           default:
-            //   res.canto = res.respuesta;
-            //   res = await booleanos(res);
-            socket.to(res.sala).emit('cantando', sala)
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            socket.to(res.sala).emit('cantando', res)
             break;
         }
 
@@ -605,26 +608,37 @@ const compararValores = async (sala) => {
 
 
       } //
+      if (jugador2.jugada.length === 3) {//comparo con 1 solo ya que tienen la misma cantidad de jugadas
 
-      //Si el valor de la última jugada del jugador 1 es mayor que el del jugador 2, se incrementa el puntaje del jugador 1 
-      if (jugada1.valor > jugada2.valor) {
-        jugador1.tantosPartida += 1
-        jugador1.juega = true;
-        jugador2.juega = false;
-        return console.log('Gana ', jugador1.name, 'Tiene ', jugador1.tantosPartida)
-      } else {
-        //Si el valor de la última jugada del jugador 2 es mayor, se incrementa el puntaje del jugador 2 
-        jugador2.tantosPartida += 1
-        jugador2.juega = true;
-        jugador1.juega = false;
-        return console.log('Gana ', jugador2.name, 'Tiene ', jugador2.tantosPartida)
+        if (users[0].ganoPrimera) {
+          return console.log('Gana ', users[0].name, 'Tiene ', users[0].tantosPartida)
+        }
+        else {
+          return console.log('Gana ', users[1].name, 'Tiene ', users[1].tantosPartida)
+        }
       }
-    } else {
-      //Si los jugadores no tienen el mismo número de jugadas no se puede hacer la comparación.
-      console.log('falta una carta')
-      jugador2.juega = !jugador2.juega;
-      jugador1.juega = !jugador1.juega;
     }
+    //Si el valor de la última jugada del jugador 1 es mayor que el del jugador 2, se incrementa el puntaje del jugador 1 
+    if (jugada1.valor > jugada2.valor) {
+      jugador1.juega = true;
+      jugador2.juega = false;
+      if (jugador2.jugada.length === 1) {
+        //***********************************
+      }
+      return console.log('Gana ', jugador1.name, 'Tiene ', jugador1.tantosPartida)
+    } else {
+      //Si el valor de la última jugada del jugador 2 es mayor, se incrementa el puntaje del jugador 2 
+      jugador2.tantosPartida += 1
+      jugador2.juega = true;
+      jugador1.juega = false;
+      return console.log('Gana ', jugador2.name, 'Tiene ', jugador2.tantosPartida)
+    }
+
+  } else {
+    //Si los jugadores no tienen el mismo número de jugadas no se puede hacer la comparación.
+    console.log('falta una carta')
+    jugador2.juega = !jugador2.juega;
+    jugador1.juega = !jugador1.juega;
   }
 }
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
