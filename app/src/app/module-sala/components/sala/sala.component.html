@@ -1,7 +1,7 @@
 <nav>
     <img src="logo" alt="">
     <h2>A de ser truco</h2>
-    <button>opciones</button>
+    <button (click)="cancel()" class="set">Salir</button>
 </nav>
 <div class="body">
     <div class="titulo">
@@ -39,6 +39,7 @@
                 <img *ngFor="let valor of jugadorCont?.valores" src="../../../../assets/trasera.jpg" alt="">
             </div>
         </div>
+        <h2>Tantos: {{jugador.tantos}}</h2>
         <div [ngClass]="{'invertir': invertCards}">
             <div *ngFor="let item of sala?.usuarios" class="jugador">
                 
@@ -58,7 +59,6 @@
             <img src="../../../../assets/{{valor.name}}.jpg" alt="">
         </button>
     </div>
-    <!-- <h2>Tantos: {{jugador.tantos}}</h2> -->
     <button (click)="repartir()">Repartir</button>
     <div class="botonesCanto">
         <div class="cantos">
@@ -101,9 +101,9 @@
                     Falta envido
                 </option>
             </select>
-            <button *ngIf="truco && !reTruco" (click)="contestarCanto('retruco')">Retruco</button>
+            <button *ngIf="truco && !reTruco" (click)="contestarCanto('reTruco')">Retruco</button>
             <button *ngIf="!valeCuatro && reTruco" (click)="contestarCanto('valeCuatro')">Vale cuatro</button>
-            <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido" (click)="contestarCanto('reenvido')">Envido</button>
+            <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido" (click)="contestarCanto('reEnvido')">Envido</button>
             <button *ngIf="!realEnvido && !faltaEnvido && !truco" (click)="contestarCanto('realEnvido')">Real envido</button>
             <button *ngIf="!faltaEnvido && !truco" (click)="contestarCanto('faltaEnvido')">Falta Envido</button>
             <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido" (click)="contestarCanto('flor')">Flor por atrevido</button>
@@ -113,4 +113,11 @@
 </div>
 <div *ngIf="mensaje" class="mensaje">
     <h1>{{mensaje}}</h1>
+</div>
+<div *ngIf="salir" class="options">
+    <div class="btns">
+        <button>Abandonar partida</button>
+        <button>Cerrar sesión</button>
+        <button (click)="cancel()">Cancelar</button>
+    </div>
 </div>
