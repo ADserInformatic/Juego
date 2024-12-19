@@ -80,6 +80,8 @@ io.on('connection', (socket) => {
     salaOn.cantosenmano.booltruco = false;
     salaOn.cantosenmano.boolretruco = false;
     salaOn.cantosenmano.boolvalecuatro = false;
+    salaOn.finish = false;
+    salaOn.cantosenmano.pardaprimera = false;
     if (salaOn.partida % 2 === 0) {
       users[1].mano = true;
       users[0].mano = false;
@@ -602,12 +604,15 @@ const compararValores = async (sala) => {
     if (jugada1.valor === jugada2.valor) {
       if (jugador2.jugada.length === 1) {//si son iguales y es la primer mano van parda en primer mano
         sala.cantosenmano.pardaprimera = true;
+        sala.save();
         await salaM.findOneAndUpdate({ _id: salaOn._id }, { $set: { cantosenmano: sala.cantosenmano } });
         return console.log('empate parda en primera') //ya devuelve avisando que es primera y parda
       }
       //aca va si tienen el mismo valor pero no es la primera carta, puede ser la segunda o 3ra
       if (jugador2.jugada.length === 2) {//comparo con 1 solo ya que tienen la misma cantidad de jugadas
         if (sala.cantosenmano.pardaprimera) {
+          sala.finish = true;
+          sala.save();
           if (users[0].mano) {
             return console.log('Gana ', users[0].name, 'Tiene ', users[0].tantosPartida)
           }
@@ -616,6 +621,8 @@ const compararValores = async (sala) => {
           }
         } else {
           if (users[0].ganoPrimera) {
+            sala.finish = true;
+            sala.save();
             return console.log('Gana ', users[0].name, 'Tiene ', users[0].tantosPartida)
           }
           else {
@@ -629,6 +636,8 @@ const compararValores = async (sala) => {
       if (jugador2.jugada.length === 3) {//comparo con 1 solo ya que tienen la misma cantidad de jugadas
 
         if (users[0].ganoPrimera) {
+          sala.finish = true;
+          sala.save();
           return console.log('Gana ', users[0].name, 'Tiene ', users[0].tantosPartida)
         }
         else {
@@ -642,15 +651,18 @@ const compararValores = async (sala) => {
       jugador2.juega = false;
       if (jugador2.jugada.length === 1) {
         jugador1.ganoPrimera = true;
-        //***********************************
+
       }
       if (jugador1.jugada.length === 2) {
-        jugador1.ganoPrimera = true;
-        //***********************************
+        if (users[0].ganoPrimera) {
+          sala.finish = true;
+          sala.save();
+        }
+
       }
       if (jugador1.jugada.length === 3) {
-        jugador1.ganoPrimera = true;
-        //***********************************
+        sala.finish = true;
+        sala.save();
       }
       return console.log('Gana ', jugador1.name, 'Tiene ', jugador1.tantosPartida)
     } else {
@@ -659,15 +671,17 @@ const compararValores = async (sala) => {
       jugador1.juega = false;
       if (jugador2.jugada.length === 1) {
         jugador2.ganoPrimera = true;
-        //***********************************
       }
       if (jugador2.jugada.length === 2) {
-        jugador1.ganoPrimera = true;
-        //***********************************
+        if (users[1].ganoPrimera) {
+          sala.finish = true;
+          sala.save();
+        }
       }
       if (jugador2.jugada.length === 3) {
-        jugador1.ganoPrimera = true;
-        //***********************************
+        sala.finish = true;
+        sala.save();
+
       }
       return console.log('Gana ', jugador2.name, 'Tiene ', jugador2.tantosPartida)
     }
@@ -682,20 +696,18 @@ const compararValores = async (sala) => {
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
 const terminar = (jugador1, jugador2, sala) => {
 
-  if (jugador1.jugada.length === jugador2.jugada.length) {
-    //Se verifica si cada jugador ha realizado 3 jugadas. Si no es así, no se hace nada y no se declara un ganador.
-    if (jugador1.jugada.length === 3) {
-      sala.partida += 1
-      //Si el puntaje de la partida (tantosPartida) del jugador 1 es mayor que el del jugador 2, se incrementa el puntaje total (tantos) del jugador 1 y se imprime un mensaje indicando que el jugador 1 es el ganador de la partida.
-      if (jugador1.tantosPartida > jugador2.tantosPartida) {
-        cuantosPuntos(jugador1)
-        return console.log('Ganador de la partida: ', jugador1.name)
-      } else {
-        //Si el puntaje de la partida del jugador 2 es mayor o igual, se incrementa el puntaje total del jugador 2 y se imprime un mensaje indicando que el jugador 2 es el ganador de la partida.
-        cuantosPuntos(jugador2)
-        return console.log('Ganador de la partida: ', jugador2.name)
-      }
+  if (sala.finish) {
+    sala.partida += 1
+    //Si el puntaje de la partida (tantosPartida) del jugador 1 es mayor que el del jugador 2, se incrementa el puntaje total (tantos) del jugador 1 y se imprime un mensaje indicando que el jugador 1 es el ganador de la partida.
+    if (jugador1.tantosPartida > jugador2.tantosPartida) {
+      cuantosPuntos(jugador1)
+      return console.log('Ganador de la partida: ', jugador1.name)
+    } else {
+      //Si el puntaje de la partida del jugador 2 es mayor o igual, se incrementa el puntaje total del jugador 2 y se imprime un mensaje indicando que el jugador 2 es el ganador de la partida.
+      cuantosPuntos(jugador2)
+      return console.log('Ganador de la partida: ', jugador2.name)
     }
+
   } else {
     console.log('Siga')
   }
