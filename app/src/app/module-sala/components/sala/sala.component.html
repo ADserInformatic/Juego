@@ -1,7 +1,7 @@
 <nav>
     <img src="logo" alt="">
     <h2>A de ser truco</h2>
-    <button class="set">Salir</button>
+    <button (click)="cancel()" class="set">Salir</button>
 </nav>
 <div class="body">
     <div class="titulo">
@@ -113,4 +113,11 @@
 </div>
 <div *ngIf="mensaje" class="mensaje">
     <h1>{{mensaje}}</h1>
+</div>
+<div *ngIf="salir" class="options">
+    <div class="btns">
+        <button>Abandonar partida</button>
+        <button>Cerrar sesión</button>
+        <button (click)="cancel()">Cancelar</button>
+    </div>
 </div>

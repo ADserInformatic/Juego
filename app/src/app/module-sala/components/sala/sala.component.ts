@@ -48,6 +48,7 @@ export class SalaComponent implements OnInit {
   private cantoI: string = '';
   public btnMentiras: boolean = true;
   public invertCards!: boolean;
+  public salir: boolean = false;
 
 
 
@@ -235,4 +236,7 @@ export class SalaComponent implements OnInit {
     this.cantoConf = !this.cantoConf
   }
 
+  cancel(){
+    this.salir = !this.salir
+  }
 }
