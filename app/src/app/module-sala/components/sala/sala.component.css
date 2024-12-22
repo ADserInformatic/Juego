@@ -114,12 +114,55 @@ nav .set{
     display: flex;
     align-items: center;
     text-align: left;
+    justify-content: space-around;
 }
-.cajas .caja{
-    margin-left: 5px;
+.pintarPuntos{
     width: 15px;
-    height: 15px;
-    border: solid .4px #fff;
+    height:15px;
+    position: relative;
+    display: flex;
+    margin-left: 5px;
+}
+.pintarPuntos .punto0, .pintarPuntos .punto5, .pintarPuntos .punto10{
+    position: absolute;
+    background: #fff;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 1px;
+}
+.pintarPuntos .punto1, .pintarPuntos .punto6, .pintarPuntos .punto11{
+    position: absolute;
+    background: #fff;
+    width: 1px;
+    top: 0;
+    right: 0;
+    height: 100%;
+}
+.pintarPuntos .punto2, .pintarPuntos .punto7, .pintarPuntos .punto12{
+    position: absolute;
+    background: #fff;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+}
+.pintarPuntos .punto3, .pintarPuntos .punto8, .pintarPuntos .punto13{
+    position: absolute;
+    background: #fff;
+    width: 1px;
+    top: 0;
+    left: 0;
+    height: 100%;
+}
+.pintarPuntos .punto4, .pintarPuntos .punto9, .pintarPuntos .punto14{
+    /* position: absolute; */
+    background: #fff;
+    width: 1px;
+    top: 0;
+    margin: auto;
+    height: 100%;
+    transform: rotate(50deg);
 }
 .titulo{
     padding: 10px 0px;

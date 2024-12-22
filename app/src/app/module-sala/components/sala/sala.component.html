@@ -17,17 +17,29 @@
             <div class="puntos">
                 <h4>{{jugador.name}}:</h4>
                 <div class="cajas">
-                    <div class="caja"></div>
-                    <div class="caja"></div>
-                    <div class="caja"></div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantos1" class="punto{{tantos1.indexOf(item)}}"></div>
+                    </div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantos2" class="punto{{tantos2.indexOf(item)}}"></div>
+                    </div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantos3" class="punto{{tantos3.indexOf(item)}}"></div>
+                    </div>
                 </div>
             </div>
             <div class="puntos">
                 <h4>{{jugadorCont.name}}:</h4>
                 <div class="cajas">
-                    <div class="caja"></div>
-                    <div class="caja"></div>
-                    <div class="caja"></div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantosCont1" class="punto{{tantosCont1.indexOf(item)}}"></div>
+                    </div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantosCont2" class="punto{{tantosCont2.indexOf(item)}}"></div>
+                    </div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantosCont3" class="punto{{tantosCont3.indexOf(item)}}"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -42,6 +54,7 @@
             </div>
         </div>
         <h2>Tantos: {{jugador.tantos}}</h2>
+
         <div [ngClass]="{'invertir': invertCards}">
             <div *ngFor="let item of sala?.usuarios" class="jugador">
                 
