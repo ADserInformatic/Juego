@@ -7,6 +7,13 @@ nav{
     background: #000;
     color: #fff;
 }
+nav .logo{
+    width: 30px;
+    height: 30px;
+}
+.logo img{
+    width: 100%;
+}
 nav .set{
     background: #fff;
     color: #000;
