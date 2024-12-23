@@ -195,64 +195,29 @@ export class SalaComponent implements OnInit {
         break
       }
     }
-    if(this.jugadorCont.tantos > 5){
-      for(let i = 5; i < this.jugadorCont.tantos; i++){
-        this.tantosCont2.push(i)
-        if (i > 8) {
-          break
-        }
-      }
-    }
-    if(this.jugador.tantos > 5){
-      for(let i = 5; i < this.jugador.tantos; i++){
-        this.tantos2.push(i)
-        if (i > 8) {
-          break
-        }
-      }
-    }
-    if(this.jugadorCont.tantos > 10){
-      for(let i = 10; i < this.jugadorCont.tantos; i++){
-        this.tantosCont3.push(i)
-        if (i > 13) {
-          break
-        }
-      }
-    }
-    if(this.jugador.tantos > 10){
-      for(let i = 10; i < this.jugador.tantos; i++){
-        this.tantos3.push(i)
-        if (i > 13) {
-          break
-        }
-      }
-    }
-    console.log(this.tantos1, this.tantosCont1)
-    console.log(this.tantos2, this.tantosCont2)
-    console.log(this.tantos3, this.tantosCont3)
+    this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont2, 5, 8)
+    this.pintarPuntos(this.jugador.tantos, this.tantos2, 5, 8)
+    this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
+    this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
   }
 
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
-    console.log(val)
     const data: Jugada = {
       sala: this.nameSala,
       valor: val.valor,
       carta: val.name,
       idUser: this.cookies.get('jugador')
     }
-    console.log(data)
     this.socket.emit('tirar', data)
   }
 
   repartir() {
-    console.log(this.sala)
     this.socket.emit('repartir', this.sala)
   }
 
   canto(canto: string) {
     if(this.truco && canto === 'envido'){
-
     }
     if (canto === 'envido' || canto === 'realEnvido' || canto === 'faltaEnvido') {
       this.btnMentiras = false
@@ -271,7 +236,6 @@ export class SalaComponent implements OnInit {
   contestarCanto(resp: string) {
     if(this.truco && resp === 'primEnvido'){
       if(this.selected.nativeElement.value === 'El envido va primero'){
-        console.log(this.selected.nativeElement.value)
         return
       }
       let data = {
@@ -290,9 +254,19 @@ export class SalaComponent implements OnInit {
       sala: this.nameSala,
       canto: this.cantoI
     }
-    console.log(respons)
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
+  }
+
+  pintarPuntos(jugador: number, puntos: Array<any>, min: number, max: number){
+    if(jugador > min){
+      for(let i = min; i < jugador; i++){
+        puntos.push(i)
+        if (i > max) {
+          break
+        }
+      }
+    }
   }
 
   cancel(){
