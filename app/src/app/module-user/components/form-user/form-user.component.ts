@@ -103,4 +103,8 @@ export class FormUserComponent implements OnInit {
       this.traeSalas()
     })
   }
+
+  solicitar(){
+    alert('Quiere solicitar usuario?')
+  }
 }
