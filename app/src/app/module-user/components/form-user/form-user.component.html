@@ -37,9 +37,11 @@
                 <ng-container *ngFor="let item of salas">
                     <div class="salaItem">
                         <button title="Ingresar a {{item.name}}" (click)="sala(item)">{{item.name}}</button>
-                        <button title="Eliminar sala" (click)="deleteSala(item._id)"><span class="material-symbols-outlined">
-                            delete
-                            </span></button>
+                        <button title="Eliminar sala" (click)="deleteSala(item._id)">
+                            <span class="material-symbols-outlined">
+                                delete
+                            </span>
+                        </button>
                     </div>
                 </ng-container>
             </div>

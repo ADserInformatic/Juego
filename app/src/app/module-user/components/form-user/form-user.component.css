@@ -1,14 +1,14 @@
 .body{
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     /* padding: 10%; */
     display: flex;
     align-items: center;
-    /* background-image: url('../../../../assets/OIP.jpg'); */
-    background-position: top;
+    background-image: url('../../../../assets/Logotruco.png');
+    background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
-    background-color: rgb(44, 39, 39);
+    background-color: var(--back);
     position: relative;
 }
 .body nav{
@@ -46,8 +46,8 @@ nav .solicitar button{
     margin: auto;
     width: 100%;
     align-items: center;
+    margin-top: 10%;
 }
-
 .form-user, .salas{
     width: 35%;
     margin: 20px auto;
@@ -57,7 +57,7 @@ nav .solicitar button{
     box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.795),
                 -2px -2px 12px rgba(255, 255, 255, 0.788);
     color: #fff;
-    background: #000000ab;
+    background: #000000d5;
 }
 .form-block{
     margin-top: 15px;
@@ -72,11 +72,11 @@ nav .solicitar button{
     outline: none;
     padding: 3px;
     border-radius: 3px;
-    border-bottom: solid 1px rgb(250, 124, 6);
+    border-bottom: solid 1px var(--bordeBajo);
 }
 .form-block input:focus-visible{
     background: #fff;
-    border: solid 1px rgb(250, 124, 6);
+    border: solid 1px var(--bordeBajo);
   }
 .form-block button, .salaItem{
     width: 100%;
@@ -113,8 +113,30 @@ nav .solicitar button{
     border: solid .7px #fff;
 }
 .form-block button.crear:hover, .form-user button:hover{
-    background: rgb(250, 124, 6);
+    background: var(--bordeBajo);
 }
 .ocultar{
     display: none;
+}
+
+@media screen and (max-width: 980px) {
+    .form-user, .salas{
+        width: 50%;
+    }
+}
+@media screen and (max-width: 570px) {
+    .forms{
+        margin-top: 20%;
+    }
+    .form-user, .salas{
+        width: 80%;
+    }
+}
+@media screen and (max-width: 320px) {
+    .titulo{
+        display: none;
+    }
+    .form-user, .salas{
+        width: 90%;
+    }
 }

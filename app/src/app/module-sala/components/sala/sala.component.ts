@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { io } from 'socket.io-client';
 import { Jugada } from 'src/app/interfaces/jugada';
 import { Jugador } from 'src/app/interfaces/jugador';
+import { ServicGuardService } from '../../services/servic-guard.service';
 
 @Component({
   selector: 'app-sala',
@@ -23,7 +24,7 @@ export class SalaComponent implements OnInit {
     creditos: 0,
     valores: [{ name: '', valor: 0 }]
   };
-  public cantoActual: string = 'truco';
+  public cantoActual: string = '';
   public nameSala!: string;
   private mentira!: any;
   private socket: any;
@@ -55,6 +56,7 @@ export class SalaComponent implements OnInit {
   public tantosCont2: Array<number> = []
   public tantos3: Array<number> = []
   public tantosCont3: Array<number> = []
+  public partidaFinalizada: boolean = false;
 
 
 
@@ -63,7 +65,8 @@ export class SalaComponent implements OnInit {
 
   constructor(
     private routeAct: ActivatedRoute,
-    private cookies: CookieService
+    private cookies: CookieService,
+    private verGuard: ServicGuardService
   ) { }
 
   ngOnInit(): void {
@@ -123,7 +126,6 @@ export class SalaComponent implements OnInit {
         console.log('bueeee',)
         //this.contestarCanto(res.respuesta)
       }
-
       this.cantoConf = true
       this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
     })
@@ -149,7 +151,7 @@ export class SalaComponent implements OnInit {
       this.btnMentiras = this.jugador.valores.length > 2 && !this.mentira
     })
   }
-
+  
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
     this.sala = res;
@@ -166,7 +168,7 @@ export class SalaComponent implements OnInit {
     this.reTruco = res.cantosenmano.boolretruco;
     this.valeCuatro = res.cantosenmano.boolvalecuatro;
     
-
+    
     this.sala.usuarios.forEach((element: any) => {
       if (element.id == this.cookies.get('jugador')) {
         this.jugador = element
@@ -174,6 +176,12 @@ export class SalaComponent implements OnInit {
         this.jugadorCont = element
       }
     });
+    if(this.truco){
+      this.cantoActual = "retruco"
+    }
+    if(this.truco && this.reTruco){
+      this.cantoActual = "vale cuatro"
+    }
     this.verCartas.next(this.jugador.valores)
     this.invertCards = this.jugador.name == this.sala.usuarios[0].name
     //reveer --------------------------
@@ -199,8 +207,11 @@ export class SalaComponent implements OnInit {
     this.pintarPuntos(this.jugador.tantos, this.tantos2, 5, 8)
     this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
     this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
+    
+    //Emitir valor para el guard antes de salir de la sala
+    this.verGuard.verGuard.emit(this.partidaFinalizada)
   }
-
+  
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
     const data: Jugada = {
