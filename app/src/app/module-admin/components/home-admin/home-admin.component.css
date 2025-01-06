@@ -56,6 +56,7 @@
     display: flex;
     justify-content: space-between;
     padding: 10px;
+    flex-wrap: wrap;
 }
 .usersAndCredit li{
     width: 100%;
@@ -92,4 +93,24 @@
 }
 .balances div h3{
     margin-right: 10px;
+}
+
+@media screen and (max-width: 800px) {
+    .users{
+        display: none;
+    }
+    .adduser{
+        width: 90%;
+    }
+}
+@media screen and (max-width: 450px) {
+    .adduser{
+        width: 100%;
+    }
+    .head .range{
+        display: none;
+    }
+    .balances{
+        flex-wrap: wrap;
+    }
 }

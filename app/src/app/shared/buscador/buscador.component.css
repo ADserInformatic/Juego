@@ -1,11 +1,10 @@
 .buscador{
     /* width: 100%; */
     position: relative;
-    margin-left: 10px;
 }
 .buscador .inpu{
     border-radius: 3px;
-    border-bottom: .5px solid var(--colorSec);
+    border-bottom: solid .5px var(--bordeBajo);
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -13,11 +12,13 @@
 }
 .inpu input{
     flex: 1;
+    border: none;
+    background: transparent;
+    width: 90%;
 }
 .inpu input, .inpu span{
     outline: none;
     border: none;
-    background: var(--border);
     padding: 5px;
     font-size: 14px;
 }

@@ -15,6 +15,9 @@
     justify-content: space-between;
     margin: 10px 0px;
 }
+.campos .form-block{
+    width: 30%;
+}
 .form .campos input{
     background-color: transparent;
     outline: none;
@@ -24,6 +27,7 @@
     border-radius: 5px;
     margin-left: 5px;
     color: #fff;
+    width: 100%;
 }
 .form-btn{
     width: 100%;

@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { io } from 'socket.io-client';
 import { Jugada } from 'src/app/interfaces/jugada';
 import { Jugador } from 'src/app/interfaces/jugador';
@@ -56,7 +56,7 @@ export class SalaComponent implements OnInit {
   public tantosCont2: Array<number> = []
   public tantos3: Array<number> = []
   public tantosCont3: Array<number> = []
-  public partidaFinalizada: boolean = false;
+  public partidaFinalizada!: boolean;
 
 
 
@@ -70,6 +70,10 @@ export class SalaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.partidaFinalizada = false;
+    
+
+    
     this.routeAct.params.subscribe((res: any) => {
       this.socket = io('http://localhost:3006',
         {
@@ -208,8 +212,8 @@ export class SalaComponent implements OnInit {
     this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
     this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
     
-    //Emitir valor para el guard antes de salir de la sala
-    this.verGuard.verGuard.emit(this.partidaFinalizada)
+    this.verGuard.observarGuard.next(this.partidaFinalizada)
+    
   }
   
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.

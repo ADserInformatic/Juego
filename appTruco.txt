@@ -21,3 +21,11 @@ Necesito una ruta que me trae los jugadores.
 Rendimiento: GET
 Necesito una ruta que me devuelva cuánto se va generando
 +++++Colocar ruta aqui: getRender
+
+Login
+Mando
+-name
+-pass
+Devolver token
+Solo hay un admin
++++++Colocar ruta aqui: login

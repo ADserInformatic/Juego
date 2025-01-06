@@ -16,7 +16,7 @@
     margin: 10px 0px;
 }
 .campos .form-block{
-    display: flex;
+    width: 30%;
 }
 .form .campos input{
     background-color: transparent;
@@ -27,6 +27,7 @@
     border-radius: 5px;
     margin-left: 5px;
     color: #fff;
+    width: 100%;
 }
 .form-btn{
     width: 100%;
