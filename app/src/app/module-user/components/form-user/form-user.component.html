@@ -1,7 +1,18 @@
 <div class="body" >
+    <nav>
+        <div class="titulo">
+            <h4>ADser Truco</h4>
+        </div>
+        <div class="logo">
+            <img src="assets/Logotruco.png" alt="">
+        </div>
+        <div class="solicitar">
+            <button (click)="solicitar()">Solicitar usuario</button>
+        </div>
+    </nav>
     <div class="forms">
         <div class="form-user" [ngClass]="{'ocultar': user !== ''}">
-            <h1>Ingrese usuario</h1>
+            <h1>Login</h1>
             <div [formGroup]="formUser" class="form-block">
                 <label for="name">Nombre</label>
                 <input formControlName="name" type="text" id="name">
@@ -12,20 +23,25 @@
         </div>
         
         <div class="salas" [ngClass]="{'ocultar': user === ''}">
+            <h1>Crear sala</h1>
             <div class="form-block" [formGroup]="formSala">
-                <label for="sala">Crear sala</label>
+                <label for="sala">Nombre de la sala</label>
                 <input formControlName="name" type="text" id="name">
                 <label for="apuesta">Apuesta:</label>
                 <input formControlName="apuesta" type="number">
-                <button (click)="createSala()">Crear</button>
+                <button class="crear" (click)="createSala()">Crear</button>
             </div>
             <div class="form-block">
-                <label for="sala">Ingresar a una sala:</label>
+                <h2 for="sala">Ingresar a una sala:</h2>
                 <br>
                 <ng-container *ngFor="let item of salas">
                     <div class="salaItem">
-                        <button (click)="sala(item)">{{item.name}}</button>
-                        <button (click)="deleteSala(item._id)">x</button>
+                        <button title="Ingresar a {{item.name}}" (click)="sala(item)">{{item.name}}</button>
+                        <button title="Eliminar sala" (click)="deleteSala(item._id)">
+                            <span class="material-symbols-outlined">
+                                delete
+                            </span>
+                        </button>
                     </div>
                 </ng-container>
             </div>

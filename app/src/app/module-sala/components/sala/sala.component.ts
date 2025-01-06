@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { io } from 'socket.io-client';
 import { Jugada } from 'src/app/interfaces/jugada';
 import { Jugador } from 'src/app/interfaces/jugador';
+import { ServicGuardService } from '../../services/servic-guard.service';
 
 @Component({
   selector: 'app-sala',
@@ -23,7 +24,7 @@ export class SalaComponent implements OnInit {
     creditos: 0,
     valores: [{ name: '', valor: 0 }]
   };
-  public cantoActual: string = 'truco';
+  public cantoActual: string = '';
   public nameSala!: string;
   private mentira!: any;
   private socket: any;
@@ -49,6 +50,13 @@ export class SalaComponent implements OnInit {
   public btnMentiras: boolean = true;
   public invertCards!: boolean;
   public salir: boolean = false;
+  public tantos1: Array<number> = []
+  public tantosCont1: Array<number> = []
+  public tantos2: Array<number> = []
+  public tantosCont2: Array<number> = []
+  public tantos3: Array<number> = []
+  public tantosCont3: Array<number> = []
+  public partidaFinalizada!: boolean;
 
 
 
@@ -57,10 +65,15 @@ export class SalaComponent implements OnInit {
 
   constructor(
     private routeAct: ActivatedRoute,
-    private cookies: CookieService
+    private cookies: CookieService,
+    private verGuard: ServicGuardService
   ) { }
 
   ngOnInit(): void {
+    this.partidaFinalizada = false;
+    
+
+    
     this.routeAct.params.subscribe((res: any) => {
       this.socket = io('http://localhost:3006',
         {
@@ -117,7 +130,6 @@ export class SalaComponent implements OnInit {
         console.log('bueeee',)
         //this.contestarCanto(res.respuesta)
       }
-
       this.cantoConf = true
       this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
     })
@@ -143,7 +155,7 @@ export class SalaComponent implements OnInit {
       this.btnMentiras = this.jugador.valores.length > 2 && !this.mentira
     })
   }
-
+  
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
     this.sala = res;
@@ -160,7 +172,7 @@ export class SalaComponent implements OnInit {
     this.reTruco = res.cantosenmano.boolretruco;
     this.valeCuatro = res.cantosenmano.boolvalecuatro;
     
-
+    
     this.sala.usuarios.forEach((element: any) => {
       if (element.id == this.cookies.get('jugador')) {
         this.jugador = element
@@ -168,32 +180,59 @@ export class SalaComponent implements OnInit {
         this.jugadorCont = element
       }
     });
+    if(this.truco){
+      this.cantoActual = "retruco"
+    }
+    if(this.truco && this.reTruco){
+      this.cantoActual = "vale cuatro"
+    }
     this.verCartas.next(this.jugador.valores)
     this.invertCards = this.jugador.name == this.sala.usuarios[0].name
-    console.log(this.invertCards)
+    //reveer --------------------------
+    this.tantos1 = []
+    this.tantosCont1 = []
+    this.tantos2 = []
+    this.tantosCont2 = []
+    this.tantos3 = []
+    this.tantosCont3 = []
+    for (let i = 0; i < this.jugador.tantos; i++) {
+      this.tantos1.push(i)
+      if (i > 3) {
+        break
+      }
+    }
+    for (let i = 0; i < this.jugadorCont.tantos; i++) {
+      this.tantosCont1.push(i)
+      if (i > 3) {
+        break
+      }
+    }
+    this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont2, 5, 8)
+    this.pintarPuntos(this.jugador.tantos, this.tantos2, 5, 8)
+    this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
+    this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
+    
+    this.verGuard.observarGuard.next(this.partidaFinalizada)
+    
   }
-
+  
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
-    console.log(val)
     const data: Jugada = {
       sala: this.nameSala,
       valor: val.valor,
       carta: val.name,
       idUser: this.cookies.get('jugador')
     }
-    console.log(data)
     this.socket.emit('tirar', data)
   }
 
   repartir() {
-    console.log(this.sala)
     this.socket.emit('repartir', this.sala)
   }
 
   canto(canto: string) {
     if(this.truco && canto === 'envido'){
-
     }
     if (canto === 'envido' || canto === 'realEnvido' || canto === 'faltaEnvido') {
       this.btnMentiras = false
@@ -212,7 +251,6 @@ export class SalaComponent implements OnInit {
   contestarCanto(resp: string) {
     if(this.truco && resp === 'primEnvido'){
       if(this.selected.nativeElement.value === 'El envido va primero'){
-        console.log(this.selected.nativeElement.value)
         return
       }
       let data = {
@@ -231,9 +269,19 @@ export class SalaComponent implements OnInit {
       sala: this.nameSala,
       canto: this.cantoI
     }
-    console.log(respons)
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
+  }
+
+  pintarPuntos(jugador: number, puntos: Array<any>, min: number, max: number){
+    if(jugador > min){
+      for(let i = min; i < jugador; i++){
+        puntos.push(i)
+        if (i > max) {
+          break
+        }
+      }
+    }
   }
 
   cancel(){

@@ -3,7 +3,9 @@
 :root{
     --colorPri: #fc91047c;
     --colorSec: #fc91045b;
+    --bordeBajo: rgb(250, 124, 6);
     --border: #fff;
+    --back: #2a2633;
 }
 *{
     box-sizing: border-box;

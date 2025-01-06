@@ -7,6 +7,14 @@ nav{
     background: #000;
     color: #fff;
 }
+nav .logo{
+    width: 30px;
+    height: 30px;
+}
+.logo img{
+    width: 100%;
+    border-radius: 25%;
+}
 nav .set{
     background: #fff;
     color: #000;
@@ -20,7 +28,7 @@ nav .set{
 .options{
     width: 100%;
     height: 100vh;
-    background: #00000096;
+    background: #000000af;
     top: 0;
     left: 0;
     position: fixed;
@@ -45,7 +53,7 @@ nav .set{
     border-radius: 3px;
 }
 .options .btns button:hover{
-    background: #000;
+    background: rgba(26, 25, 23, 0.856);
 }
 .body{
     max-width: 1240px;
@@ -107,12 +115,55 @@ nav .set{
     display: flex;
     align-items: center;
     text-align: left;
+    justify-content: space-around;
 }
-.cajas .caja{
-    margin-left: 5px;
+.pintarPuntos{
     width: 15px;
-    height: 15px;
-    border: solid .4px #fff;
+    height:15px;
+    position: relative;
+    display: flex;
+    margin-left: 5px;
+}
+.pintarPuntos .punto0, .pintarPuntos .punto5, .pintarPuntos .punto10{
+    position: absolute;
+    background: #fff;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 1px;
+}
+.pintarPuntos .punto1, .pintarPuntos .punto6, .pintarPuntos .punto11{
+    position: absolute;
+    background: #fff;
+    width: 1px;
+    top: 0;
+    right: 0;
+    height: 100%;
+}
+.pintarPuntos .punto2, .pintarPuntos .punto7, .pintarPuntos .punto12{
+    position: absolute;
+    background: #fff;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+}
+.pintarPuntos .punto3, .pintarPuntos .punto8, .pintarPuntos .punto13{
+    position: absolute;
+    background: #fff;
+    width: 1px;
+    top: 0;
+    left: 0;
+    height: 100%;
+}
+.pintarPuntos .punto4, .pintarPuntos .punto9, .pintarPuntos .punto14{
+    /* position: absolute; */
+    background: #fff;
+    width: 1px;
+    top: 0;
+    margin: auto;
+    height: 100%;
+    transform: rotate(50deg);
 }
 .titulo{
     padding: 10px 0px;
@@ -147,7 +198,7 @@ nav .set{
     flex-flow: column-reverse wrap-reverse;
 }
 .jugador{
-    width: 40%;
+    width: 50%;
     min-height: 30vh;
     margin: 0px auto;
     padding: 10px 20px;
@@ -158,7 +209,7 @@ nav .set{
 .card{
     margin: 10px 5px;
     display: inline-block;
-    width: 12%;
+    width: 15%;
     cursor: pointer;
     border-radius: 16px;
     overflow: hidden;
@@ -171,6 +222,7 @@ nav .set{
     display: flex;
     justify-content: center;
     padding-top: 15px;
+    width: 100%;
     flex-flow: row-reverse wrap-reverse;
 }
 .jugoC{
@@ -195,8 +247,8 @@ nav .set{
 .cantos button{
     color: #000;
     background: #fff;
-    padding: 5px 0px;
-    width: 25%;
+    padding: 5px;
+    /* width: 25%; */
     border: solid .8px #000000;
     border-radius: 3px;
     outline: none;
@@ -204,6 +256,7 @@ nav .set{
     font-weight: bold;
     cursor: pointer;
     transition: all .6s ease-in-out;
+    flex: 1 1 100px;
 }
 .cantos button:hover{
     color: #fff;
@@ -233,6 +286,7 @@ nav .set{
     width: 100%;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 .canto .contCanto .flor{
     justify-content: center;
@@ -245,7 +299,7 @@ nav .set{
     border-radius: 4px;
     outline: none;
     text-transform: uppercase;
-    width: 30%;
+    /* width: 30%; */
     cursor: pointer;
 }
 .canto .contCanto .btns button:nth-child(1){
@@ -310,4 +364,27 @@ nav .set{
     outline: none;
     padding: 10px;
     background: #dfa403;
+}
+
+@media screen and (max-width: 900px) {
+    .standBy .texto h1{
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .card{
+        width: 25%;
+    }
+    .jugador{
+        width: 70%;
+    }
+    .standBy .texto h1{
+        font-size: 16px;
+    }
+}
+@media(max-width: 380px) {
+    .cantos, .jugadores{
+        width: 100%;
+    }
 }

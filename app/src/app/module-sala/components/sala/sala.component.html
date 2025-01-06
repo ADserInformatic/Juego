@@ -1,6 +1,8 @@
 <nav>
-    <img src="logo" alt="">
-    <h2>A de ser truco</h2>
+    <div class="logo" title="ADser Truco">
+        <img src="assets/Logotruco.png" alt="">
+    </div>
+    <h2>ADser Truco</h2>
     <button (click)="cancel()" class="set">Salir</button>
 </nav>
 <div class="body">
@@ -15,17 +17,29 @@
             <div class="puntos">
                 <h4>{{jugador.name}}:</h4>
                 <div class="cajas">
-                    <div class="caja"></div>
-                    <div class="caja"></div>
-                    <div class="caja"></div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantos1" class="punto{{tantos1.indexOf(item)}}"></div>
+                    </div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantos2" class="punto{{tantos2.indexOf(item)}}"></div>
+                    </div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantos3" class="punto{{tantos3.indexOf(item)}}"></div>
+                    </div>
                 </div>
             </div>
             <div class="puntos">
                 <h4>{{jugadorCont.name}}:</h4>
                 <div class="cajas">
-                    <div class="caja"></div>
-                    <div class="caja"></div>
-                    <div class="caja"></div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantosCont1" class="punto{{tantosCont1.indexOf(item)}}"></div>
+                    </div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantosCont2" class="punto{{tantosCont2.indexOf(item)}}"></div>
+                    </div>
+                    <div class="pintarPuntos">
+                        <div *ngFor="let item of tantosCont3" class="punto{{tantosCont3.indexOf(item)}}"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -40,6 +54,7 @@
             </div>
         </div>
         <h2>Tantos: {{jugador.tantos}}</h2>
+
         <div [ngClass]="{'invertir': invertCards}">
             <div *ngFor="let item of sala?.usuarios" class="jugador">
                 
@@ -65,7 +80,8 @@
             <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('envido')">Envido</button>
             <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
             <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
-            <button [disabled]="truco" (click)="canto(cantoActual)">{{cantoActual}}</button>
+            <button *ngIf="!truco" [disabled]="!jugador.puedeCantar" (click)="canto('truco')">Truco</button>
+            <button *ngIf="truco" [disabled]="!jugador.puedeCantar" (click)="contestarCanto(cantoActual)">{{cantoActual}}</button>
             <button [disabled]="truco || !btnMentiras" (click)="canto('flor')">Flor</button>
         </div>
     </div>
@@ -117,6 +133,7 @@
 <div *ngIf="salir" class="options">
     <div class="btns">
         <button>Abandonar partida</button>
+        <button>Nueva partida</button>
         <button>Cerrar sesión</button>
         <button (click)="cancel()">Cancelar</button>
     </div>

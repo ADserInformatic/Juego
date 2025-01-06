@@ -2,8 +2,7 @@
     <div class="container">
         <div class="head">
             <div class="title">
-                <h1>ADser</h1>
-                <img src="" alt="">
+                <img src="assets/Logotruco.png" alt="">
             </div>
             <div class="range">
                 <h1>Administrador</h1>
@@ -20,11 +19,11 @@
                 </div>
                 <div class="usersAndCredit">
                     <li *ngFor="let item of usuarios">
-                        <span>{{item.name}}</span>
+                        <h3>{{item.name}}</h3>
                         <i>{{item.credit | currency}}</i>
                         <button>
                             <span class="material-symbols-outlined">
-                                close
+                                delete
                                 </span>
                         </button></li>
                 </div>
@@ -38,10 +37,10 @@
         <div class="balances">
             <div class="rendimiento">
                 <h3>Rendiminto: </h3>
-                <span>$000</span>
+                <span> $000</span>
             </div>
             <div class="ganacias">
-                <h3>Ganancia: </h3>
+                <h3>Ganancia:</h3>
                 <span>$000</span>
             </div>
         </div>
