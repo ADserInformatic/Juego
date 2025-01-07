@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { io } from 'socket.io-client';
@@ -66,14 +66,13 @@ export class SalaComponent implements OnInit {
   constructor(
     private routeAct: ActivatedRoute,
     private cookies: CookieService,
-    private verGuard: ServicGuardService
+    private verGuard: ServicGuardService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.partidaFinalizada = false;
-    
 
-    
     this.routeAct.params.subscribe((res: any) => {
       this.socket = io('http://localhost:3006',
         {
@@ -287,4 +286,13 @@ export class SalaComponent implements OnInit {
   cancel(){
     this.salir = !this.salir
   }
+
+  closed(){
+    if(confirm('Desea cerrar sesión?')){
+      this.router.navigate(['/'])
+      this.cookies.delete('jugador')
+    }
+  }
+  
+
 }

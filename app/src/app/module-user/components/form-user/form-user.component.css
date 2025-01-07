@@ -31,7 +31,8 @@ nav .logo{
     width: 100%;
     border-radius: 30%;
 }
-nav .solicitar button{
+nav .solicitar a{
+    text-decoration: none;
     color: #000;
     background: #fff;
     border: none;
@@ -40,6 +41,8 @@ nav .solicitar button{
     text-transform: uppercase;
     cursor: pointer;
     padding: 5px 10px;
+    display: flex;
+    align-items: center;
 }
 .forms{
     display: flex;
@@ -130,6 +133,9 @@ nav .solicitar button{
     }
     .form-user, .salas{
         width: 80%;
+    }
+    .solicitar a p{
+        display: none;
     }
 }
 @media screen and (max-width: 320px) {
