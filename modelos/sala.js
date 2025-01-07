@@ -7,19 +7,20 @@ const sala = new Schema({
     partida: { type: Number, default: 1 }, //Toda la partida arranca jugando el mismo
     unaFalta: { type: Boolean, default: true },
     finish: { type: Boolean, default: true },
+    partidaFinalizada: { type: Boolean, default: false },
     cantosenmano: {
-        boolenvido: { type: Boolean, default: false },
-        boolreenvido: { type: Boolean, default: false },
-        boolrealenvido: { type: Boolean, default: false },
-        boolfaltaenvido: { type: Boolean, default: false },
-        boolflor: { type: Boolean, default: false },
-        boolflorflor: { type: Boolean, default: false },
-        boolflormeachico: { type: Boolean, default: false },
-        boolcontraflor: { type: Boolean, default: false },
-        booltruco: { type: Boolean, default: false },
-        boolretruco: { type: Boolean, default: false },
-        boolvalecuatro: { type: Boolean, default: false },
-        pardaprimera: { type: Boolean, default: false },
+        boolEnvido: { type: Boolean, default: false },
+        boolReEnvido: { type: Boolean, default: false },
+        boolRealEnvido: { type: Boolean, default: false },
+        boolFaltaEnvido: { type: Boolean, default: false },
+        boolFlor: { type: Boolean, default: false },
+        boolFlorFlor: { type: Boolean, default: false },
+        boolFlorMeAchico: { type: Boolean, default: false },
+        boolContraFlor: { type: Boolean, default: false },
+        boolTruco: { type: Boolean, default: false },
+        boolReTruco: { type: Boolean, default: false },
+        boolValeCuatro: { type: Boolean, default: false },
+        pardaPrimera: { type: Boolean, default: false },
 
     },
     usuarios: [{
@@ -28,7 +29,6 @@ const sala = new Schema({
         juega: { type: Boolean, default: false }, //Para saber a quien le toca tirar
         valores: { type: Array }, //Estas son las cartas
         jugada: { type: Array }, //Esas son cada una de las jugadas (cada carta tirada)
-        tantosPartida: { type: Number, default: 0 }, //Estos serían los tantos particulares de cada partida (se vacía cada vez que se reparten las cartas).
         puntosMentira: { type: Number, default: 0 },//puntos de la mentira de cada partida
         //canto: { type: String, default: 'noHay' }, //Este es para saber si estamos en truco, re o vale cua
         tantos: { type: Number, default: 0 }, //Estos son los puntos generales
@@ -36,7 +36,7 @@ const sala = new Schema({
         puedeMentir: { type: Boolean, default: true },//true si aun no tiro una carta o si tiene el quiero
         id: { type: Schema.ObjectId, ref: user },
         mano: { type: Boolean, default: false }, //true si el jugador es mano,
-        puedeflor: { type: Boolean, default: false },//true si puede cantar flor
+        puedeFlor: { type: Boolean, default: false },//true si puede cantar flor
         ganoPrimera: { type: Boolean, default: false }, //quien gano primera 
 
     }]
