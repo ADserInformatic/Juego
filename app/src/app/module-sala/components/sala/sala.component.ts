@@ -56,7 +56,6 @@ export class SalaComponent implements OnInit {
   public tantosCont2: Array<number> = []
   public tantos3: Array<number> = []
   public tantosCont3: Array<number> = []
-  public partidaFinalizada!: boolean;
 
 
 
@@ -71,8 +70,6 @@ export class SalaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.partidaFinalizada = false;
-
     this.routeAct.params.subscribe((res: any) => {
       this.socket = io('http://localhost:3006',
         {
@@ -211,7 +208,7 @@ export class SalaComponent implements OnInit {
     this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
     this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
     
-    this.verGuard.observarGuard.next(this.partidaFinalizada)
+    this.verGuard.observarGuard.next(res.partidaFinalizada)
     
   }
   
