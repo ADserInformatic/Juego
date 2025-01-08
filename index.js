@@ -647,7 +647,6 @@ const compararValores = async (sala) => {
         }
       }
     }
-    //Si el valor de la última jugada del jugador 1 es mayor que el del jugador 2, se incrementa el puntaje del jugador 1 
     if (jugada1.valor > jugada2.valor) {
       jugador1.juega = true;
       jugador2.juega = false;
@@ -660,6 +659,7 @@ const compararValores = async (sala) => {
           await sumarTantosAPartida(sala, 0)
           await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
         }
+
         return console.log('Gana ', users[0].name, ' segunda jugada ')
       }
       if (jugador1.jugada.length === 3) {//si gana en la 3ra le sumo los puntos de lo cantado
@@ -670,8 +670,8 @@ const compararValores = async (sala) => {
 
     } else {
       //Si el valor de la última jugada del jugador 2 es mayor, se incrementa el puntaje del jugador 2 
-      jugador2.juega = !jugador2.juega;
-      jugador1.juega = !jugador1.juega;
+      jugador1.juega = false;
+      jugador2.juega = true;
       if (jugador2.jugada.length === 1) {
         jugador2.ganoPrimera = true;
         return console.log('Gana ', users[1].name, ' primera jugada ')
@@ -699,7 +699,7 @@ const compararValores = async (sala) => {
 }
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
 const terminar = async (sala) => {
-  console.log(sala.finish)
+  console.log("dentro de funcion terminar...la variable finish es: ", sala.finish)
   if (sala.finish) {
     sala.partida += 1
     console.log("partida terminada")
