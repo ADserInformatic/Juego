@@ -55,7 +55,7 @@ export class SalaComponent implements OnInit {
   public tantos2: Array<number> = []
   public tantosCont2: Array<number> = []
   public tantos3: Array<number> = []
-  public tantosCont3: Array<number> = []
+  public tantosCont3: Array<number> = [] 
 
 
 
@@ -155,7 +155,6 @@ export class SalaComponent implements OnInit {
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
     this.sala = res;
-    console.log(res)
     this.envido = res.cantosenmano.boolenvido
     this.reEnvido = res.cantosenmano.boolreenvido
     this.realEnvido = res.cantosenmano.boolrealenvido
