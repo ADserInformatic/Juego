@@ -92,6 +92,7 @@ io.on('connection', (socket) => {
     //Una vez que se actualiza la jugada al usuario que la realizá, se compara los valores. La función compararValores compara las últimas jugadas de los jugadores y actualiza el puntaje dependiendo del resultado de la comparación.
     compararValores(salaOn)
     //La función terminar determina si una partida entre dos jugadores ha terminado basándose en el número de jugadas realizadas y declara al ganador
+    console.log("ya compararon valores y voy a terminar")
     terminar(salaOn)
     //Una vez actualizado el usuario se actualiza la sala
     await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users, partida: salaOn.partida } })
@@ -621,8 +622,7 @@ const compararValores = async (sala) => {
           if (users[0].ganoPrimera) {
 
             await sumarTantosAPartida(sala, 0)
-            sala.finish = true;
-            sala.save();
+            await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
             return console.log('Gana ', users[0].name, 'habia ganado en primera')
           }
           else {
@@ -638,8 +638,7 @@ const compararValores = async (sala) => {
 
         if (users[0].ganoPrimera) {
           await sumarTantosAPartida(sala, 0)
-          sala.finish = true;
-          sala.save();
+          await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
           return console.log('Gana ', users[0].name, ' parda ultima carta y habia ganado en primera')
         }
         else {
@@ -659,15 +658,13 @@ const compararValores = async (sala) => {
       if (jugador1.jugada.length === 2) { //si es la 2da jugada y ya gano primera termina la ronda y le sumo los puntos de lo cantado
         if (users[0].ganoPrimera) {
           await sumarTantosAPartida(sala, 0)
-          sala.finish = true;
-          sala.save();
+          await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
         }
         return console.log('Gana ', users[0].name, ' segunda jugada ')
       }
       if (jugador1.jugada.length === 3) {//si gana en la 3ra le sumo los puntos de lo cantado
         await sumarTantosAPartida(sala, 0)
-        sala.finish = true;
-        sala.save();
+        await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
         return console.log('Gana ', users[0].name, ' tercera jugada')
       }
 
@@ -682,15 +679,13 @@ const compararValores = async (sala) => {
       if (jugador2.jugada.length === 2) {
         if (users[1].ganoPrimera) {
           await sumarTantosAPartida(sala, 1)
-          sala.finish = true;
-          sala.save();
+          await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
           return console.log('Gana ', users[1].name, ' ronda xq habia ganado en primera tambien ')
         }
       }
       if (jugador2.jugada.length === 3) {
         await sumarTantosAPartida(sala, 1)
-        sala.finish = true;
-        sala.save();
+        await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
         return console.log('Gana ', users[1].name, ' ronda en tercera jugada ')
       }
 
@@ -704,7 +699,7 @@ const compararValores = async (sala) => {
 }
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
 const terminar = async (sala) => {
-
+  console.log(sala.finish)
   if (sala.finish) {
     sala.partida += 1
     console.log("partida terminada")
@@ -832,8 +827,8 @@ const repartir = async (_sala) => {
    */
   //Una vez que se actualiza, se busca la sala (la acción anterior me devuelve la sala sin actualizar, por eso este paso adicional) y se devuelve a travez del emit 'repartir'
   const salaActualizada = await salaM.findOne({ _id: salaOn._id })
-  console.log("booleano finish: ", salaActualizada.finish)
-  io.to(salaOn.name).emit('repartir', salaActualizada)
+  console.log("booleano finish: ", salaOn.finish)
+  io.to(salaOn.name).emit('repartir', salaOn)
 
 }
 //La función tieneEnvido determina si hay "envido" en una mano de cartas, y calcula los puntos de envido para un jugador específico.

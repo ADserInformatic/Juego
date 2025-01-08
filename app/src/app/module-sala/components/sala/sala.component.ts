@@ -155,17 +155,17 @@ export class SalaComponent implements OnInit {
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
     this.sala = res;
-    this.envido = res.cantosenmano.boolenvido
-    this.reEnvido = res.cantosenmano.boolreenvido
-    this.realEnvido = res.cantosenmano.boolrealenvido
-    this.faltaEnvido = res.cantosenmano.boolfaltaenvido;
-    this.flor = res.cantosenmano.boolflor;
-    this.florFlor = res.cantosenmano.boolflorflor;
-    this.contraFlor = res.cantosenmano.boolcontraflor;
-    this.florMeachico = res.cantosenmano.boolflormeachico;
-    this.truco = res.cantosenmano.booltruco;
-    this.reTruco = res.cantosenmano.boolretruco;
-    this.valeCuatro = res.cantosenmano.boolvalecuatro;
+    this.envido = res.cantosenmano.boolEnvido
+    this.reEnvido = res.cantosenmano.boolReEnvido
+    this.realEnvido = res.cantosenmano.boolRealEnvido
+    this.faltaEnvido = res.cantosenmano.boolFaltaEnvido;
+    this.flor = res.cantosenmano.boolFlor;
+    this.florFlor = res.cantosenmano.boolFlorFlor;
+    this.contraFlor = res.cantosenmano.boolContraFlor;
+    this.florMeachico = res.cantosenmano.boolFlorMeAchico;
+    this.truco = res.cantosenmano.boolTruco;
+    this.reTruco = res.cantosenmano.boolReTruco;
+    this.valeCuatro = res.cantosenmano.boolValeCuatro;
     
     
     this.sala.usuarios.forEach((element: any) => {
