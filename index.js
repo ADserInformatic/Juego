@@ -545,13 +545,13 @@ const booleanos = async (res) => {
       break;
     case 'reTruco':
       sala.cantosenmano.boolReTruco = true;
-      users.forEach(element => {
-        if (element.id == res.jugador.id) {
-          element.puedeCantar = false
-        } else {
-          element.puedeCantar = true
-        }
-      })
+      /*       users.forEach(element => {
+              if (element.id == res.jugador.id) {
+                element.puedeCantar = false
+              } else {
+                element.puedeCantar = true
+              }
+            }) */
       break;
     case 'valeCuatro':
       sala.cantosenmano.boolvalecuatro = true;
@@ -698,13 +698,13 @@ const compararValores = async (sala) => {
   }
 }
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
-const terminar = async (sala) => {
+const terminar = (sala) => {
   console.log("dentro de funcion terminar...la variable finish es: ", sala.finish)
   if (sala.finish) {
     sala.partida += 1
     console.log("partida terminada")
-    setTimeout(async () => {
-      await repartir(sala)
+    setTimeout(() => {
+      repartir(sala)
       console.log("repartido")
     }, 2000);
 
