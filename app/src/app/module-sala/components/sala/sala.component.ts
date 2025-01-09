@@ -59,7 +59,6 @@ export class SalaComponent implements OnInit {
 
 
 
-
   private verCartas: BehaviorSubject<any> = new BehaviorSubject<any>(this.jugador.valores)
 
   constructor(
@@ -176,7 +175,7 @@ export class SalaComponent implements OnInit {
       }
     });
     if(this.truco){
-      this.cantoActual = "retruco"
+      this.cantoActual = "reTruco"
     }
     if(this.truco && this.reTruco){
       this.cantoActual = "vale cuatro"
@@ -264,6 +263,7 @@ export class SalaComponent implements OnInit {
       sala: this.nameSala,
       canto: this.cantoI
     }
+    console.log(respons)
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
   }
