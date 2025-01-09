@@ -132,9 +132,9 @@
 </div>
 <div *ngIf="salir" class="options">
     <div class="btns">
-        <button>Abandonar partida</button>
+        <button routerLink="/">Abandonar partida</button>
         <button>Nueva partida</button>
-        <button>Cerrar sesión</button>
+        <button (click)="closed()"> Cerrar sesión</button>
         <button (click)="cancel()">Cancelar</button>
     </div>
 </div>

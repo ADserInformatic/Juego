@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { io } from 'socket.io-client';
@@ -55,8 +55,7 @@ export class SalaComponent implements OnInit {
   public tantos2: Array<number> = []
   public tantosCont2: Array<number> = []
   public tantos3: Array<number> = []
-  public tantosCont3: Array<number> = []
-  public partidaFinalizada!: boolean;
+  public tantosCont3: Array<number> = [] 
 
 
 
@@ -66,14 +65,11 @@ export class SalaComponent implements OnInit {
   constructor(
     private routeAct: ActivatedRoute,
     private cookies: CookieService,
-    private verGuard: ServicGuardService
+    private verGuard: ServicGuardService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.partidaFinalizada = false;
-    
-
-    
     this.routeAct.params.subscribe((res: any) => {
       this.socket = io('http://localhost:3006',
         {
@@ -108,17 +104,17 @@ export class SalaComponent implements OnInit {
         canto: res.canto,
         mensaje: ''
       };
-      this.envido = res.cantosenmano.boolenvido;
-      this.reEnvido = res.cantosenmano.boolreenvido;
-      this.realEnvido = res.cantosenmano.boolrealenvido;
-      this.faltaEnvido = res.cantosenmano.boolfaltaenvido;
-      this.flor = res.cantosenmano.boolflor;
-      this.florFlor = res.cantosenmano.boolflorflor;
-      this.contraFlor = res.cantosenmano.boolcontraflor;
-      this.florMeachico = res.cantosenmano.boolflormeachico;
-      this.truco = res.cantosenmano.booltruco;
-      this.reTruco = res.cantosenmano.boolretruco;
-      this.valeCuatro = res.cantosenmano.boolvalecuatro;
+      this.envido = res.cantosenmano.boolEnvido
+      this.reEnvido = res.cantosenmano.boolReEnvido
+      this.realEnvido = res.cantosenmano.boolRealEnvido
+      this.faltaEnvido = res.cantosenmano.boolFaltaEnvido;
+      this.flor = res.cantosenmano.boolFlor;
+      this.florFlor = res.cantosenmano.boolFlorFlor;
+      this.contraFlor = res.cantosenmano.boolContraFlor;
+      this.florMeachico = res.cantosenmano.boolFlorMeAchico;
+      this.truco = res.cantosenmano.boolTruco;
+      this.reTruco = res.cantosenmano.boolReTruco;
+      this.valeCuatro = res.cantosenmano.boolValeCuatro;
 
       if(this.envido || this.realEnvido || this.faltaEnvido){
         this.btnMentiras = false
@@ -159,18 +155,17 @@ export class SalaComponent implements OnInit {
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
     this.sala = res;
-    console.log(res)
-    this.envido = res.cantosenmano.boolenvido
-    this.reEnvido = res.cantosenmano.boolreenvido
-    this.realEnvido = res.cantosenmano.boolrealenvido
-    this.faltaEnvido = res.cantosenmano.boolfaltaenvido;
-    this.flor = res.cantosenmano.boolflor;
-    this.florFlor = res.cantosenmano.boolflorflor;
-    this.contraFlor = res.cantosenmano.boolcontraflor;
-    this.florMeachico = res.cantosenmano.boolflormeachico;
-    this.truco = res.cantosenmano.booltruco;
-    this.reTruco = res.cantosenmano.boolretruco;
-    this.valeCuatro = res.cantosenmano.boolvalecuatro;
+    this.envido = res.cantosenmano.boolEnvido
+    this.reEnvido = res.cantosenmano.boolReEnvido
+    this.realEnvido = res.cantosenmano.boolRealEnvido
+    this.faltaEnvido = res.cantosenmano.boolFaltaEnvido;
+    this.flor = res.cantosenmano.boolFlor;
+    this.florFlor = res.cantosenmano.boolFlorFlor;
+    this.contraFlor = res.cantosenmano.boolContraFlor;
+    this.florMeachico = res.cantosenmano.boolFlorMeAchico;
+    this.truco = res.cantosenmano.boolTruco;
+    this.reTruco = res.cantosenmano.boolReTruco;
+    this.valeCuatro = res.cantosenmano.boolValeCuatro;
     
     
     this.sala.usuarios.forEach((element: any) => {
@@ -212,7 +207,7 @@ export class SalaComponent implements OnInit {
     this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
     this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
     
-    this.verGuard.observarGuard.next(this.partidaFinalizada)
+    this.verGuard.observarGuard.next(res.partidaFinalizada)
     
   }
   
@@ -287,4 +282,13 @@ export class SalaComponent implements OnInit {
   cancel(){
     this.salir = !this.salir
   }
+
+  closed(){
+    if(confirm('Desea cerrar sesión?')){
+      this.router.navigate(['/'])
+      this.cookies.delete('jugador')
+    }
+  }
+  
+
 }

@@ -104,7 +104,11 @@ export class FormUserComponent implements OnInit {
     })
   }
 
-  solicitar(){
-    alert('Quiere solicitar usuario?')
-  }
+  // solicitar(){
+  //   if(confirm('Quiere solicitar usuario? Si acepta se')){
+
+  //   }else{
+
+  //   }
+  // }
 }
