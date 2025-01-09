@@ -545,13 +545,13 @@ const booleanos = async (res) => {
       break;
     case 'reTruco':
       sala.cantosenmano.boolReTruco = true;
-      /*       users.forEach(element => {
-              if (element.id == res.jugador.id) {
-                element.puedeCantar = false
-              } else {
-                element.puedeCantar = true
-              }
-            }) */
+      users.forEach(element => {
+        if (element.id == res.jugador.id) {
+          element.puedeCantar = false
+        } else {
+          element.puedeCantar = true
+        }
+      })
       break;
     case 'valeCuatro':
       sala.cantosenmano.boolvalecuatro = true;
@@ -758,6 +758,7 @@ const repartir = async (_sala) => {
   jugador2.jugada = [];
   jugador1.puntosMentira = 0;
   jugador2.puntosMentira = 0;
+
   jugador1.ganoPrimera = false;
   jugador2.ganoPrimera = false;
   let values = [];
@@ -794,8 +795,6 @@ const repartir = async (_sala) => {
   jugador2.puntosMentira = temp2.puntos;
   jugador1.puedeflor = temp1.flor;
   jugador2.puedeflor = temp2.flor;
-
-
   salaOn.cantosenmano.boolEnvido = false;
   salaOn.cantosenmano.boolReEnvido = false;
   salaOn.cantosenmano.boolRealEnvido = false;
@@ -814,11 +813,15 @@ const repartir = async (_sala) => {
     users[0].mano = false;
     users[1].juega = true;
     users[0].juega = false;
+    users[1].puedeCantar = true;
+    users[0].puedeCantar = false;
   } else {
     users[0].mano = true;
     users[1].mano = false;
     users[0].juega = true;
     users[1].juega = false;
+    users[1].puedeCantar = false;
+    users[0].puedeCantar = true;;
   }
   salaOn.save();
   /*   const paraGuardar = await salaM.findOne({ _id: _sala._id })
