@@ -178,7 +178,7 @@ export class SalaComponent implements OnInit {
       this.cantoActual = "reTruco"
     }
     if(this.truco && this.reTruco){
-      this.cantoActual = "vale cuatro"
+      this.cantoActual = "valeCuatro"
     }
     this.verCartas.next(this.jugador.valores)
     this.invertCards = this.jugador.name == this.sala.usuarios[0].name
@@ -242,7 +242,7 @@ export class SalaComponent implements OnInit {
     this.socket.emit('canto', data)
   }
 
-  contestarCanto(resp: string) {
+  contestarCanto(resp: string, bool?: boolean) {
     if(this.truco && resp === 'primEnvido'){
       if(this.selected.nativeElement.value === 'El envido va primero'){
         return
@@ -266,6 +266,9 @@ export class SalaComponent implements OnInit {
     console.log(respons)
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
+    if (bool === false) {
+      this.cantoConf = bool
+    }
   }
 
   pintarPuntos(jugador: number, puntos: Array<any>, min: number, max: number){

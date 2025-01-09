@@ -81,7 +81,7 @@
             <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
             <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
             <button *ngIf="!truco" [disabled]="!jugador.puedeCantar" (click)="canto('truco')">Truco</button>
-            <button *ngIf="truco" [disabled]="!jugador.puedeCantar" (click)="contestarCanto(cantoActual)">{{cantoActual}}</button>
+            <button *ngIf="truco" [disabled]="!jugador.puedeCantar" (click)="contestarCanto(cantoActual, false)">{{cantoActual}}</button>
             <button [disabled]="truco || !btnMentiras" (click)="canto('flor')">Flor</button>
         </div>
     </div>

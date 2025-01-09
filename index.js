@@ -698,13 +698,13 @@ const compararValores = async (sala) => {
   }
 }
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
-const terminar = async (sala) => {
+const terminar = (sala) => {
   console.log("dentro de funcion terminar...la variable finish es: ", sala.finish)
   if (sala.finish) {
     sala.partida += 1
     console.log("partida terminada")
-    setTimeout(async () => {
-      await repartir(sala)
+    setTimeout(() => {
+      repartir(sala)
       console.log("repartido")
     }, 2000);
 
@@ -758,6 +758,7 @@ const repartir = async (_sala) => {
   jugador2.jugada = [];
   jugador1.puntosMentira = 0;
   jugador2.puntosMentira = 0;
+
   jugador1.ganoPrimera = false;
   jugador2.ganoPrimera = false;
   let values = [];
@@ -794,8 +795,6 @@ const repartir = async (_sala) => {
   jugador2.puntosMentira = temp2.puntos;
   jugador1.puedeflor = temp1.flor;
   jugador2.puedeflor = temp2.flor;
-
-
   salaOn.cantosenmano.boolEnvido = false;
   salaOn.cantosenmano.boolReEnvido = false;
   salaOn.cantosenmano.boolRealEnvido = false;
@@ -814,11 +813,15 @@ const repartir = async (_sala) => {
     users[0].mano = false;
     users[1].juega = true;
     users[0].juega = false;
+    users[1].puedeCantar = true;
+    users[0].puedeCantar = false;
   } else {
     users[0].mano = true;
     users[1].mano = false;
     users[0].juega = true;
     users[1].juega = false;
+    users[1].puedeCantar = false;
+    users[0].puedeCantar = true;;
   }
   salaOn.save();
   /*   const paraGuardar = await salaM.findOne({ _id: _sala._id })
