@@ -116,7 +116,6 @@ io.on('connection', (socket) => {
 
   //Esto está recibiendo tanto envido como truco y flor. ¡Tener eso en cuenta!
   socket.on('respuestaCanto', async (res) => {
-    // console.log(res)
     const sala = await salaM.findOne({ name: res.sala })
     const users = sala.usuarios
     let datos;
@@ -491,16 +490,29 @@ io.on('connection', (socket) => {
             break;
         }
         break;
-      case 'flor': //solo canta flor y debo avisarle
-        mensaje = `${res.jugador.name} dice: ${res.respuesta}`
-        datos = { mensaje, jugador: res.jugador, sala }
+      case 'flor':
+        switch (res.respuesta) {
+          case 'aceptar':
 
-        await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-        io.to(res.sala).emit('resultadoDeCanto', datos)
+            users.forEach(element => {
+              if (element.id == res.jugador.id) {
+
+                element.tantos += 3;
+              }
+            })
+            break;
+          default:
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            // console.log(res)
+            socket.to(res.sala).emit('cantando', res)
+            break;
+        }
+
         break;
       case 'florflor':
         switch (res.respuesta) {
-          case 'quiero':
+          case 'aceptar':
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 6
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -538,15 +550,107 @@ io.on('connection', (socket) => {
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
-          case 'noquiero':
+          default:
 
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            // console.log(res)
+            socket.to(res.sala).emit('cantando', res)
             break;
 
         }
 
         break;
-      case 'florMeAchico': break;
-      case 'contraflor': break;
+      case 'florMeAchico':
+        switch (res.respuesta) {
+          case 'aceptar':
+
+            var me;
+            users.forEach(us => {
+              if (us.name === res.jugador.name) {
+                us.tantos += 4
+              } else {
+                me = `${us.name} con flor se achica`
+              }
+            })
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            datos = {
+              mensaje: me,
+              sala
+            }
+            io.to(res.sala).emit('resultadoDeCanto', datos)
+            break;
+          default:
+
+            res.canto = res.respuesta;
+            res = await booleanos(res);
+            // console.log(res)
+            socket.to(res.sala).emit('cantando', res)
+            break;
+
+        }
+        break;
+      case 'contraflor':
+        switch (res.respuesta) {
+          case 'quiero':
+            if (users[0].puntosMentira > users[1].puntosMentira) {
+              users[0].tantos += 30
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+
+              mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+              datos = {
+                mensaje,
+                sala
+              }
+              io.to(res.sala).emit('resultadoDeCanto', datos)
+            }
+            if (users[0].puntosMentira < users[1].puntosMentira) {
+              users[1].tantos += 30
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+              mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+              datos = {
+                mensaje,
+                sala
+              }
+              io.to(res.sala).emit('resultadoDeCanto', datos)
+            }
+            if (users[0].puntosMentira == users[1].puntosMentira) {
+              if (users[1].mano == true) {
+                users[1].tantos += 30;
+                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
+              } else {
+                users[0].tantos += 30;
+                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
+              }
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+              datos = {
+                mensaje,
+                res
+              }
+              io.to(res.sala).emit('resultadoDeCanto', datos)
+            }
+            break;
+
+          case 'no quiero':
+            var me;
+            users.forEach(us => {
+              if (us.name === res.jugador.name) {
+                us.tantos += 4
+              } else {
+                me = `${us.name} no quiere`
+              }
+            })
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            datos = {
+              mensaje: me,
+              sala
+            }
+            io.to(res.sala).emit('resultadoDeCanto', datos)
+            break;
+
+
+        }
+
     }
   }////////////////////////////////////////////////////////////////////
   )
