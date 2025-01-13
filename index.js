@@ -10,7 +10,6 @@ const salaM = require('./modelos/sala');
 const cartaM = require('./modelos/carta')
 const mongoose = require('mongoose');
 const cors = require('cors');
-
 app.use(cors())
 // Conexión a Base de datos
 
@@ -492,10 +491,44 @@ io.on('connection', (socket) => {
             break;
         }
         break;
+      case 'flor':
+        mensaje = `${res.jugador.name} dice: ${res.respuesta}`
+        datos = { mensaje, jugador: res.jugador, sala }
+
+        await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+        io.to(res.sala).emit('resultadoDeCanto', datos)
+        break;
+      case 'florflor':
+        switch (res.respuesta) {
+          case 'quiero':
+            /*    mensaje = `${res.jugador.name} dice: ${res.respuesta}`
+               datos = { mensaje, jugador: res.jugador, sala }
+   
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+              io.to(res.sala).emit('resultadoDeCanto', datos) */
+            break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
+          case 'noquiero':
+
+            break;
+
+        }
+
+        break;
+      case 'florMeAchico': break;
+      case 'contraflor': break;
     }
   }////////////////////////////////////////////////////////////////////
   )
 });
+
+
+
+
+
+
+
+
+
 
 const booleanos = async (res) => {
   const sala = await salaM.findOne({ name: res.sala });
@@ -713,28 +746,6 @@ const terminar = (sala) => {
   }
 }
 
-function cuantosPuntos(jugador) {
-  switch (jugador.canto) {
-    case 'noHay':
-      console.log('1')
-      jugador.tantos += 1
-      break;
-    case 'truco':
-      console.log('2')
-      jugador.tantos += 2
-      break;
-    case 'retruco':
-      console.log('3')
-      jugador.tantos += 3
-      break;
-    case 'valeCuatro':
-      console.log('4')
-      jugador.tantos += 4
-      break;
-  }
-
-}
-
 //La función getRandomInt está diseñada para generar un número entero aleatorio entre dos valores, min (incluido) y max (excluido).
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -844,14 +855,13 @@ const tieneEnvido = (val, num) => {
   let palo3 = val[2].name.match(/[a-zA-Z]+/g).join('');
 
   //Se verifica si hay al menos dos cartas con el mismo palo, lo cual es necesario para el envido.
-  if (palo1 === palo2 && palo2 === palo3) {
-    console.log(val)
+  if (palo1 === palo2 && palo2 === palo3) {//si tiene los 3 iguales tiene una flor
     if (parseInt(val[0].name) < 10) { pts += parseInt(val[0].name) }
     if (parseInt(val[1].name) < 10) { pts += parseInt(val[1].name) }
     if (parseInt(val[2].name) < 10) { pts += parseInt(val[2].name) }
 
     return {
-      mensaje: `El jugador ${num} tiene ${pts} puntos`,
+      mensaje: `El jugador ${num} tiene flor de ${pts} puntos`,
       jugadorNum: num,
       puntos: pts,
       flor: true
@@ -899,6 +909,7 @@ const tieneEnvido = (val, num) => {
   //cadena.match(/[a-zA-Z]+/g).join('');
 }
 
+
 //Parámetros de Entrada:
 //carta1: El palo de la primera carta.
 // carta2: El palo de la segunda carta.
@@ -936,3 +947,33 @@ const sumaPts = (carta1, carta2, valor1, valor2, num) => {
     return puntosFinales
   }
 }
+
+
+
+
+
+
+
+
+
+/* function cuantosPuntos(jugador) {
+  switch (jugador.canto) {
+    case 'noHay':
+      console.log('1')
+      jugador.tantos += 1
+      break;
+    case 'truco':
+      console.log('2')
+      jugador.tantos += 2
+      break;
+    case 'retruco':
+      console.log('3')
+      jugador.tantos += 3
+      break;
+    case 'valeCuatro':
+      console.log('4')
+      jugador.tantos += 4
+      break;
+  }
+
+} */
