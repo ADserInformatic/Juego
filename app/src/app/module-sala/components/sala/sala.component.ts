@@ -123,7 +123,6 @@ export class SalaComponent implements OnInit {
         return
       } else {
         console.log('bueeee',)
-        //this.contestarCanto(res.respuesta)
       }
       this.cantoConf = true
       this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
