@@ -6,5 +6,6 @@ export interface Jugador {
     puedeCantar: boolean,
     canto: string,
     creditos: number,
+    puedeFlor: boolean,
     valores: [{name: string, valor: number}]
 }

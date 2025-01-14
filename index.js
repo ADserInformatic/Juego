@@ -491,7 +491,7 @@ io.on('connection', (socket) => {
             break;
         }
         break;
-      case 'flor':
+      case 'flor': //solo canta flor y debo avisarle
         mensaje = `${res.jugador.name} dice: ${res.respuesta}`
         datos = { mensaje, jugador: res.jugador, sala }
 
@@ -501,11 +501,42 @@ io.on('connection', (socket) => {
       case 'florflor':
         switch (res.respuesta) {
           case 'quiero':
-            /*    mensaje = `${res.jugador.name} dice: ${res.respuesta}`
-               datos = { mensaje, jugador: res.jugador, sala }
-   
+            if (users[0].puntosMentira > users[1].puntosMentira) {
+              users[0].tantos += 6
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              io.to(res.sala).emit('resultadoDeCanto', datos) */
+
+              mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+              datos = {
+                mensaje,
+                sala
+              }
+              io.to(res.sala).emit('resultadoDeCanto', datos)
+            }
+            if (users[0].puntosMentira < users[1].puntosMentira) {
+              users[1].tantos += 6
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+              mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+              datos = {
+                mensaje,
+                sala
+              }
+              io.to(res.sala).emit('resultadoDeCanto', datos)
+            }
+            if (users[0].puntosMentira == users[1].puntosMentira) {
+              if (users[1].mano == true) {
+                users[1].tantos += 6;
+                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
+              } else {
+                users[0].tantos += 6;
+                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
+              }
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+              datos = {
+                mensaje,
+                res
+              }
+              io.to(res.sala).emit('resultadoDeCanto', datos)
+            }
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
 
@@ -555,7 +586,7 @@ const booleanos = async (res) => {
       sala.cantosenmano.boolTruco = false;
       break;
     case 'florFlor':
-      sala.cantosenmano.boolflorflor = true;
+      sala.cantosenmano.boolFlorFlor = true;
       sala.cantosenmano.boolTruco = false;
       break;
     case 'florMeachico':
@@ -587,7 +618,7 @@ const booleanos = async (res) => {
       })
       break;
     case 'valeCuatro':
-      sala.cantosenmano.boolvalecuatro = true;
+      sala.cantosenmano.boolValeCuatro = true;
       break;
   }
   res.cantosenmano = sala.cantosenmano;
@@ -804,19 +835,19 @@ const repartir = async (_sala) => {
   let temp2 = tieneEnvido(jugador2.valores, 2);
   jugador1.puntosMentira = temp1.puntos;
   jugador2.puntosMentira = temp2.puntos;
-  jugador1.puedeflor = temp1.flor;
-  jugador2.puedeflor = temp2.flor;
+  jugador1.puedeFlor = temp1.flor;
+  jugador2.puedeFlor = temp2.flor;
   salaOn.cantosenmano.boolEnvido = false;
   salaOn.cantosenmano.boolReEnvido = false;
   salaOn.cantosenmano.boolRealEnvido = false;
   salaOn.cantosenmano.boolFaltaEnvido = false;
   salaOn.cantosenmano.boolFlor = false;
-  salaOn.cantosenmano.boolflorflor = false;
+  salaOn.cantosenmano.boolFlorFlor = false;
   salaOn.cantosenmano.boolFlorMeAchico = false;
   salaOn.cantosenmano.boolContraFlor = false;
   salaOn.cantosenmano.boolTruco = false;
   salaOn.cantosenmano.boolReTruco = false;
-  salaOn.cantosenmano.boolvalecuatro = false;
+  salaOn.cantosenmano.boolValeCuatro = false;
   salaOn.finish = false;
   salaOn.cantosenmano.pardaPrimera = false;
   if (users[0].mano) {
