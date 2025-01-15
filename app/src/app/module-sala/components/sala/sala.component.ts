@@ -47,7 +47,7 @@ export class SalaComponent implements OnInit {
   public truco: boolean = false;
   public reTruco: boolean = false;
   public valeCuatro: boolean = false;
-  private cantoI: string = '';
+  public cantoI: string = '';
   public btnMentiras: boolean = true;
   public invertCards!: boolean;
   public salir: boolean = false;
@@ -95,8 +95,8 @@ export class SalaComponent implements OnInit {
     })
 
     this.socket.on('cantando', (res: any) => {
-      console.log(res)
       this.cantoI = res.canto
+      console.log(this.cantoI)
       
       res.jugador = this.jugadorCont
       this.respuesta = {

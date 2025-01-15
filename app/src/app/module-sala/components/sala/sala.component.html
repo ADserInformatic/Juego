@@ -99,13 +99,15 @@
         <div class="texto">
             <h1>{{cantora | uppercase}}</h1>
         </div>
-        <div class="btns flor" *ngIf="respuesta.canto === 'flor' || respuesta.canto === 'contraFlor' || respuesta.canto === 'florMeachico'">
-            <button (click)="contestarCanto('aceptar')" >Aceptar</button>
-            <button *ngIf="jugador.puedeFlor" (click)="contestarCanto('contraFlor')">Contra flor</button>
-            <button *ngIf="jugador.puedeFlor" (click)="contestarCanto('florMeachico')">Con flor me achico</button>
-            <button *ngIf="jugador.puedeFlor"  (click)="contestarCanto('florFlor')">Flor</button>
+        <div class="btns flor" *ngIf="respuesta.canto === 'flor' || respuesta.canto === 'florFlor' || respuesta.canto === 'contraFlor' || respuesta.canto === 'florMeAchico'">
+            <button *ngIf="flor && contraFlor" (click)="contestarCanto('quiero')">Quiero</button>
+            <button *ngIf="!contraFlor" (click)="contestarCanto('aceptar')" >Aceptar</button>
+            <button *ngIf="jugador.puedeFlor && !contraFlor" (click)="contestarCanto('contraFlor')">Contra flor</button>
+            <button *ngIf="jugador.puedeFlor && !florMeachico && florFlor && !contraFlor" (click)="contestarCanto('florMeAchico')">Con flor me achico</button>
+            <button *ngIf="jugador.puedeFlor && !florFlor && !contraFlor"  (click)="contestarCanto('florFlor')">Flor</button>
+            <button *ngIf="flor && contraFlor" (click)="contestarCanto('noquiero')">No quiero</button>
         </div>
-        <div class="btns" *ngIf="respuesta.canto !== 'flor'&& respuesta.canto !== 'contraFlor' && respuesta.canto !== 'florMeachico'">
+        <div class="btns" *ngIf="cantoI !== 'flor' &&  cantoI !== 'florFlor' && cantoI !==  'contraFlor' && cantoI !==  'florMeAchico'">
             <button (click)="contestarCanto('quiero')" >Quiero</button>
             <select #slected (change)="contestarCanto('envido')" class="envido" *ngIf="btnMentiras && truco && !reTruco">
                 <option value="">El envido va primero</option>
