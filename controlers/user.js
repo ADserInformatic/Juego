@@ -1,6 +1,6 @@
 const user = require('../modelos/user')
 
-const getUser = async (req, res)=>{
+const getUser = async (req, res) => {
     const users = await user.find({})
     try {
         res.json({
@@ -16,10 +16,10 @@ const getUser = async (req, res)=>{
     }
 }
 
-const saveUser = async (req, res)=>{
+const saveUser = async (req, res) => {
     console.log(req.body)
-    const {name, credito, valores} = req.body
-    const save = await user.create({name, credito, valores})
+    const { name, credito, valores } = req.body
+    const save = await user.create({ name, credito, valores })
     try {
         res.json({
             error: false,
@@ -34,4 +34,4 @@ const saveUser = async (req, res)=>{
     }
 }
 
-module.exports = {getUser, saveUser}
+module.exports = { getUser, saveUser }

@@ -43,4 +43,4 @@ const sala = new Schema({
 
 })
 
-module.exports = model('sala', sala)
+module.exports = model('sala', sala)     

@@ -512,7 +512,7 @@ io.on('connection', (socket) => {
         break;
       case 'florflor':
         switch (res.respuesta) {
-          case 'aceptar':
+          case 'quiero':
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 6
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -550,6 +550,23 @@ io.on('connection', (socket) => {
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
+
+          case 'no quiero':
+            users.forEach(element => {
+              if (element.id == res.jugador.id) {
+                console.log("dentro del for flor")
+                element.tantos += 4;
+              }
+            })
+
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            mensaje = `sumados los 4 puntos`
+            datos = {
+              mensaje,
+              sala
+            }
+            io.to(res.sala).emit('resultadoDeCanto', datos)
+            break;
           default:
 
             res.canto = res.respuesta;
@@ -580,14 +597,6 @@ io.on('connection', (socket) => {
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
-          default:
-
-            res.canto = res.respuesta;
-            res = await booleanos(res);
-            // console.log(res)
-            socket.to(res.sala).emit('cantando', res)
-            break;
-
         }
         break;
       case 'contraflor':
