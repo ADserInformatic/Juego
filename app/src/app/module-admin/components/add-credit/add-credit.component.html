@@ -1,24 +1,30 @@
 <div class="form">
-    <form>
+    <form [formGroup]="formGrup">
         <div class="title">
             <h3>Cargar crédito: </h3>
         </div>
         <div class="campos">
             <div class="form-block">
                 <label for="name">Jugador:</label>
-                <app-buscador></app-buscador>
+                <app-buscador (id)="obtenerDato($event)" [elementos]="users"></app-buscador>
             </div>
             <div class="form-block">
                 <label for="credit">Credios: </label>
-                <input type="number" id="credit">
+                <input formControlName="credit" type="number" id="credit">
+                <div class="error">
+                    <i  *ngIf="formGrup.get('credit')?.invalid && formGrup.get('credit')?.touched">Creditos es requerido.</i>
+                </div>
             </div>
             <div class="form-block">
                 <label for="pass">Contraseña: </label>
-                <input type="password" id="pass">
+                <input formControlName="password" type="password" id="pass">
+                <div class="error" >
+                    <i *ngIf="formGrup.get('password')?.invalid && formGrup.get('password')?.errors?.['minlength'] && formGrup.get('password')?.touched">Ingrese una contraseña válida.</i>
+                </div>
             </div>
         </div>
         <div class="form-btn">
-            <button>Cargar</button>
+            <button type="submit"  [disabled]="formGrup.invalid" (click)="addC()">Cargar</button>
         </div>
     </form>
 </div>

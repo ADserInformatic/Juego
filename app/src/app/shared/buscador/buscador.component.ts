@@ -23,7 +23,7 @@ export class BuscadorComponent implements OnInit {
     })
 
     this.form.valueChanges.subscribe(res=>{
-      this.nuevoArray = this.elementos.filter(e => e.userLogin.toUpperCase().includes(res.texto.toUpperCase()))
+      this.nuevoArray = this.elementos.filter(e => e.name.toUpperCase().includes(res.texto.toUpperCase()))
       if(res === ''){
         this.nuevoArray = []
       }
@@ -33,7 +33,7 @@ export class BuscadorComponent implements OnInit {
 
   verId(e:any){
     this.id.emit(e)
-    this.input.nativeElement.value = e.userLogin
+    this.input.nativeElement.value = e.name
     this.nuevoArray = []
   }
     

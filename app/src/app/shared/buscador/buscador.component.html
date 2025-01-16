@@ -6,6 +6,6 @@
       </span>
     </div>
       <ul *ngIf="nuevoArray.length > 0">
-        <li *ngFor="let elemento of nuevoArray" (click)="verId(elemento)">{{ elemento.userLogin }}</li>
+        <li *ngFor="let elemento of nuevoArray" (click)="verId(elemento)">{{ elemento.name }}</li>
       </ul>
   </div>

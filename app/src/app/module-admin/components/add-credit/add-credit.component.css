@@ -50,3 +50,7 @@
 .form-btn button:hover{
     background: var(--bordeBajo);
 }
+
+button:disabled {
+    background: #f8f2f273;
+}

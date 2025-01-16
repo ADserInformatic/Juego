@@ -50,3 +50,11 @@
 .form-btn button:hover{
     background: var(--bordeBajo);
 }
+
+.error{
+    height: 15px;
+}
+.error i{
+    font-size: 10px;
+    color: var(--bordeBajo);
+}
