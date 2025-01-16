@@ -29,3 +29,24 @@ Mando
 Devolver token
 Solo hay un admin
 +++++Colocar ruta aqui: login
+
+
+
+
+
+
+
+/////Código para probar cantora
+ jugador1.valores[0].name = '10c'
+  jugador1.valores[0].valor = 5
+  jugador1.valores[1].name = '2c'
+  jugador1.valores[1].valor = 9
+  jugador1.valores[2].name = '3c'
+  jugador1.valores[2].valor = 10
+
+  jugador2.valores[0].name = '10b'
+  jugador2.valores[0].valor = 5
+  jugador2.valores[1].name = '2b'
+  jugador2.valores[1].valor = 9
+  jugador2.valores[2].name = '3b'
+  jugador2.valores[2].valor = 10

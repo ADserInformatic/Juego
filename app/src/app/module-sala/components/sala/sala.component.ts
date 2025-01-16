@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, map, Observable, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { io } from 'socket.io-client';
 import { Jugada } from 'src/app/interfaces/jugada';
 import { Jugador } from 'src/app/interfaces/jugador';
@@ -21,6 +21,7 @@ export class SalaComponent implements OnInit {
     puedeCantar: true,
     canto: '',
     tantos: 0,
+    puedeFlor: false,
     creditos: 0,
     valores: [{ name: '', valor: 0 }]
   };
@@ -46,7 +47,7 @@ export class SalaComponent implements OnInit {
   public truco: boolean = false;
   public reTruco: boolean = false;
   public valeCuatro: boolean = false;
-  private cantoI: string = '';
+  public cantoI: string = '';
   public btnMentiras: boolean = true;
   public invertCards!: boolean;
   public salir: boolean = false;
@@ -94,8 +95,8 @@ export class SalaComponent implements OnInit {
     })
 
     this.socket.on('cantando', (res: any) => {
-      console.log(res)
       this.cantoI = res.canto
+      console.log(this.cantoI)
       
       res.jugador = this.jugadorCont
       this.respuesta = {
@@ -123,7 +124,6 @@ export class SalaComponent implements OnInit {
         return
       } else {
         console.log('bueeee',)
-        //this.contestarCanto(res.respuesta)
       }
       this.cantoConf = true
       this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
@@ -180,7 +180,6 @@ export class SalaComponent implements OnInit {
     if(this.truco && this.reTruco){
       this.cantoActual = "valeCuatro"
     }
-    this.verCartas.next(this.jugador.valores)
     this.invertCards = this.jugador.name == this.sala.usuarios[0].name
     //reveer --------------------------
     this.tantos1 = []
@@ -206,6 +205,7 @@ export class SalaComponent implements OnInit {
     this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
     this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
     
+    this.verCartas.next(this.jugador.valores)
     this.verGuard.observarGuard.next(res.partidaFinalizada)
     
   }

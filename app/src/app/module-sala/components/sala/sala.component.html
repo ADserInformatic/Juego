@@ -56,7 +56,8 @@
         <h2>Tantos: {{jugador.tantos}}</h2>
 
         <div [ngClass]="{'invertir': invertCards}">
-            <div *ngFor="let item of sala?.usuarios" class="jugador">
+           
+           <div *ngFor="let item of sala?.usuarios" class="jugador">
                 
                 <div class="jugadas">
                     <div class="juego">
@@ -81,8 +82,9 @@
             <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
             <button [disabled]="!btnMentiras || truco" [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
             <button *ngIf="!truco" [disabled]="!jugador.puedeCantar" (click)="canto('truco')">Truco</button>
-            <button *ngIf="truco" [disabled]="!jugador.puedeCantar" (click)="contestarCanto(cantoActual, false)">{{cantoActual}}</button>
-            <button [disabled]="truco || !btnMentiras" (click)="canto('flor')">Flor</button>
+            <button *ngIf="truco" [disabled]="!jugador.puedeCantar || valeCuatro" (click)="contestarCanto(cantoActual, false)">{{cantoActual}}</button>
+            <button [disabled]="truco || !btnMentiras || 
+            !jugador.puedeFlor || flor" (click)="canto('flor')">Flor</button>
         </div>
     </div>
 </div>
@@ -97,13 +99,15 @@
         <div class="texto">
             <h1>{{cantora | uppercase}}</h1>
         </div>
-        <div class="btns flor" *ngIf="respuesta.canto === 'flor' || respuesta.canto === 'contraFlor' || respuesta.canto === 'florMeachico'">
-            <button (click)="contestarCanto('aceptar')" >Aceptar</button>
-            <button (click)="contestarCanto('contraFlor')">Contra flor</button>
-            <button (click)="contestarCanto('florMeachico')">Con flor me achico</button>
-            <button  (click)="contestarCanto('flor')">Flor</button>
+        <div class="btns flor" *ngIf="respuesta.canto === 'flor' || respuesta.canto === 'florFlor' || respuesta.canto === 'contraFlor' || respuesta.canto === 'florMeAchico'">
+            <button *ngIf="flor && contraFlor" (click)="contestarCanto('quiero')">Quiero</button>
+            <button *ngIf="!contraFlor" (click)="contestarCanto('aceptar')" >Aceptar</button>
+            <button *ngIf="jugador.puedeFlor && !contraFlor" (click)="contestarCanto('contraFlor')">Contra flor</button>
+            <button *ngIf="jugador.puedeFlor && !florMeachico && florFlor && !contraFlor" (click)="contestarCanto('florMeAchico')">Con flor me achico</button>
+            <button *ngIf="jugador.puedeFlor && !florFlor && !contraFlor"  (click)="contestarCanto('florFlor')">Flor</button>
+            <button *ngIf="flor && contraFlor" (click)="contestarCanto('noquiero')">No quiero</button>
         </div>
-        <div class="btns" *ngIf="respuesta.canto !== 'flor'&& respuesta.canto !== 'contraFlor' && respuesta.canto !== 'florMeachico'">
+        <div class="btns" *ngIf="cantoI !== 'flor' &&  cantoI !== 'florFlor' && cantoI !==  'contraFlor' && cantoI !==  'florMeAchico'">
             <button (click)="contestarCanto('quiero')" >Quiero</button>
             <select #slected (change)="contestarCanto('envido')" class="envido" *ngIf="btnMentiras && truco && !reTruco">
                 <option value="">El envido va primero</option>

@@ -116,7 +116,6 @@ io.on('connection', (socket) => {
 
   //Esto está recibiendo tanto envido como truco y flor. ¡Tener eso en cuenta!
   socket.on('respuestaCanto', async (res) => {
-    console.log(res)
     const sala = await salaM.findOne({ name: res.sala })
     const users = sala.usuarios
     let datos;
@@ -497,18 +496,10 @@ io.on('connection', (socket) => {
 
             users.forEach(element => {
               if (element.id == res.jugador.id) {
-                console.log("dentro del for")
+
                 element.tantos += 3;
               }
             })
-
-            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            mensaje = `sumados los 3 puntos`
-            datos = {
-              mensaje,
-              sala
-            }
-            io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
             res.canto = res.respuesta;
@@ -613,7 +604,8 @@ io.on('connection', (socket) => {
           case 'quiero':
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 30
-              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users, finish: true } })
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+
               mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
               datos = {
                 mensaje,
@@ -623,7 +615,7 @@ io.on('connection', (socket) => {
             }
             if (users[0].puntosMentira < users[1].puntosMentira) {
               users[1].tantos += 30
-              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users, finish: true } })
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
               mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
               datos = {
                 mensaje,
@@ -639,7 +631,7 @@ io.on('connection', (socket) => {
                 users[0].tantos += 30;
                 mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
               }
-              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users, finish: true } })
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
               datos = {
                 mensaje,
                 res
