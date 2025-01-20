@@ -70,16 +70,20 @@ nav .solicitar a{
 .form-block input{
     background-color: transparent;
     margin-top: 5px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     border: none;
     outline: none;
     padding: 3px;
     border-radius: 3px;
     border-bottom: solid 1px var(--bordeBajo);
+    color: #dddcdc;
 }
 .form-block input:focus-visible{
-    background: #fff;
+    background: #ffffff34;
     border: solid 1px var(--bordeBajo);
+  }
+  .form-block label{
+    margin-top: 10px;
   }
 .form-block button, .salaItem{
     width: 100%;
@@ -94,6 +98,7 @@ nav .solicitar a{
 .form-block button.crear, .form-user button{
     background-color: #000;
     border-radius: 3px;
+    margin-top: 10px;
     color: #fff;
     border: none;
     outline: none;
@@ -120,6 +125,24 @@ nav .solicitar a{
 }
 .ocultar{
     display: none;
+}
+button:hover{
+    background: var(--bordeBajo);
+}
+
+.error{
+    height: 15px;
+}
+.error i{
+    font-size: 10px;
+    color: var(--bordeBajo);
+}
+
+button:disabled{
+    filter: brightness(0.4);
+}
+button:disabled:hover{
+    background: #000;
 }
 
 @media screen and (max-width: 980px) {

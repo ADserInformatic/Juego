@@ -23,9 +23,15 @@
             <div [formGroup]="formUser" class="form-block">
                 <label for="name">Nombre</label>
                 <input formControlName="name" type="text" id="name">
-                <label for="credito">Créditos</label>
-                <input formControlName="credito" type="text" id="credito">
-                <button (click)="userSend()">Ingresar</button>
+                <div class="error">
+                    <i *ngIf="formUser.get('name')?.invalid && formUser.get('name')?.touched">Nombre es requerido.</i>
+                </div>
+                <label for="pass">Contraseña</label>
+                <input formControlName="password" type="password" id="pass">
+                <div class="error" >
+                    <i *ngIf="formUser.get('password')?.invalid && formUser.get('password')?.errors?.['minlength'] && formUser.get('password')?.touched">Ingrese una contraseña válida.</i>
+                </div>
+                <button [disabled]="formUser.invalid" (click)="userSend()">Ingresar</button>
             </div>
         </div>
         
@@ -34,9 +40,15 @@
             <div class="form-block" [formGroup]="formSala">
                 <label for="sala">Nombre de la sala</label>
                 <input formControlName="name" type="text" id="name">
+                <div class="error">
+                    <i *ngIf="formSala.get('name')?.invalid && formSala.get('name')?.touched">Nombre es requerido.</i>
+                </div>
                 <label for="apuesta">Apuesta:</label>
                 <input formControlName="apuesta" type="number">
-                <button class="crear" (click)="createSala()">Crear</button>
+                <div class="error">
+                    <i  *ngIf="formSala.get('credit')?.invalid && formSala.get('credit')?.touched">Creditos es requerido.</i>
+                </div>
+                <button [disabled]="formSala.invalid" class="crear" (click)="createSala()">Crear</button>
             </div>
             <div class="form-block">
                 <h2 for="sala">Ingresar a una sala:</h2>

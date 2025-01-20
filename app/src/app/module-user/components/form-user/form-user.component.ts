@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { ConsultasService } from 'src/app/services/consultas.service';
@@ -24,13 +24,13 @@ export class FormUserComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.cookie.get('jugador')
     this.formUser = this.fb.group({
-      name: '',
-      credito: ''
+      name: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(3)]]
     })
 
     this.formSala = this.fb.group({
-      name: '',
-      apuesta: ''
+      name: ['', [Validators.required]],
+      apuesta: [0, [Validators.required, Validators.minLength(2)]]
     })
     
     this.traeSalas()
@@ -43,6 +43,8 @@ export class FormUserComponent implements OnInit {
   }
   
   userSend(){
+    alert('Ruta no creada')
+    return
     this.servCons.saveUser(this.formUser.value).subscribe(res=>{
       if(res.mensaje){
         alert(res.mensaje)

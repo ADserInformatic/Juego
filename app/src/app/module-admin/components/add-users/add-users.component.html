@@ -15,7 +15,7 @@
                 <label for="credit">Credios: </label>
                 <input type="number" id="credit" formControlName="credit">
                 <div class="error">
-                    <i  *ngIf="formGrup.get('credit')?.invalid && formGrup.get('credit')?.touched">Creditos es requerido.</i>
+                    <i  *ngIf="formGrup.get('credit')?.errors?.['minlength'] && formGrup.get('credit')?.touched">Creditos es requerido.</i>
                 </div>
             </div>
             <div class="form-block">

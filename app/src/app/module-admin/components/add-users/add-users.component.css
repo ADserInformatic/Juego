@@ -58,3 +58,10 @@
     font-size: 10px;
     color: var(--bordeBajo);
 }
+
+.form-btn button:disabled{
+    filter: brightness(0.4);
+}
+.form-btn button:disabled:hover{
+    background: #000;
+}

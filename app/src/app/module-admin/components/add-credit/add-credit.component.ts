@@ -19,7 +19,7 @@ export class AddCreditComponent implements OnInit {
   ngOnInit(): void {
     this.formGrup = this.fb.group({
       name: '',
-      credit: [Number, Validators.required],
+      credit: [0 ,  [Validators.required, Validators.minLength(2)]],
       _id: '',
       password: ['', [Validators.required, Validators.minLength(3)]]
     })

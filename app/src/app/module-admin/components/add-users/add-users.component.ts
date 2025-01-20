@@ -18,7 +18,7 @@ export class AddUsersComponent implements OnInit {
   ngOnInit(): void {
     this.formGrup = this.fb.group({
       name: ['', Validators.required],
-      credit: [Number , Validators.required],
+      credit: [0, [Validators.required, Validators.minLength(2)]],
       password: ['', [Validators.required, Validators.minLength(3)]]
     })
   }
