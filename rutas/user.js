@@ -5,9 +5,8 @@ const SECRET_KEY = 'ADserTruco';
 const express = require('express');
 const controlersUsers = require('../controlers/user')
 
-router.get('', controlersUsers.getUser)
+router.get('/getUser/:id', controlersUsers.getUser)
 router.get('/getUsers', controlersUsers.getUsers)
-router.post('', controlersUsers.saveUser)
 router.post('/addUser', controlersUsers.addUser);
 router.put('/addCredit/:id', authenticateToken, controlersUsers.addCredit)
 

@@ -9,22 +9,6 @@ res.json({ token }); */
 
 
 
-const getUser = async (req, res) => {
-    const users = await user.find({})
-    try {
-        res.json({
-            error: false,
-            data: users,
-            mensaje: 'La solicitud ha sido resuelta exitosamente'
-        })
-    } catch (e) {
-        res.json({
-            error: true,
-            mensaje: `El servidor devuelve el siguiente error ${e}`
-        })
-    }
-}
-
 const getUsers = async (req, res) => {
     const users = await user.find({})
     try {
@@ -40,15 +24,13 @@ const getUsers = async (req, res) => {
         })
     }
 }
-const saveUser = async (req, res) => {
-    console.log(req.body)
-    const { name, credito } = req.body
-
-    const save = await user.create({ name, credito })
+const getUser = async (req, res) => {
+    let id = req.params.id
+    const userX = await user.findOne({ _id: id })
     try {
         res.json({
             error: false,
-            data: save,
+            data: userX,
             mensaje: 'La solicitud ha sido resuelta exitosamente'
         })
     } catch (e) {
@@ -58,6 +40,8 @@ const saveUser = async (req, res) => {
         })
     }
 }
+
+
 const addUser = async (req, res) => {
     const { name, credito, passAdmin } = req.body
 
@@ -65,7 +49,7 @@ const addUser = async (req, res) => {
 
     let CreditBefore = 0;
     let CreditAfter = credito;
-    let passUser = encript('123456Aa');
+    let passUser = encript('123456Aa');//hasheo la contraseña
     letloadHistory = [
         {
             carga: credito,
@@ -74,6 +58,14 @@ const addUser = async (req, res) => {
             date: new Date()
         }
     ]
+    const yaExiste = await user.findOne({ name: name });
+    if (yaExiste) {
+        res.json({
+            error: true,
+            data: "",
+            mensaje: 'NOMBRE DE USUARIO YA EXISTENTE'
+        })
+    }
     const save = await user.create({ name, credito, passUser, loadHistory })
     try {
         await save.save();
@@ -123,6 +115,51 @@ const addCredit = async (req, res) => { //ver donde tengo el id
 
 }
 
+const login = async (req, res) => {
+    let { userX, passInput } = req.body;
+    const usuario = usuarios.findOne({ usuario: userX });
+
+    if (!usuario) {
+        res.json({
+            error: true,
+            data: "",
+            mensaje: 'NOMBRE DE USUARIO NO ENCONTRADO'
+        })
+    }
+
+    bcrypt.compare(passInput, usuario.password, (err, result) => {
+        if (err) {
+            res.json({
+                error: true,
+                data: "",
+                mensaje: 'Error al comparar contraseñas'
+            })
+        }
+
+        if (result) {
+            res.json({
+                error: false,
+                data: "",
+                mensaje: 'Inicio de sesión exitoso'
+            })
+        } else {
+            res.json({
+                error: true,
+                data: "",
+                mensaje: 'Error al comparar contraseñas'
+            })
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
 function encript(passToEncript) {
     let passToEncripted = bcrypt.hash(passToEncript, 10, (err, hash) => {
         if (err) {
@@ -132,6 +169,7 @@ function encript(passToEncript) {
     })
     return passToEncripted
 }
+
 function decript() { }
 
 
