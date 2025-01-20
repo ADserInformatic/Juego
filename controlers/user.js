@@ -1,4 +1,12 @@
 const user = require('../modelos/user')
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = 'ADserTruco';
+/* // Generar el token
+const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+res.json({ token }); */
+
+
+
 
 const getUser = async (req, res) => {
     const users = await user.find({})
@@ -16,6 +24,21 @@ const getUser = async (req, res) => {
     }
 }
 
+const getUsers = async (req, res) => {
+    const users = await user.find({})
+    try {
+        res.json({
+            error: false,
+            data: users,
+            mensaje: 'La solicitud ha sido resuelta exitosamente'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+}
 const saveUser = async (req, res) => {
     console.log(req.body)
     const { name, credito, valores } = req.body
@@ -102,4 +125,5 @@ const addCredit = async (req, res) => { //ver donde tengo el id
 
 
 
-module.exports = { getUser, saveUser, addUser, addCredit }
+
+module.exports = router
