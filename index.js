@@ -1095,29 +1095,3 @@ const sumaPts = (carta1, carta2, valor1, valor2, num) => {
 
 
 
-
-
-
-
-
-/* function cuantosPuntos(jugador) {
-  switch (jugador.canto) {
-    case 'noHay':
-      console.log('1')
-      jugador.tantos += 1
-      break;
-    case 'truco':
-      console.log('2')
-      jugador.tantos += 2
-      break;
-    case 'retruco':
-      console.log('3')
-      jugador.tantos += 3
-      break;
-    case 'valeCuatro':
-      console.log('4')
-      jugador.tantos += 4
-      break;
-  }
-
-} */

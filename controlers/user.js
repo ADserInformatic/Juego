@@ -33,5 +33,73 @@ const saveUser = async (req, res) => {
         })
     }
 }
+const addUser = async (req, res) => {
+    const { name, credito, passAdmin } = req.body
 
-module.exports = { getUser, saveUser }
+    //CORROBORAR PASS DEL ADMINISTRADOR
+
+    let CreditBefore = 0;
+    let CreditAfter = credito;
+    let passUser = "123456Aa";
+    letloadHistory = [
+        {
+            Carga: credito,
+            CreditBefore: CreditBefore,
+            CreditAfter: CreditAfter,
+            Date: new Date()
+        }
+    ]
+    const save = await user.create({ name, credito, passUser, loadHistory })
+    try {
+        await save.save();
+        res.json({
+            error: false,
+            data: save,
+            mensaje: 'Usuario CREADO EXITOSAMENTE'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+
+}
+
+const addCredit = async (req, res) => { //ver donde tengo el id
+    let idUser = req.params.id;
+    let usuario = await user();
+    const { name, credito, passAdmin } = req.body
+
+    //CORROBORAR PASS DEL ADMINISTRADOR
+
+    letloadHistory = [
+        {
+            Carga: credito,
+            CreditBefore: 0,
+            CreditAfter: CreditBefore + Carga,
+            Date: new Date()
+        }
+    ]
+    const save = await user.create({ name, credito, passUser, loadHistory })
+    try {
+        await save.save();
+        res.json({
+            error: false,
+            data: save,
+            mensaje: 'Usuario CREADO EXITOSAMENTE'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+
+}
+
+
+
+
+
+module.exports = { getUser, saveUser, addUser, addCredit }
