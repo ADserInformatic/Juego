@@ -15,13 +15,13 @@
             <div class="users">
                 <div class="up">
                     <h3>USUARIOS:</h3>
-                    <app-buscador></app-buscador>
+                    <app-buscador [elementos]="usuarios"></app-buscador>
                 </div>
                 <div class="usersAndCredit">
                     <li *ngFor="let item of usuarios">
                         <h3>{{item.name}}</h3>
-                        <i>{{item.credit | currency}}</i>
-                        <button>
+                        <i>{{item.credito | currency}}</i>
+                        <button (click)="deleteUs(item)">
                             <span class="material-symbols-outlined">
                                 delete
                             </span>
@@ -31,7 +31,7 @@
             <div class="adduser">
                 <app-add-users></app-add-users>
                 <br>
-                <app-add-credit></app-add-credit>
+                <app-add-credit [usuarios]="usuarios"></app-add-credit>
             </div>
         </div>
         <div class="balances">

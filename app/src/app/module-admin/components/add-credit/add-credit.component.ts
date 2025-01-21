@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiAdminService } from '../../services/api-admin.service';
 
@@ -9,7 +9,7 @@ import { ApiAdminService } from '../../services/api-admin.service';
 })
 export class AddCreditComponent implements OnInit {
   formGrup!: FormGroup;
-  public users: Array<any> = [{_id: 'kjkjuhkjhkj', name: 'Juan', credit: 300}, {_id: 'kjkjuh6666kj', name: 'John', credit: 7000}]
+  @Input() usuarios: Array<any> = []
 
   constructor(
     private fb: FormBuilder,

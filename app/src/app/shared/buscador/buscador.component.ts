@@ -18,6 +18,7 @@ export class BuscadorComponent implements OnInit {
   constructor(private fb: FormBuilder){}
   
   ngOnInit(): void {
+    console.log(this.elementos)
     this.form = this.fb.group({
       texto: ''
     })

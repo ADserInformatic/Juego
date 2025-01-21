@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiAdminService } from '../../services/api-admin.service';
 
 @Component({
   selector: 'app-home-admin',
@@ -7,15 +8,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeAdminComponent implements OnInit {
 
-  public usuarios: Array<any> = [
-    {name: 'Juan', credit: '1200'},
-    {name: 'Pablo', credit: '11000'},
-    {name: 'Segundo', credit: '12000'}
-  ]
+  public usuarios: Array<any> = []
 
-  constructor() { }
+  constructor( private apiServ: ApiAdminService) { }
 
   ngOnInit(): void {
+    this.apiServ.getUsers().subscribe(res=>{
+      console.log(res.data)
+      this.usuarios = res.data
+    })
   }
 
+  deleteUs(item: any){
+    if (confirm(`Seguro que desea eliminar el siguiente usuario: ${item.name}`)) {
+      this.apiServ.deleteUser(item._id).subscribe(res=>{
+        alert(res)
+      })
+    }
+  }
 }

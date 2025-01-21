@@ -48,7 +48,11 @@
 .main .users{
     width: 30%;
     height: 100%;
+    max-height: 80vh;
+    overflow: auto;
+    overflow-x: hidden;
     padding: 20px 10px;
+    padding-top: 0px;
     border: 1px solid var(--border);
     /* background: var(--colorSec); */
 }
@@ -57,6 +61,9 @@
     justify-content: space-between;
     padding: 10px;
     flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: var(--back);
 }
 .usersAndCredit li{
     width: 100%;
@@ -93,6 +100,29 @@
 }
 .balances div h3{
     margin-right: 10px;
+}
+/* Para navegadores WebKit */
+::-webkit-scrollbar {
+    width: 2px; /* Ancho de la barra de desplazamiento */
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color del fondo de la barra de desplazamiento */
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bordeBajo); /* Color del "pulgar" de la barra de desplazamiento */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color del "pulgar" al pasar el ratón */
+}
+
+/* Para Firefox */
+.scrollable-element {
+    scrollbar-width: thin; /* Hacer la barra de desplazamiento más delgada */
+    scrollbar-color: #888 #f1f1f1; /* Color del "pulgar" y del fondo */
 }
 
 @media screen and (max-width: 800px) {
