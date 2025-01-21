@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
+const bodyParser = require('body-parser');
 const user = require('./rutas/user');
 const sala = require('./rutas/sala');
 const carta = require('./rutas/cartas')
@@ -21,6 +22,7 @@ mongoose.connect(process.env.uri, {
   .catch(e => console.log('error db:', e))
 
 app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.raw());
 

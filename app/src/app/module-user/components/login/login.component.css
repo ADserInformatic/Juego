@@ -31,7 +31,19 @@ nav .logo{
     width: 100%;
     border-radius: 30%;
 }
-
+nav .solicitar a{
+    text-decoration: none;
+    color: #000;
+    background: #fff;
+    border: none;
+    outline: none;
+    border-radius: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+}
 .forms{
     display: flex;
     margin: auto;
@@ -39,7 +51,7 @@ nav .logo{
     align-items: center;
     margin-top: 10%;
 }
-.salas{
+.form-user{
     width: 35%;
     margin: 20px auto;
     padding: 20px;
@@ -73,7 +85,7 @@ nav .logo{
   .form-block label{
     margin-top: 10px;
   }
-.form-block button, .salaItem{
+.form-block button{
     width: 100%;
     color: #fff;
     background: rgb(151, 92, 3);
@@ -83,7 +95,7 @@ nav .logo{
     cursor: pointer;
     transition: all .5s ease-in-out;
 }
-.form-block button.crear, .form-user button{
+.form-user button{
     background-color: #000;
     border-radius: 3px;
     margin-top: 10px;
@@ -95,23 +107,9 @@ nav .logo{
     border: solid 1px #fff;
     padding: 10px 0px;
 }
-.salaItem button{
-    width: auto;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    font-weight: bold;
-}
-.salaItem{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    border: solid .7px #fff;
-}
-.form-block button.crear:hover, .form-user button:hover{
+.form-user button:hover{
     background: var(--bordeBajo);
 }
-
 button:hover{
     background: var(--bordeBajo);
 }
@@ -132,7 +130,7 @@ button:disabled:hover{
 }
 
 @media screen and (max-width: 980px) {
-     .salas{
+    .form-user{
         width: 50%;
     }
 }
@@ -140,15 +138,18 @@ button:disabled:hover{
     .forms{
         margin-top: 20%;
     }
-    .salas{
+    .form-user{
         width: 80%;
+    }
+    .solicitar a p{
+        display: none;
     }
 }
 @media screen and (max-width: 320px) {
     .titulo{
         display: none;
     }
-    .salas{
+    .form-user{
         width: 90%;
     }
 }

@@ -1,6 +1,15 @@
 const user = require('../modelos/user')
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const SECRET_KEY = 'ADserTruco';
+/* // Generar el token
+const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+res.json({ token }); */
+// Encabezado: Authorization: Bearer &lt;tu_token_jwt>
 
-const getUser = async (req, res) => {
+
+
+const getUsers = async (req, res) => {
     const users = await user.find({})
     try {
         res.json({
@@ -15,15 +24,13 @@ const getUser = async (req, res) => {
         })
     }
 }
-
-const saveUser = async (req, res) => {
-    console.log(req.body)
-    const { name, credito, valores } = req.body
-    const save = await user.create({ name, credito, valores })
+const getUser = async (req, res) => {
+    let id = req.params.id
+    const userX = await user.findOne({ _id: id })
     try {
         res.json({
             error: false,
-            data: save,
+            data: userX,
             mensaje: 'La solicitud ha sido resuelta exitosamente'
         })
     } catch (e) {
@@ -33,6 +40,8 @@ const saveUser = async (req, res) => {
         })
     }
 }
+
+
 const addUser = async (req, res) => {
     const { name, credito, passAdmin } = req.body
 
@@ -40,15 +49,23 @@ const addUser = async (req, res) => {
 
     let CreditBefore = 0;
     let CreditAfter = credito;
-    let passUser = "123456Aa";
+    let passUser = encript('123456Aa');//hasheo la contraseña
     letloadHistory = [
         {
-            Carga: credito,
-            CreditBefore: CreditBefore,
-            CreditAfter: CreditAfter,
-            Date: new Date()
+            carga: credito,
+            creditBefore: CreditBefore,
+            creditAfter: CreditAfter,
+            date: new Date()
         }
     ]
+    const yaExiste = await user.findOne({ name: name });
+    if (yaExiste) {
+        res.json({
+            error: true,
+            data: "",
+            mensaje: 'NOMBRE DE USUARIO YA EXISTENTE'
+        })
+    }
     const save = await user.create({ name, credito, passUser, loadHistory })
     try {
         await save.save();
@@ -68,26 +85,26 @@ const addUser = async (req, res) => {
 
 const addCredit = async (req, res) => { //ver donde tengo el id
     let idUser = req.params.id;
-    let usuario = await user();
-    const { name, credito, passAdmin } = req.body
+    let usuario = await user.findOne({ _id: idUser });
+    const { credit } = req.body
 
     //CORROBORAR PASS DEL ADMINISTRADOR
-
-    letloadHistory = [
+    let currentCredit = usuario.credito + credit;
+    let currentLoadHistory = [
         {
-            Carga: credito,
-            CreditBefore: 0,
-            CreditAfter: CreditBefore + Carga,
-            Date: new Date()
+            carga: credit,
+            creditBefore: usuario.credito,
+            creditAfter: usuario.credito + credit,
+            date: new Date()
         }
     ]
-    const save = await user.create({ name, credito, passUser, loadHistory })
+    const save = await user.findByIdAndUpdate({ _id: idUser }, { $set: { credito: currentCredit, loadHistory: currentLoadHistory } })
     try {
         await save.save();
         res.json({
             error: false,
             data: save,
-            mensaje: 'Usuario CREADO EXITOSAMENTE'
+            mensaje: 'CREDITO CARGADO EXITOSAMENTE'
         })
     } catch (e) {
         res.json({
@@ -98,8 +115,63 @@ const addCredit = async (req, res) => { //ver donde tengo el id
 
 }
 
+const login = async (req, res) => {
+    let { userX, passInput } = req.body;
+    const usuario = usuarios.findOne({ usuario: userX });
+
+    if (!usuario) {
+        res.json({
+            error: true,
+            data: "",
+            mensaje: 'NOMBRE DE USUARIO NO ENCONTRADO'
+        })
+    }
+
+    bcrypt.compare(passInput, usuario.password, (err, result) => {
+        if (err) {
+            res.json({
+                error: true,
+                data: "",
+                mensaje: 'Error al comparar contraseñas'
+            })
+        }
+
+        if (result) {
+            res.json({
+                error: false,
+                data: "",
+                mensaje: 'Inicio de sesión exitoso'
+            })
+        } else {
+            res.json({
+                error: true,
+                data: "",
+                mensaje: 'Error al comparar contraseñas'
+            })
+        }
+    });
+}
 
 
 
 
-module.exports = { getUser, saveUser, addUser, addCredit }
+
+
+
+
+
+function encript(passToEncript) {
+    let passToEncripted = bcrypt.hash(passToEncript, 10, (err, hash) => {
+        if (err) {
+            console.error('Error al hashear la contraseña:', err);
+            return;
+        }
+    })
+    return passToEncripted
+}
+
+function decript() { }
+
+
+
+module.exports = router

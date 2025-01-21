@@ -1,0 +1,40 @@
+<div class="body" >
+    <nav>
+        <div class="titulo">
+            <h4>ADser Truco</h4>
+        </div>
+        <div class="logo">
+            <img src="assets/Logotruco.png" alt="">
+        </div>
+        <div class="solicitar">
+            <!-- <button (click)="solicitar()">Solicitar usuario</button> -->
+            <a title="Solicitar registro"
+            href="https://wa.me/123456789?text=Hola,%20quisiera%20registrarme%20en%20ADser%20Truco!"
+            target="_blank"><p>Solicitar registro</p>
+            <span class="material-symbols-outlined">
+                speaker_notes
+            </span>
+    </a>
+        </div>
+    </nav>
+    <div class="forms">
+        <div class="form-user">
+            <h1>Login</h1>
+            <div [formGroup]="formUser" class="form-block">
+                <label for="name">Nombre</label>
+                <input formControlName="name" type="text" id="name">
+                <div class="error">
+                    <i *ngIf="formUser.get('name')?.invalid && formUser.get('name')?.touched">Nombre es requerido.</i>
+                </div>
+                <label for="pass">Contraseña</label>
+                <input formControlName="password" type="password" id="pass">
+                <div class="error" >
+                    <i *ngIf="formUser.get('password')?.invalid && formUser.get('password')?.errors?.['minlength'] && formUser.get('password')?.touched">Ingrese una contraseña válida.</i>
+                </div>
+                <button [disabled]="formUser.invalid" (click)="userSend()">Ingresar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

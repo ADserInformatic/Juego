@@ -10,7 +10,6 @@ import { ConsultasService } from 'src/app/services/consultas.service';
   styleUrls: ['./form-user.component.css']
 })
 export class FormUserComponent implements OnInit {
-  public formUser!: FormGroup;
   public formSala!: FormGroup;
   public salas: Array<any>= [];
   public user!: string;
@@ -23,10 +22,6 @@ export class FormUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.cookie.get('jugador')
-    this.formUser = this.fb.group({
-      name: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(3)]]
-    })
 
     this.formSala = this.fb.group({
       name: ['', [Validators.required]],
@@ -40,22 +35,6 @@ export class FormUserComponent implements OnInit {
     this.servCons.getSalas().subscribe(res=>{
       this.salas = res.data
     })
-  }
-  
-  userSend(){
-    alert('Ruta no creada')
-    return
-    this.servCons.saveUser(this.formUser.value).subscribe(res=>{
-      if(res.mensaje){
-        alert(res.mensaje)
-      }
-      this.user = res.data.name
-      this.cookie.set('jugador', res.data._id)
-      this.servCons.getSalas().subscribe(res=>{
-        this.salas = res.data
-      })
-    })
-    
   }
 
   createSala(){
