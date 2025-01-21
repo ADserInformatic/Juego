@@ -1,19 +1,15 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanDeactivate, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { ServicGuardService } from '../services/servic-guard.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GuardSalaGuard implements CanActivate, CanDeactivate<unknown> {
+export class GuardSalaGuard implements CanDeactivate<unknown> {
   finalPartida!: boolean;
   constructor(private servGuard: ServicGuardService){}
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return true;
-  }
+
   canDeactivate(
     component: unknown,
     currentRoute: ActivatedRouteSnapshot,

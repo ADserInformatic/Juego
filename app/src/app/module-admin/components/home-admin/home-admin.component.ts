@@ -9,6 +9,8 @@ import { ApiAdminService } from '../../services/api-admin.service';
 export class HomeAdminComponent implements OnInit {
 
   public usuarios: Array<any> = []
+  public usersFilter: Array<any> = []
+
 
   constructor( private apiServ: ApiAdminService) { }
 
@@ -16,7 +18,17 @@ export class HomeAdminComponent implements OnInit {
     this.apiServ.getUsers().subscribe(res=>{
       console.log(res.data)
       this.usuarios = res.data
+      this.usersFilter = res.data
     })
+  }
+
+  actualizar(datos: any){
+    console.log(datos)
+    if (datos.length > 0) {
+      this.usersFilter = datos
+    }else{
+      this.usersFilter = this.usuarios
+    }
   }
 
   deleteUs(item: any){

@@ -15,10 +15,10 @@
             <div class="users">
                 <div class="up">
                     <h3>USUARIOS:</h3>
-                    <app-buscador [elementos]="usuarios"></app-buscador>
+                    <app-buscador [elementos]="usuarios" (data)="actualizar($event)"></app-buscador>
                 </div>
                 <div class="usersAndCredit">
-                    <li *ngFor="let item of usuarios">
+                    <li *ngFor="let item of usersFilter">
                         <h3>{{item.name}}</h3>
                         <i>{{item.credito | currency}}</i>
                         <button (click)="deleteUs(item)">

@@ -31,7 +31,16 @@ nav .logo{
     width: 100%;
     border-radius: 30%;
 }
-
+nav .set{
+    background: #fff;
+    color: #000;
+    outline: none;
+    border: none;
+    border-radius: 3px;
+    padding: 0px 10px;
+    cursor: pointer;
+    margin-right: 10px;
+}
 .forms{
     display: flex;
     margin: auto;

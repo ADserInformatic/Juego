@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from 'src/app/services/auth.service';
 import { ConsultasService } from 'src/app/services/consultas.service';
 
 @Component({
@@ -18,7 +19,9 @@ export class FormUserComponent implements OnInit {
     private servCons: ConsultasService,
     private fb: FormBuilder,
     private cookie: CookieService,
-    private route: Router) { }
+    private route: Router,
+    private servLogin: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.user = this.cookie.get('jugador')
@@ -92,4 +95,12 @@ export class FormUserComponent implements OnInit {
 
   //   }
   // }
+
+  closed(){
+    if(confirm('Desea cerrar sesión?')){
+      this.servLogin.logout()
+      this.cookie.delete('jugador')
+      this.route.navigate(['/'])
+    }
+  }
 }

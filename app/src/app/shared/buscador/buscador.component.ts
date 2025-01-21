@@ -10,6 +10,7 @@ export class BuscadorComponent implements OnInit {
 
   @Input() elementos!: Array<any>;
   @Output() id: EventEmitter<any> = new EventEmitter()
+  @Output() data: EventEmitter<any> = new EventEmitter()
   @ViewChild('inp') input!: ElementRef;
   nuevoArray: Array<any> = []
   form!: FormGroup;
@@ -28,6 +29,7 @@ export class BuscadorComponent implements OnInit {
       if(res === ''){
         this.nuevoArray = []
       }
+      this.data.emit(this.nuevoArray)
     })
     
   }
