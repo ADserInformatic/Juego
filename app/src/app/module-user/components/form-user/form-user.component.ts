@@ -12,8 +12,10 @@ import { ConsultasService } from 'src/app/services/consultas.service';
 })
 export class FormUserComponent implements OnInit {
   public formSala!: FormGroup;
+  public formPass!: FormGroup;
   public salas: Array<any>= [];
   public user!: string;
+  public cambiarPass: boolean = false;
 
   constructor(
     private servCons: ConsultasService,
@@ -29,6 +31,11 @@ export class FormUserComponent implements OnInit {
     this.formSala = this.fb.group({
       name: ['', [Validators.required]],
       apuesta: [0, [Validators.required, Validators.minLength(2)]]
+    })
+
+    this.formPass = this.fb.group({
+      password: ['', [Validators.required, Validators.minLength(3)]],
+      newPassword: ['' , [Validators.required, Validators.minLength(3)]]
     })
     
     this.traeSalas()
@@ -102,5 +109,29 @@ export class FormUserComponent implements OnInit {
       this.cookie.delete('jugador')
       this.route.navigate(['/'])
     }
+  }
+
+  cambiar(){
+    this.cambiarPass = true
+  }
+  cerrar(){
+    this.cambiarPass = false
+  }
+
+  sendPass(){
+    if(this.formPass.value.password !== this.formPass.value.newPassword){
+      alert('La contraseña debe ser igual en los dos campos')
+      return
+    }
+    console.log(this.formPass.value)
+    return
+    const id = this.cookie.get('jugador')
+    this.servCons.newPass(id, this.formPass.value).subscribe(res=>{
+      alert(res.mensaje)
+      this.servLogin.logout()
+      this.cookie.delete('jugador')
+      this.route.navigate(['/'])
+    })
+
   }
 }

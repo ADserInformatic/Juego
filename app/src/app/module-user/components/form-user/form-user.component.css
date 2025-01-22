@@ -48,7 +48,7 @@ nav .set{
     align-items: center;
     margin-top: 10%;
 }
-.salas{
+.salas, .form-user{
     width: 35%;
     margin: 20px auto;
     padding: 20px;
@@ -138,6 +138,30 @@ button:disabled{
 }
 button:disabled:hover{
     background: #000;
+}
+.cambiarPass{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000000b4;
+    color: #fff;
+}
+.cambiarPass .form-user{
+    position: relative;
+}
+.form-user .cerrar{
+    position: absolute;
+    right: -25px;
+    top: -35px;
+    border: none;
+    color: #fff;
+    background: transparent;
+    outline: none;
 }
 
 @media screen and (max-width: 980px) {

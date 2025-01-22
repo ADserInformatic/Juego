@@ -8,7 +8,7 @@
                 <h1>Administrador</h1>
             </div>
             <div class="closeSesion">
-                <button>Salir</button>
+                <button (click)="closed()">Salir</button>
             </div>
         </div>
         <div class="main">
@@ -38,6 +38,27 @@
             <div class="rendimiento">
                 <h3>Rendiminto: </h3>
                 <span> $000</span>
+            </div>
+            <button (click)="formPayOn()" class="imgPay" *ngIf="!pagar">
+                <img src="assets/Logotruco.png" alt="">
+            </button>
+            <div class="formPay" [formGroup]="formPay" *ngIf="pagar">
+                <button class="btnClosed" (click)="formPayOn()"> 
+                    <span class="material-symbols-outlined">
+                        cancel
+                    </span>
+                </button>
+                <div class="block-form">
+                    <label for="monto">Monto:</label>
+                    <input formControlName="monto" type="number" id="monto">
+                </div>
+                <div class="block-form">
+                    <label for="password">Contraseña: </label>
+                    <input formControlName="password" type="password" id="password">
+                </div>
+                <div class="block-btn">
+                    <button [disabled]="formPay.invalid" (click)="pay()">Enviar</button>
+                </div>
             </div>
             <div class="ganacias">
                 <h3>Ganancia:</h3>

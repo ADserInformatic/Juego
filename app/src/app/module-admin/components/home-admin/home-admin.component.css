@@ -101,6 +101,62 @@
 .balances div h3{
     margin-right: 10px;
 }
+.imgPay{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: transparent;
+    overflow: hidden;
+    box-shadow: inset 1px 1px 10px #fff,
+    inset -1px -1px 10px #fff;
+}
+.imgPay:hover img{
+    width: 100%;
+}
+.imgPay img{
+    width: 80%;
+    margin: auto;
+    transition: all 1s;
+}
+.formPay{
+    background: #000;
+    border-radius: 5px;
+    border: solid .3px var(--bordeBajo);
+    max-width: 50%;
+    position: relative;
+}
+.formPay .btnClosed{
+    position: absolute;
+    color: #fff;
+    background: transparent;
+    right: 0px;
+    top: 0px;
+    cursor: pointer;
+}
+.formPay .block-form{
+    width: 40%;
+}
+.formPay .block-form input{
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    border-bottom: solid .5px #fff;
+    padding: 5px;
+    margin-left: 10px;
+    border-radius: 4px;
+    width: 50%;
+}
+.formPay button{
+    background: var(--bordeBajo);
+    color: #000;
+    border: none;
+    outline: none;
+    border-radius: 3px;
+    padding: 5px;
+}
+
 /* Para navegadores WebKit */
 ::-webkit-scrollbar {
     width: 2px; /* Ancho de la barra de desplazamiento */

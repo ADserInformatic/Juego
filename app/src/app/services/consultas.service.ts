@@ -40,4 +40,8 @@ export class ConsultasService {
     return this.http.get(`${this.uri}/getUsers`)
   }
 
+  newPass(id: string, datos: any): Observable<any>{
+    return this.http.put(`${this.uri}/newPass/${id}`, datos)
+  }
+
 }

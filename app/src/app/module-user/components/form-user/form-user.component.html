@@ -8,6 +8,7 @@
         </div>
         <div>
             <button (click)="closed()" class="set">Salir</button>
+            <button (click)="cambiar()" class="set">Contraseña</button>
         </div>
     </nav>
     <div class="forms">
@@ -44,3 +45,28 @@
     </div>
 </div>
 
+<div class="cambiarPass" *ngIf="cambiarPass">
+    <div class="forms">
+        <div class="form-user">
+            <button class="cerrar" (click)="cerrar()">
+                <span class="material-symbols-outlined">
+                    cancel
+                    </span>
+            </button>
+            <h1>Cambiar contraseña</h1>
+            <div [formGroup]="formPass" class="form-block">
+                <label for="name">Nueva contraseña:</label>
+                <input formControlName="password" type="password" id="password">
+                <div class="error" >
+                    <i *ngIf="formPass.get('password')?.invalid && formPass.get('password')?.errors?.['minlength'] && formPass.get('password')?.touched">Ingrese una contraseña válida.</i>
+                </div>
+                <label for="pass">Contraseña</label>
+                <input formControlName="newPassword" type="password" id="newPassword">
+                <div class="error" >
+                    <i *ngIf="formPass.get('newPassword')?.invalid && formPass.get('newPassword')?.errors?.['minlength'] && formPass.get('newPassword')?.touched">Ingrese una contraseña válida.</i>
+                </div>
+                <button [disabled]="formPass.invalid" (click)="sendPass()">Cambiar</button>
+            </div>
+        </div>
+    </div>
+</div>
