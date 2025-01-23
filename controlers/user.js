@@ -116,8 +116,8 @@ const addCredit = async (req, res) => { //ver donde tengo el id
 }
 
 const login = async (req, res) => {
-    let { userX, passInput } = req.body;
-    const usuario = usuarios.findOne({ usuario: userX });
+    let { name, passInput } = req.body;
+    const usuario = usuarios.findOne({ name: name });
 
     if (!usuario) {
         res.json({
@@ -139,7 +139,7 @@ const login = async (req, res) => {
         if (result) {
             res.json({
                 error: false,
-                data: "",
+                data: usuario,
                 mensaje: 'Inicio de sesión exitoso'
             })
         } else {
@@ -151,14 +151,6 @@ const login = async (req, res) => {
         }
     });
 }
-
-
-
-
-
-
-
-
 
 function encript(passToEncript) {
     let passToEncripted = bcrypt.hash(passToEncript, 10, (err, hash) => {
@@ -172,6 +164,13 @@ function encript(passToEncript) {
 
 function decript() { }
 
-
-
-module.exports = router
+const funtions = {
+    getUsers,
+    getUser,
+    addUser,
+    addCredit,
+    login,
+    encript,
+    decript
+}
+module.exports = funtions
