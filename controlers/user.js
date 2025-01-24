@@ -215,15 +215,24 @@ const login = async (req, res) => {
     }
 };
 
+// Función para encriptar la contraseña
 const encript = async (passToEncript) => {
-    let passToEncripted = await bcrypt.hash(passToEncript, 10
-    )
-    return passToEncripted
-}
+    try {
+        return await bcrypt.hash(passToEncript, 10);
+    } catch (error) {
+        throw new Error('Error al encriptar la contraseña');
+    }
+};
 
-function decript(passToEncripted) {
+// Función para verificar la contraseña
+/* const decript = async (passToDecript, passToCompare) => {
+    try {
+        return await bcrypt.compare(passToDecript, passToCompare);
+    } catch (error) {
+        throw new Error('Error al verificar la contraseña');
+    }
+}; */
 
-}
 
 const funtions = {
     getUsers,
@@ -233,6 +242,6 @@ const funtions = {
     removeCredit,
     login,
     encript,
-    decript
+    // decript
 }
 module.exports = funtions
