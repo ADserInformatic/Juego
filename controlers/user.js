@@ -174,7 +174,7 @@ const login = async (req, res) => {
 
     // Validar que los campos no estén vacíos
     if (!name || !passInput) {
-        return res.status(400).json({
+        return res.json({
             error: true,
             data: "",
             mensaje: 'El nombre de usuario y la contraseña son requeridos.'
@@ -184,31 +184,34 @@ const login = async (req, res) => {
         // Buscar el usuario en la base de datos
         const usuario = await user.findOne({ name: name });
         if (!usuario) {
-            return res.status(404).json({
+            return res.json({
                 error: true,
                 data: "",
                 mensaje: 'NOMBRE DE USUARIO NO ENCONTRADO'
             });
         }
-
         // Comparar la contraseña
         const result = await bcrypt.compare(passInput, usuario.password);
         if (result) {
             const token = jwt.sign({ usuario }, SECRET_KEY, { expiresIn: '1h' });
+            let id = usuario._id
             return res.json({
                 error: false,
-                data: token,
+                data: {
+                    token: token,
+                    _id: id
+                },
                 mensaje: 'Inicio de sesión exitoso'
             });
         } else {
-            return res.status(401).json({
+            return res.json({
                 error: true,
                 data: "",
                 mensaje: 'Contraseña incorrecta'
             });
         }
     } catch (err) {
-        return res.status(500).json({
+        return res.json({
             error: true,
             data: "",
             mensaje: `Error al procesar la solicitud: ${err.message}`

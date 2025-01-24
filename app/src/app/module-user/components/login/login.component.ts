@@ -33,11 +33,16 @@ export class LoginComponent implements OnInit {
       if(res.mensaje){
         alert(res.mensaje)
       }
-      this.token = res.data.token; // Asumiendo que el token viene en la respuesta
-      localStorage.setItem('token', this.token); // Almacena el token en localStorage
-      // this.user = res.data.name
-      this.cookie.set('jugador', res.data._id)
-      this.router.navigate(['/appTruco']); // Redirige a la página de inicio de sesión
+      if(res.error){
+        return
+      }
+      if(res.data.token){
+        this.token = res.data.token; // Asumiendo que el token viene en la respuesta
+        localStorage.setItem('token', this.token); // Almacena el token en localStorage
+        // this.user = res.data.name
+        this.cookie.set('jugador', res.data._id)
+        this.router.navigate(['/appTruco']); // Redirige a la página de inicio de sesión
+      }
     })
     
   }
