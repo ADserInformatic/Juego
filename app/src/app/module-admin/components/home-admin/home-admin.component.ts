@@ -3,6 +3,7 @@ import { ApiAdminService } from '../../services/api-admin.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
+import { ConsultasService } from 'src/app/services/consultas.service';
 
 @Component({
   selector: 'app-home-admin',
@@ -17,13 +18,14 @@ export class HomeAdminComponent implements OnInit {
 
   constructor( 
     private apiServ: ApiAdminService,
+    private apiCons: ConsultasService,
     private fb: FormBuilder,
     private authLog: AuthService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.apiServ.getUsers().subscribe(res=>{
+    this.apiCons.getUsers().subscribe(res=>{
       console.log(res.data)
       this.usuarios = res.data
       this.usersFilter = res.data

@@ -13,10 +13,6 @@ export class ApiAdminService {
     private http: HttpClient
   ) { }
 
-  getUsers(): Observable<any>{
-    return this.http.get(this.apiUrl)
-  }
-
   getRender(): Observable<any>{
     return this.http.get(`${this.apiUrl}/getRener`)
   }

@@ -21,7 +21,7 @@ export class AddCreditComponent implements OnInit {
       name: '',
       credit: [0 ,  [Validators.required, Validators.minLength(2)]],
       _id: '',
-      password: ['', [Validators.required, Validators.minLength(3)]]
+      // password: ['', [Validators.required, Validators.minLength(3)]]
     })
   }
 

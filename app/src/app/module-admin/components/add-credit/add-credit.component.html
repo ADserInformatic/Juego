@@ -15,13 +15,13 @@
                     <i  *ngIf="formGrup.get('credit')?.invalid && formGrup.get('credit')?.touched">Creditos es requerido.</i>
                 </div>
             </div>
-            <div class="form-block">
+            <!-- <div class="form-block">
                 <label for="pass">Contraseña: </label>
                 <input formControlName="password" type="password" id="pass">
                 <div class="error" >
                     <i *ngIf="formGrup.get('password')?.invalid && formGrup.get('password')?.errors?.['minlength'] && formGrup.get('password')?.touched">Ingrese una contraseña válida.</i>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class="form-btn">
             <button type="submit"  [disabled]="formGrup.invalid" (click)="addC()">Cargar</button>

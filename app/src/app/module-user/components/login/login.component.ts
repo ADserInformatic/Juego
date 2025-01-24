@@ -28,9 +28,6 @@ export class LoginComponent implements OnInit {
   }
 
   userSend(){
-    alert('Ruta no creada')
-    this.router.navigate(['/appTruco']); // Redirige a la página de inicio de sesión
-    return
     this.servLogin.login(this.formUser.value).subscribe(res=>{
       if(res.mensaje){
         alert(res.mensaje)

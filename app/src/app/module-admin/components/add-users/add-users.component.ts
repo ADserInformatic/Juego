@@ -28,7 +28,7 @@ export class AddUsersComponent implements OnInit {
       Nombre: ${this.formGrup.value.name},
       Créditos: ${this.formGrup.value.credito}`)){
         this.servApi.addUser(this.formGrup.value).subscribe(res=>{
-          console.log(res)
+          alert(res.mensaje)
         })
       }
     
