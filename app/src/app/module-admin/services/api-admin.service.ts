@@ -24,6 +24,10 @@ export class ApiAdminService {
     return this.http.put(`${this.apiUrl}/addCredit/${id}`, data)
   }
 
+  removeCredit(data: any, id: string): Observable<any>{
+    return this.http.put(`${this.apiUrl}/removeCredit/${id}`, data)
+  }
+
   deleteUser(id: string): Observable<any>{
     return this.http.delete(`${this.apiUrl}/delete/${id}`)
   }

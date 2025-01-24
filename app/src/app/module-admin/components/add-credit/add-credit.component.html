@@ -1,7 +1,7 @@
 <div class="form">
     <form [formGroup]="formGrup">
         <div class="title">
-            <h3>Cargar crédito: </h3>
+            <h3>Cargar o retirar crédito: </h3>
         </div>
         <div class="campos">
             <div class="form-block">
@@ -25,6 +25,7 @@
         </div>
         <div class="form-btn">
             <button type="submit"  [disabled]="formGrup.invalid" (click)="addC()">Cargar</button>
+            <button type="submit"  [disabled]="formGrup.invalid" (click)="remC()">Retirar</button>
         </div>
     </form>
 </div>
