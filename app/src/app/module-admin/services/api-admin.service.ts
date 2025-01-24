@@ -14,7 +14,7 @@ export class ApiAdminService {
   ) { }
 
   getUsers(): Observable<any>{
-    return this.http.get(`${this.apiUrl}/getUsers`)
+    return this.http.get(this.apiUrl)
   }
 
   getRender(): Observable<any>{
@@ -26,5 +26,9 @@ export class ApiAdminService {
 
   addCredit(data: any, id: string): Observable<any>{
     return this.http.put(`${this.apiUrl}/addCredit/${id}`, data)
+  }
+
+  deleteUser(id: string): Observable<any>{
+    return this.http.delete(`${this.apiUrl}/delete/${id}`)
   }
 }

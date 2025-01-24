@@ -10,6 +10,7 @@ export class BuscadorComponent implements OnInit {
 
   @Input() elementos!: Array<any>;
   @Output() id: EventEmitter<any> = new EventEmitter()
+  @Output() data: EventEmitter<any> = new EventEmitter()
   @ViewChild('inp') input!: ElementRef;
   nuevoArray: Array<any> = []
   form!: FormGroup;
@@ -18,22 +19,24 @@ export class BuscadorComponent implements OnInit {
   constructor(private fb: FormBuilder){}
   
   ngOnInit(): void {
+    console.log(this.elementos)
     this.form = this.fb.group({
       texto: ''
     })
 
     this.form.valueChanges.subscribe(res=>{
-      this.nuevoArray = this.elementos.filter(e => e.userLogin.toUpperCase().includes(res.texto.toUpperCase()))
+      this.nuevoArray = this.elementos.filter(e => e.name.toUpperCase().includes(res.texto.toUpperCase()))
       if(res === ''){
         this.nuevoArray = []
       }
+      this.data.emit(this.nuevoArray)
     })
     
   }
 
   verId(e:any){
     this.id.emit(e)
-    this.input.nativeElement.value = e.userLogin
+    this.input.nativeElement.value = e.name
     this.nuevoArray = []
   }
     

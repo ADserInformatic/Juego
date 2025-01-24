@@ -6,6 +6,7 @@ import { io } from 'socket.io-client';
 import { Jugada } from 'src/app/interfaces/jugada';
 import { Jugador } from 'src/app/interfaces/jugador';
 import { ServicGuardService } from '../../services/servic-guard.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-sala',
@@ -66,7 +67,8 @@ export class SalaComponent implements OnInit {
     private routeAct: ActivatedRoute,
     private cookies: CookieService,
     private verGuard: ServicGuardService,
-    private router: Router
+    private router: Router,
+    private servLogin: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -288,8 +290,9 @@ export class SalaComponent implements OnInit {
 
   closed(){
     if(confirm('Desea cerrar sesión?')){
-      this.router.navigate(['/'])
+      this.servLogin.logout()
       this.cookies.delete('jugador')
+      this.router.navigate(['/'])
     }
   }
   

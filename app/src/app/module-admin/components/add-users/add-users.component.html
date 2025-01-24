@@ -1,24 +1,33 @@
 <div class="form">
-    <form>
+    <form  [formGroup]="formGrup">
         <div class="title">
             <h3>Agregar usuario: </h3>
         </div>
         <div class="campos">
             <div class="form-block">
                 <label for="name">Nombre: </label>
-                <input type="text" id="name">
+                <input type="text" id="name" formControlName="name">
+                <div class="error">
+                    <i *ngIf="formGrup.get('name')?.invalid && formGrup.get('name')?.touched">Nombre es requerido.</i>
+                </div>
             </div>
             <div class="form-block">
                 <label for="credit">Credios: </label>
-                <input type="number" id="credit">
+                <input type="number" id="credit" formControlName="credit">
+                <div class="error">
+                    <i  *ngIf="formGrup.get('credit')?.errors?.['minlength'] && formGrup.get('credit')?.touched">Creditos es requerido.</i>
+                </div>
             </div>
             <div class="form-block">
                 <label for="pass">Contraseña: </label>
-                <input type="password" id="pass">
+                <input type="password" id="pass" formControlName="password">
+                <div class="error" >
+                    <i *ngIf="formGrup.get('password')?.invalid && formGrup.get('password')?.errors?.['minlength'] && formGrup.get('password')?.touched">Ingrese una contraseña válida.</i>
+                </div>
             </div>
         </div>
         <div class="form-btn">
-            <button>Crear</button>
+            <button type="submit" [disabled]="formGrup.invalid" (click)="send()">Crear</button>
         </div>
     </form>
 </div>

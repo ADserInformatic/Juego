@@ -6,37 +6,26 @@
         <div class="logo">
             <img src="assets/Logotruco.png" alt="">
         </div>
-        <div class="solicitar">
-            <!-- <button (click)="solicitar()">Solicitar usuario</button> -->
-            <a title="Solicitar registro"
-            href="https://wa.me/123456789?text=Hola,%20quisiera%20registrarme%20en%20ADser%20Truco!"
-            target="_blank"><p>Solicitar registro</p>
-            <span class="material-symbols-outlined">
-                speaker_notes
-            </span>
-    </a>
+        <div>
+            <button (click)="closed()" class="set">Salir</button>
+            <button (click)="cambiar()" class="set">Contraseña</button>
         </div>
     </nav>
     <div class="forms">
-        <div class="form-user" [ngClass]="{'ocultar': user !== ''}">
-            <h1>Login</h1>
-            <div [formGroup]="formUser" class="form-block">
-                <label for="name">Nombre</label>
-                <input formControlName="name" type="text" id="name">
-                <label for="credito">Créditos</label>
-                <input formControlName="credito" type="text" id="credito">
-                <button (click)="userSend()">Ingresar</button>
-            </div>
-        </div>
-        
-        <div class="salas" [ngClass]="{'ocultar': user === ''}">
+        <div class="salas">
             <h1>Crear sala</h1>
             <div class="form-block" [formGroup]="formSala">
                 <label for="sala">Nombre de la sala</label>
                 <input formControlName="name" type="text" id="name">
+                <div class="error">
+                    <i *ngIf="formSala.get('name')?.invalid && formSala.get('name')?.touched">Nombre es requerido.</i>
+                </div>
                 <label for="apuesta">Apuesta:</label>
                 <input formControlName="apuesta" type="number">
-                <button class="crear" (click)="createSala()">Crear</button>
+                <div class="error">
+                    <i  *ngIf="formSala.get('credit')?.invalid && formSala.get('credit')?.touched">Creditos es requerido.</i>
+                </div>
+                <button [disabled]="formSala.invalid" class="crear" (click)="createSala()">Crear</button>
             </div>
             <div class="form-block">
                 <h2 for="sala">Ingresar a una sala:</h2>
@@ -56,3 +45,28 @@
     </div>
 </div>
 
+<div class="cambiarPass" *ngIf="cambiarPass">
+    <div class="forms">
+        <div class="form-user">
+            <button class="cerrar" (click)="cerrar()">
+                <span class="material-symbols-outlined">
+                    cancel
+                    </span>
+            </button>
+            <h1>Cambiar contraseña</h1>
+            <div [formGroup]="formPass" class="form-block">
+                <label for="name">Nueva contraseña:</label>
+                <input formControlName="password" type="password" id="password">
+                <div class="error" >
+                    <i *ngIf="formPass.get('password')?.invalid && formPass.get('password')?.errors?.['minlength'] && formPass.get('password')?.touched">Ingrese una contraseña válida.</i>
+                </div>
+                <label for="pass">Contraseña</label>
+                <input formControlName="newPassword" type="password" id="newPassword">
+                <div class="error" >
+                    <i *ngIf="formPass.get('newPassword')?.invalid && formPass.get('newPassword')?.errors?.['minlength'] && formPass.get('newPassword')?.touched">Ingrese una contraseña válida.</i>
+                </div>
+                <button [disabled]="formPass.invalid" (click)="sendPass()">Cambiar</button>
+            </div>
+        </div>
+    </div>
+</div>

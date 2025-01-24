@@ -5,6 +5,7 @@ import { AddUsersComponent } from './components/add-users/add-users.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { AddCreditComponent } from './components/add-credit/add-credit.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -17,7 +18,8 @@ import { AddCreditComponent } from './components/add-credit/add-credit.component
   imports: [
     CommonModule,
     AdminRoutingModule,
-    SharedModule
+    SharedModule,
+    ReactiveFormsModule
   ]
 })
 export class ModuleAdminModule { }

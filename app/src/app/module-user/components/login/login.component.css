@@ -31,15 +31,18 @@ nav .logo{
     width: 100%;
     border-radius: 30%;
 }
-nav .set{
-    background: #fff;
+nav .solicitar a{
+    text-decoration: none;
     color: #000;
-    outline: none;
+    background: #fff;
     border: none;
+    outline: none;
     border-radius: 3px;
-    padding: 0px 10px;
+    text-transform: uppercase;
     cursor: pointer;
-    margin-right: 10px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
 }
 .forms{
     display: flex;
@@ -48,7 +51,7 @@ nav .set{
     align-items: center;
     margin-top: 10%;
 }
-.salas, .form-user{
+.form-user{
     width: 35%;
     margin: 20px auto;
     padding: 20px;
@@ -82,7 +85,7 @@ nav .set{
   .form-block label{
     margin-top: 10px;
   }
-.form-block button, .salaItem{
+.form-block button{
     width: 100%;
     color: #fff;
     background: rgb(151, 92, 3);
@@ -92,7 +95,7 @@ nav .set{
     cursor: pointer;
     transition: all .5s ease-in-out;
 }
-.form-block button.crear, .form-user button{
+.form-user button{
     background-color: #000;
     border-radius: 3px;
     margin-top: 10px;
@@ -104,23 +107,9 @@ nav .set{
     border: solid 1px #fff;
     padding: 10px 0px;
 }
-.salaItem button{
-    width: auto;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    font-weight: bold;
-}
-.salaItem{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    border: solid .7px #fff;
-}
-.form-block button.crear:hover, .form-user button:hover{
+.form-user button:hover{
     background: var(--bordeBajo);
 }
-
 button:hover{
     background: var(--bordeBajo);
 }
@@ -139,33 +128,9 @@ button:disabled{
 button:disabled:hover{
     background: #000;
 }
-.cambiarPass{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #000000b4;
-    color: #fff;
-}
-.cambiarPass .form-user{
-    position: relative;
-}
-.form-user .cerrar{
-    position: absolute;
-    right: -25px;
-    top: -35px;
-    border: none;
-    color: #fff;
-    background: transparent;
-    outline: none;
-}
 
 @media screen and (max-width: 980px) {
-     .salas{
+    .form-user{
         width: 50%;
     }
 }
@@ -173,15 +138,18 @@ button:disabled:hover{
     .forms{
         margin-top: 20%;
     }
-    .salas{
+    .form-user{
         width: 80%;
+    }
+    .solicitar a p{
+        display: none;
     }
 }
 @media screen and (max-width: 320px) {
     .titulo{
         display: none;
     }
-    .salas{
+    .form-user{
         width: 90%;
     }
 }
