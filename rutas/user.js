@@ -6,7 +6,7 @@ const controlersUsers = require('../controlers/user')
 
 router.get('/getUser/:id', controlersUsers.getUser)
 router.get('/getUsers', controlersUsers.getUsers)
-router.post('/addUser', authenticateToken, controlersUsers.addUser);
+router.post('/addUser', controlersUsers.addUser);
 router.put('/addCredit/:id', authenticateToken, controlersUsers.addCredit)
 
 
