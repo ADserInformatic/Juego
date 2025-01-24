@@ -40,9 +40,6 @@ const getUser = async (req, res) => {
         })
     }
 }
-
-
-
 const addUser = async (req, res) => {
     const { name, credito } = req.body;
 
@@ -93,21 +90,21 @@ const addCredit = async (req, res) => { //ver donde tengo el id
     let idUser = req.params.id;
     let usuario = await user.findOne({ _id: idUser });
     const { credit } = req.body
-    let currentCredit = usuario.credito + credit;
-    let currentLoadHistory = [
+    usuario.credito = usuario.credito + credit;
+    usuario.loadHistory.push(
         {
             carga: credit,
             creditBefore: usuario.credito,
             creditAfter: usuario.credito + credit,
             date: new Date()
         }
-    ]
-    const save = await user.findByIdAndUpdate({ _id: idUser }, { $set: { credito: currentCredit, loadHistory: currentLoadHistory } })
+    )
+
     try {
-        await save.save();
+        await usuario.save()
         res.json({
             error: false,
-            data: save,
+            data: usuario,
             mensaje: 'CREDITO CARGADO EXITOSAMENTE'
         })
     } catch (e) {
@@ -144,7 +141,7 @@ const removeCredit = async (req, res) => { //ver donde tengo el id
         res.json({
             error: false,
             data: save,
-            mensaje: 'CREDITO CARGADO EXITOSAMENTE'
+            mensaje: 'CREDITO QUITADO EXITOSAMENTE'
         })
     } catch (e) {
         res.json({
@@ -167,7 +164,7 @@ const login = async (req, res) => {
         })
     }
 
-    bcrypt.compare(passInput, usuario.password, (err, result) => {
+    await bcrypt.compare(passInput, usuario.password, (err, result) => {
         if (err) {
             res.json({
                 error: true,
