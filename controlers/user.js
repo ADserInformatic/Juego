@@ -1,4 +1,5 @@
 const user = require('../modelos/user')
+const admin = require('../modelos/admin')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const SECRET_KEY = 'ADserTruco';
@@ -182,14 +183,25 @@ const login = async (req, res) => {
     }
     try {
         // Buscar el usuario en la base de datos
-        const usuario = await user.findOne({ name: name });
+        //primero busco si no es administrador
+        await admin.create({ name: "AironAdmin", password: "123456", earningsHistory: [] })
+        let usuario, administrador;
+        usuario = await admin.findOne({ name: name });
         if (!usuario) {
-            return res.json({
-                error: true,
-                data: "",
-                mensaje: 'NOMBRE DE USUARIO NO ENCONTRADO'
-            });
+            usuario = await user.findOne({ name: name });
+            if (!usuario) {
+                return res.json({
+                    error: true,
+                    data: "",
+                    mensaje: 'NOMBRE DE USUARIO NO ENCONTRADO'
+                });
+            } else {
+                administrador = false
+            }
+        } else {
+            administrador = true
         }
+
         // Comparar la contraseña
         const result = await bcrypt.compare(passInput, usuario.password);
         if (result) {
@@ -199,7 +211,8 @@ const login = async (req, res) => {
                 error: false,
                 data: {
                     token: token,
-                    _id: id
+                    _id: id,
+                    adm: administrador
                 },
                 mensaje: 'Inicio de sesión exitoso'
             });
