@@ -171,7 +171,14 @@ const removeCredit = async (req, res) => {
 
 const login = async (req, res) => {
     const { name, passInput } = req.body;
-
+    // Validar que los campos no estén vacíos
+    if (!name || !passInput) {
+        return res.status(400).json({
+            error: true,
+            data: "",
+            mensaje: 'El nombre de usuario y la contraseña son requeridos.'
+        });
+    }
     try {
         // Buscar el usuario en la base de datos
         const usuario = await usuarios.findOne({ name: name });
