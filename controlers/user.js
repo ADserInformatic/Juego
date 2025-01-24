@@ -56,7 +56,7 @@ const addUser = async (req, res) => {
 
     let CreditBefore = 0;
     let CreditAfter = credito;
-    let password = encript('123456Aa'); // Hasheo la contraseña
+    let password = await encript('123456Aa'); // Hasheo la contraseña
     let loadHistory = [
         {
             carga: credito,
@@ -193,13 +193,9 @@ const login = async (req, res) => {
     });
 }
 
-function encript(passToEncript) {
-    let passToEncripted = bcrypt.hash(passToEncript, 10, (err, hash) => {
-        if (err) {
-            console.error('Error al hashear la contraseña:', err);
-            return;
-        }
-    })
+const encript = async (passToEncript) => {
+    let passToEncripted = await bcrypt.hash(passToEncript, 10
+    )
     return passToEncripted
 }
 
