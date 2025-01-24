@@ -162,7 +162,9 @@ function encript(passToEncript) {
     return passToEncripted
 }
 
-function decript() { }
+function decript(passToEncripted) {
+
+}
 
 const funtions = {
     getUsers,
