@@ -89,6 +89,14 @@ const addUser = async (req, res) => {
 const addCredit = async (req, res) => { //ver donde tengo el id
     let idUser = req.params.id;
     let usuario = await user.findOne({ _id: idUser });
+    if (!usuario) {
+        res.json({
+            error: true,
+            mensaje: `USUARIO NO ENCONTRADO`
+        })
+        return
+
+    }
     const { credit } = req.body
     usuario.credito = usuario.credito + credit;
     usuario.loadHistory.push(
@@ -116,41 +124,50 @@ const addCredit = async (req, res) => { //ver donde tengo el id
 
 }
 
-const removeCredit = async (req, res) => { //ver donde tengo el id
+const removeCredit = async (req, res) => {
     let idUser = req.params.id;
-    let usuario = await user.findOne({ _id: idUser });
-    const { credit } = req.body
-    if (usuario.credito < credit) {
-        res.json({
-            error: true,
-            mensaje: `Credito insuficiente`
-        })
-    }
-    let currentCredit = usuario.credito - credit;
-    let currentLoadHistory = [
-        {
-            carga: credit,
-            creditBefore: usuario.credito,
-            creditAfter: usuario.credito - credit,
-            date: new Date()
-        }
-    ]
-    const save = await user.findByIdAndUpdate({ _id: idUser }, { $set: { credito: currentCredit, loadHistory: currentLoadHistory } })
-    try {
-        await save.save();
-        res.json({
-            error: false,
-            data: save,
-            mensaje: 'CREDITO QUITADO EXITOSAMENTE'
-        })
-    } catch (e) {
-        res.json({
-            error: true,
-            mensaje: `El servidor devuelve el siguiente error ${e}`
-        })
-    }
 
-}
+    try {
+        let usuario = await user.findOne({ _id: idUser });
+        if (!usuario) {
+            return res.json({
+                error: true,
+                mensaje: `USUARIO NO ENCONTRADO`
+            });
+        }
+
+        const { credit } = req.body;
+
+        if (usuario.credito < credit) {
+            return res.json({
+                error: true,
+                mensaje: `Crédito insuficiente`
+            });
+        }
+
+        // Actualizar el crédito del usuario
+        usuario.credito -= credit; // Restar el crédito
+        usuario.loadHistory.push({
+            carga: credit,
+            creditBefore: usuario.credito + credit, // Antes de la resta
+            creditAfter: usuario.credito, // Después de la resta
+            date: new Date().toLocaleString("es-ES", { timeZone: "America/Sao_Paulo" })
+        });
+
+        await usuario.save();
+
+        return res.json({
+            error: false,
+            data: usuario,
+            mensaje: 'CREDITO QUITADO EXITOSAMENTE'
+        });
+    } catch (e) {
+        return res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error: ${e.message}`
+        });
+    }
+};
 
 const login = async (req, res) => {
     let { name, passInput } = req.body;
