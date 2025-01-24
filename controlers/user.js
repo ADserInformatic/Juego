@@ -96,7 +96,7 @@ const addCredit = async (req, res) => { //ver donde tengo el id
             carga: credit,
             creditBefore: usuario.credito,
             creditAfter: usuario.credito + credit,
-            date: new Date()
+            date: new Date().toLocaleString("es-ES", { timeZone: "America/Sao_Paulo" })
         }
     )
 
