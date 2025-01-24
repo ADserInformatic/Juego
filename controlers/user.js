@@ -171,6 +171,7 @@ const removeCredit = async (req, res) => {
 
 const login = async (req, res) => {
     const { name, passInput } = req.body;
+
     // Validar que los campos no estén vacíos
     if (!name || !passInput) {
         return res.status(400).json({
@@ -181,7 +182,7 @@ const login = async (req, res) => {
     }
     try {
         // Buscar el usuario en la base de datos
-        const usuario = await usuarios.findOne({ name: name });
+        const usuario = await user.findOne({ name: name });
         if (!usuario) {
             return res.status(404).json({
                 error: true,
@@ -210,7 +211,7 @@ const login = async (req, res) => {
         return res.status(500).json({
             error: true,
             data: "",
-            mensaje: 'Error al procesar la solicitud'
+            mensaje: `Error al procesar la solicitud: ${err.message}`
         });
     }
 };
