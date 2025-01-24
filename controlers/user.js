@@ -43,9 +43,7 @@ const getUser = async (req, res) => {
 
 
 const addUser = async (req, res) => {
-    const { name, credito, passAdmin } = req.body
-
-    //CORROBORAR PASS DEL ADMINISTRADOR
+    const { name, credito } = req.body
 
     let CreditBefore = 0;
     let CreditAfter = credito;
@@ -87,14 +85,48 @@ const addCredit = async (req, res) => { //ver donde tengo el id
     let idUser = req.params.id;
     let usuario = await user.findOne({ _id: idUser });
     const { credit } = req.body
-
-    //CORROBORAR PASS DEL ADMINISTRADOR
     let currentCredit = usuario.credito + credit;
     let currentLoadHistory = [
         {
             carga: credit,
             creditBefore: usuario.credito,
             creditAfter: usuario.credito + credit,
+            date: new Date()
+        }
+    ]
+    const save = await user.findByIdAndUpdate({ _id: idUser }, { $set: { credito: currentCredit, loadHistory: currentLoadHistory } })
+    try {
+        await save.save();
+        res.json({
+            error: false,
+            data: save,
+            mensaje: 'CREDITO CARGADO EXITOSAMENTE'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+
+}
+
+const removeCredit = async (req, res) => { //ver donde tengo el id
+    let idUser = req.params.id;
+    let usuario = await user.findOne({ _id: idUser });
+    const { credit } = req.body
+    if (usuario.credito < credit) {
+        res.json({
+            error: true,
+            mensaje: `Credito insuficiente`
+        })
+    }
+    let currentCredit = usuario.credito - credit;
+    let currentLoadHistory = [
+        {
+            carga: credit,
+            creditBefore: usuario.credito,
+            creditAfter: usuario.credito - credit,
             date: new Date()
         }
     ]
