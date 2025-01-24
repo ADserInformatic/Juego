@@ -1,4 +1,4 @@
-const user = require('../modelos/admin')
+const admin = require('../modelos/admin')
 //funciones ganancias
 
 module.exports = {}

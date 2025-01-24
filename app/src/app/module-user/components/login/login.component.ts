@@ -41,7 +41,12 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('token', this.token); // Almacena el token en localStorage
         // this.user = res.data.name
         this.cookie.set('jugador', res.data._id)
+      if(res.data.adm){
+        this.router.navigate(['/admin']);
+        this.cookie.set('isAMadafaka?', res.data.adm)
+      }else{
         this.router.navigate(['/appTruco']); // Redirige a la página de inicio de sesión
+      }
       }
     })
     
