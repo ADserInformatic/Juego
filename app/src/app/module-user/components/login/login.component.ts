@@ -29,6 +29,7 @@ export class LoginComponent implements OnInit {
 
   userSend(){
     this.servLogin.login(this.formUser.value).subscribe(res=>{
+      console.log(res)
       if(res.mensaje){
         alert(res.mensaje)
       }
