@@ -42,37 +42,73 @@ const getUser = async (req, res) => {
 }
 
 
-const addUser = async (req, res) => {
-    const { name, credito, passAdmin } = req.body
 
-    //CORROBORAR PASS DEL ADMINISTRADOR
+const addUser = async (req, res) => {
+    const { name, credito } = req.body;
+
+    // Validar que se hayan proporcionado name y credito
+    if (!name || credito === undefined) {
+        return res.status(400).json({
+            error: true,
+            mensaje: 'El nombre y el crédito son requeridos.'
+        });
+    }
 
     let CreditBefore = 0;
     let CreditAfter = credito;
-    let passUser = encript('123456Aa');//hasheo la contraseña
-    letloadHistory = [
+    let password = encript('123456Aa'); // Hasheo la contraseña
+    let loadHistory = [
         {
             carga: credito,
             creditBefore: CreditBefore,
             creditAfter: CreditAfter,
             date: new Date()
         }
-    ]
-    const yaExiste = await user.findOne({ name: name });
-    if (yaExiste) {
+    ];
+
+    try {
+        const yaExiste = await user.findOne({ name: name });
+        if (yaExiste) {
+            return res.json({
+                error: true,
+                data: "",
+                mensaje: 'NOMBRE DE USUARIO YA EXISTENTE'
+            });
+        }
+
+        const save = await user.create({ name, credito, password, loadHistory });
         res.json({
+            error: false,
+            data: save,
+            mensaje: 'Usuario CREADO EXITOSAMENTE'
+        });
+    } catch (e) {
+        res.status(500).json({
             error: true,
-            data: "",
-            mensaje: 'NOMBRE DE USUARIO YA EXISTENTE'
-        })
+            mensaje: `El servidor devuelve el siguiente error: ${e.message}`
+        });
     }
-    const save = await user.create({ name, credito, passUser, loadHistory })
+};
+const addCredit = async (req, res) => { //ver donde tengo el id
+    let idUser = req.params.id;
+    let usuario = await user.findOne({ _id: idUser });
+    const { credit } = req.body
+    let currentCredit = usuario.credito + credit;
+    let currentLoadHistory = [
+        {
+            carga: credit,
+            creditBefore: usuario.credito,
+            creditAfter: usuario.credito + credit,
+            date: new Date()
+        }
+    ]
+    const save = await user.findByIdAndUpdate({ _id: idUser }, { $set: { credito: currentCredit, loadHistory: currentLoadHistory } })
     try {
         await save.save();
         res.json({
             error: false,
             data: save,
-            mensaje: 'Usuario CREADO EXITOSAMENTE'
+            mensaje: 'CREDITO CARGADO EXITOSAMENTE'
         })
     } catch (e) {
         res.json({
@@ -83,18 +119,22 @@ const addUser = async (req, res) => {
 
 }
 
-const addCredit = async (req, res) => { //ver donde tengo el id
+const removeCredit = async (req, res) => { //ver donde tengo el id
     let idUser = req.params.id;
     let usuario = await user.findOne({ _id: idUser });
     const { credit } = req.body
-
-    //CORROBORAR PASS DEL ADMINISTRADOR
-    let currentCredit = usuario.credito + credit;
+    if (usuario.credito < credit) {
+        res.json({
+            error: true,
+            mensaje: `Credito insuficiente`
+        })
+    }
+    let currentCredit = usuario.credito - credit;
     let currentLoadHistory = [
         {
             carga: credit,
             creditBefore: usuario.credito,
-            creditAfter: usuario.credito + credit,
+            creditAfter: usuario.credito - credit,
             date: new Date()
         }
     ]
@@ -137,9 +177,10 @@ const login = async (req, res) => {
         }
 
         if (result) {
+            const token = jwt.sign({ usuario }, SECRET_KEY, { expiresIn: '1h' });
             res.json({
                 error: false,
-                data: usuario,
+                data: token,
                 mensaje: 'Inicio de sesión exitoso'
             })
         } else {
@@ -171,6 +212,7 @@ const funtions = {
     getUser,
     addUser,
     addCredit,
+    removeCredit,
     login,
     encript,
     decript
