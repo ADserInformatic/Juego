@@ -18,15 +18,15 @@ export class AddUsersComponent implements OnInit {
   ngOnInit(): void {
     this.formGrup = this.fb.group({
       name: ['', Validators.required],
-      credit: [0, [Validators.required, Validators.minLength(2)]],
-      password: ['', [Validators.required, Validators.minLength(3)]]
+      credito: [0, [Validators.required, Validators.minLength(2)]],
+      //password: ['', [Validators.required, Validators.minLength(3)]]
     })
   }
 
   send(){
     if(confirm(`Asegurese de que los datos son correctos:
       Nombre: ${this.formGrup.value.name},
-      Créditos: ${this.formGrup.value.credit}`)){
+      Créditos: ${this.formGrup.value.credito}`)){
         this.servApi.addUser(this.formGrup.value).subscribe(res=>{
           console.log(res)
         })

@@ -13,18 +13,18 @@
             </div>
             <div class="form-block">
                 <label for="credit">Credios: </label>
-                <input type="number" id="credit" formControlName="credit">
+                <input type="number" id="credito" formControlName="credito">
                 <div class="error">
-                    <i  *ngIf="formGrup.get('credit')?.errors?.['minlength'] && formGrup.get('credit')?.touched">Creditos es requerido.</i>
+                    <i  *ngIf="formGrup.get('credito')?.errors?.['minlength'] && formGrup.get('credito')?.touched">Creditos es requerido.</i>
                 </div>
             </div>
-            <div class="form-block">
+            <!-- <div class="form-block">
                 <label for="pass">Contraseña: </label>
                 <input type="password" id="pass" formControlName="password">
                 <div class="error" >
                     <i *ngIf="formGrup.get('password')?.invalid && formGrup.get('password')?.errors?.['minlength'] && formGrup.get('password')?.touched">Ingrese una contraseña válida.</i>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class="form-btn">
             <button type="submit" [disabled]="formGrup.invalid" (click)="send()">Crear</button>
