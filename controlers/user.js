@@ -170,42 +170,43 @@ const removeCredit = async (req, res) => {
 };
 
 const login = async (req, res) => {
-    let { name, passInput } = req.body;
-    const usuario = usuarios.findOne({ name: name });
+    const { name, passInput } = req.body;
 
-    if (!usuario) {
-        res.json({
-            error: true,
-            data: "",
-            mensaje: 'NOMBRE DE USUARIO NO ENCONTRADO'
-        })
-    }
-
-    await bcrypt.compare(passInput, usuario.password, (err, result) => {
-        if (err) {
-            res.json({
+    try {
+        // Buscar el usuario en la base de datos
+        const usuario = await usuarios.findOne({ name: name });
+        if (!usuario) {
+            return res.status(404).json({
                 error: true,
                 data: "",
-                mensaje: 'Error al comparar contraseñas'
-            })
+                mensaje: 'NOMBRE DE USUARIO NO ENCONTRADO'
+            });
         }
 
+        // Comparar la contraseña
+        const result = await bcrypt.compare(passInput, usuario.password);
         if (result) {
             const token = jwt.sign({ usuario }, SECRET_KEY, { expiresIn: '1h' });
-            res.json({
+            return res.json({
                 error: false,
                 data: token,
                 mensaje: 'Inicio de sesión exitoso'
-            })
+            });
         } else {
-            res.json({
+            return res.status(401).json({
                 error: true,
                 data: "",
-                mensaje: 'Error al comparar contraseñas'
-            })
+                mensaje: 'Contraseña incorrecta'
+            });
         }
-    });
-}
+    } catch (err) {
+        return res.status(500).json({
+            error: true,
+            data: "",
+            mensaje: 'Error al procesar la solicitud'
+        });
+    }
+};
 
 const encript = async (passToEncript) => {
     let passToEncripted = await bcrypt.hash(passToEncript, 10
