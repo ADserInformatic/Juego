@@ -54,7 +54,12 @@ const addUser = async (req, res) => {
 
     let CreditBefore = 0;
     let CreditAfter = credito;
-    let password = await encript('123456Aa'); // Hasheo la contraseña
+    let password;
+    try {
+        password = await bcrypt.hash('123456Aa', 10);// Hasheo la contraseña
+    } catch (error) {
+        throw new Error('Error al encriptar la contraseña');
+    }
     let loadHistory = [
         {
             carga: credito,
@@ -184,7 +189,6 @@ const login = async (req, res) => {
     try {
         // Buscar el usuario en la base de datos
         //primero busco si no es administrador
-        await admin.create({ name: "AironAdmin", password: "123456", earningsHistory: [] })
         let usuario, administrador;
         usuario = await admin.findOne({ name: name });
         if (!usuario) {
@@ -231,24 +235,66 @@ const login = async (req, res) => {
         });
     }
 };
+const changePass = async (req, res) => {
+    const { passOld, passNew } = req.body;
 
-// Función para encriptar la contraseña
-const encript = async (passToEncript) => {
-    try {
-        return await bcrypt.hash(passToEncript, 10);
-    } catch (error) {
-        throw new Error('Error al encriptar la contraseña');
+    // Validar que los campos no estén vacíos
+    if (!passOld || !passNew) {
+        return res.json({
+            error: true,
+            data: "",
+            mensaje: 'Faltan datos requeridos.'
+        });
     }
-};
+    try {
+        const id = req.params.id;
+        let usuario, administrador, passHashed;
+        usuario = await admin.findOne({ _id: id });
+        if (!usuario) {
+            usuario = await user.findOne({ _id: id });
+            if (!usuario) {
+                return res.json({
+                    error: true,
+                    data: "",
+                    mensaje: 'ID DE USUARIO NO ENCONTRADO'
+                });
+            } else {
+                administrador = false //por las dudas guardo q es un usuario normal...aun no se usa
+            }
+        } else {
+            administrador = true //por las dudas guardo q es un administrador...aun no se usa
+        }
+        // Comparar la contraseña
+        const result = await bcrypt.compare(passOld, usuario.password);
+        if (result) {
+            passHashed = await bcrypt.hash(passNew, 10);// Hasheo la contraseña
+            usuario.password = passHashed;
+            usuario.save();
+            res.json({
+                error: false,
+                data: usuario,
+                adm: administrador,
+                mensaje: 'CONTRASEÑA CAMBIADA EXITOSAMENTE'
+            });
+        }
+        else {
+            return res.json({
+                error: true,
+                data: "",
+                mensaje: 'Contraseña incorrecta'
+            });
+        }
 
-// Función para verificar la contraseña
-/* const decript = async (passToDecript, passToCompare) => {
-    try {
-        return await bcrypt.compare(passToDecript, passToCompare);
-    } catch (error) {
-        throw new Error('Error al verificar la contraseña');
+    } catch (err) {
+        return res.json({
+            error: true,
+            data: "",
+            mensaje: `Error al procesar la solicitud: ${err.message}`
+        });
     }
-}; */
+
+}
+
 
 
 const funtions = {
@@ -258,7 +304,6 @@ const funtions = {
     addCredit,
     removeCredit,
     login,
-    encript,
-    // decript
+    changePass
 }
 module.exports = funtions

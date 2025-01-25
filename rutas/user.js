@@ -10,6 +10,7 @@ router.post('/addUser', controlersUsers.addUser);
 router.put('/addCredit/:id', controlersUsers.addCredit)
 router.put('/removeCredit/:id', controlersUsers.removeCredit)
 router.post('/login', controlersUsers.login)
+router.put('/changePass/:id', controlersUsers.changePass)
 
 
 /* // Generar el token
