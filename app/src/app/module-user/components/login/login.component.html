@@ -27,9 +27,9 @@
                     <i *ngIf="formUser.get('name')?.invalid && formUser.get('name')?.touched">Nombre es requerido.</i>
                 </div>
                 <label for="pass">Contraseña</label>
-                <input formControlName="password" type="password" id="pass">
+                <input formControlName="passInput" type="password" id="pass">
                 <div class="error" >
-                    <i *ngIf="formUser.get('password')?.invalid && formUser.get('password')?.errors?.['minlength'] && formUser.get('password')?.touched">Ingrese una contraseña válida.</i>
+                    <i *ngIf="formUser.get('passInput')?.invalid && formUser.get('passInput')?.errors?.['minlength'] && formUser.get('passInput')?.touched">Ingrese una contraseña válida.</i>
                 </div>
                 <button [disabled]="formUser.invalid" (click)="userSend()">Ingresar</button>
             </div>

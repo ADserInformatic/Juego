@@ -23,20 +23,31 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.formUser = this.fb.group({
       name: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(3)]]
+      passInput: ['', [Validators.required, Validators.minLength(3)]]
     })
   }
 
   userSend(){
     this.servLogin.login(this.formUser.value).subscribe(res=>{
+      console.log(res)
       if(res.mensaje){
         alert(res.mensaje)
       }
-      this.token = res.data.token; // Asumiendo que el token viene en la respuesta
-      localStorage.setItem('token', this.token); // Almacena el token en localStorage
-      // this.user = res.data.name
-      this.cookie.set('jugador', res.data._id)
-      this.router.navigate(['/appTruco']); // Redirige a la página de inicio de sesión
+      if(res.error){
+        return
+      }
+      if(res.data.token){
+        this.token = res.data.token; // Asumiendo que el token viene en la respuesta
+        localStorage.setItem('token', this.token); // Almacena el token en localStorage
+        // this.user = res.data.name
+        this.cookie.set('jugador', res.data._id)
+      if(res.data.adm){
+        this.router.navigate(['/admin']);
+        this.cookie.set('isAMadafaka?', res.data.adm)
+      }else{
+        this.router.navigate(['/appTruco']); // Redirige a la página de inicio de sesión
+      }
+      }
     })
     
   }
