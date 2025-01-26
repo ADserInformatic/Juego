@@ -14,7 +14,7 @@ export class FormUserComponent implements OnInit {
   public formSala!: FormGroup;
   public formPass!: FormGroup;
   public salas: Array<any>= [];
-  public user!: string;
+  public user: any = {id: '', name: '', credito: 0};
   public cambiarPass: boolean = false;
 
   constructor(
@@ -26,7 +26,13 @@ export class FormUserComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.user = this.cookie.get('jugador')
+    this.user.id = this.cookie.get('jugador')
+
+    this.servCons.getUser(this.user.id).subscribe(res=>{
+      this.user.name = res.data.name
+      this.user.credito = res.data.credito
+      console.log(res)
+    })
 
     this.formSala = this.fb.group({
       name: ['', [Validators.required]],
@@ -34,8 +40,9 @@ export class FormUserComponent implements OnInit {
     })
 
     this.formPass = this.fb.group({
-      password: ['', [Validators.required, Validators.minLength(3)]],
-      newPassword: ['' , [Validators.required, Validators.minLength(3)]]
+      passOld: ['', [Validators.required, Validators.minLength(3)]],
+      passNew: ['' , [Validators.required, Validators.minLength(3)]],
+      passConf: ['' , [Validators.required, Validators.minLength(3)]]
     })
     
     this.traeSalas()
@@ -119,15 +126,17 @@ export class FormUserComponent implements OnInit {
   }
 
   sendPass(){
-    if(this.formPass.value.password !== this.formPass.value.newPassword){
+    if(this.formPass.value.passNew !== this.formPass.value.passConf){
       alert('La contraseña debe ser igual en los dos campos')
       return
     }
     console.log(this.formPass.value)
-    return
     const id = this.cookie.get('jugador')
     this.servCons.newPass(id, this.formPass.value).subscribe(res=>{
       alert(res.mensaje)
+      if(res.error){
+        return
+      }
       this.servLogin.logout()
       this.cookie.delete('jugador')
       this.route.navigate(['/'])

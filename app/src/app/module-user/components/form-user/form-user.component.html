@@ -12,6 +12,10 @@
         </div>
     </nav>
     <div class="forms">
+        <div class="user">
+            <h3>Usuario: {{user.name}}</h3>
+            <h3>Credito: {{user.credito}}</h3>
+        </div>
         <div class="salas">
             <h1>Crear sala</h1>
             <div class="form-block" [formGroup]="formSala">
@@ -55,15 +59,21 @@
             </button>
             <h1>Cambiar contraseña</h1>
             <div [formGroup]="formPass" class="form-block">
-                <label for="name">Nueva contraseña:</label>
-                <input formControlName="password" type="password" id="password">
+                <label for="passOld">Contraseña</label>
+                <input formControlName="passOld" type="password" id="passOld">
                 <div class="error" >
-                    <i *ngIf="formPass.get('password')?.invalid && formPass.get('password')?.errors?.['minlength'] && formPass.get('password')?.touched">Ingrese una contraseña válida.</i>
+                    <i *ngIf="formPass.get('passOld')?.invalid && formPass.get('passOld')?.errors?.['minlength'] && formPass.get('passOld')?.touched">Ingrese una contraseña válida.</i>
                 </div>
-                <label for="pass">Contraseña</label>
-                <input formControlName="newPassword" type="password" id="newPassword">
+                <label for="passNew">Nueva contraseña:</label>
+                <input formControlName="passNew" type="password" id="passNew">
                 <div class="error" >
-                    <i *ngIf="formPass.get('newPassword')?.invalid && formPass.get('newPassword')?.errors?.['minlength'] && formPass.get('newPassword')?.touched">Ingrese una contraseña válida.</i>
+                    <i *ngIf="formPass.get('passNew')?.invalid && formPass.get('passNew')?.errors?.['minlength'] && formPass.get('passNew')?.touched">Ingrese una contraseña válida.</i>
+                </div>
+                <label for="pass">Confirmar contraseña</label>
+                <input formControlName="passConf" type="password" id="pass">
+                <div class="error" >
+                    <i *ngIf="formPass.get('passConf')?.invalid && formPass.get('passConf')?.errors?.['minlength'] && formPass.get('passConf')?.touched">Ingrese una contraseña válida.</i>
+                    <i *ngIf="formPass.get('passConf')?.value !== formPass.get('passNew')?.value && formPass.get('passConf')?.touched">La nueva contraseña debe coinsidir con la confirmación.</i>
                 </div>
                 <button [disabled]="formPass.invalid" (click)="sendPass()">Cambiar</button>
             </div>

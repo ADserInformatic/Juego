@@ -45,8 +45,9 @@ nav .set{
     display: flex;
     margin: auto;
     width: 100%;
-    align-items: center;
+    /* align-items: center; */
     margin-top: 10%;
+    flex-direction: column;
 }
 .salas, .form-user{
     width: 35%;
@@ -55,9 +56,17 @@ nav .set{
     border: solid 1px #fff;
     border-radius: 5px;
     box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.795),
-                -2px -2px 12px rgba(255, 255, 255, 0.788);
+    -2px -2px 12px rgba(255, 255, 255, 0.788);
     color: #fff;
     background: #000000d5;
+}
+.forms .user{
+    width: 35%;
+    margin: 10px auto;
+    padding: 5px 10px;
+    border: solid .3px #fff;
+    background: #000000d5;
+    color: #fff;
 }
 .form-block{
     margin-top: 15px;
@@ -126,7 +135,9 @@ button:hover{
 }
 
 .error{
-    height: 15px;
+    min-height: 25px;
+    display: flex;
+    flex-direction: column;
 }
 .error i{
     font-size: 10px;
