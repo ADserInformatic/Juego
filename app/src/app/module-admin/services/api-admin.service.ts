@@ -31,4 +31,8 @@ export class ApiAdminService {
   deleteUser(id: string): Observable<any>{
     return this.http.delete(`${this.apiUrl}/delete/${id}`)
   }
+
+  resetPass(id: string): Observable<any>{
+    return this.http.put(`${this.apiUrl}/resetPass/${id}`, id)
+  }
 }
