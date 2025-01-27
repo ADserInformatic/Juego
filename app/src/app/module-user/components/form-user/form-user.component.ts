@@ -16,6 +16,8 @@ export class FormUserComponent implements OnInit {
   public salas: Array<any>= [];
   public user: any = {id: '', name: '', credito: 0};
   public cambiarPass: boolean = false;
+  public isAdmin: any;
+
 
   constructor(
     private servCons: ConsultasService,
@@ -26,12 +28,13 @@ export class FormUserComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.isAdmin = this.cookie.get('isAMadafaka?')
+
     this.user.id = this.cookie.get('jugador')
 
     this.servCons.getUser(this.user.id).subscribe(res=>{
       this.user.name = res.data.name
       this.user.credito = res.data.credito
-      console.log(res)
     })
 
     this.formSala = this.fb.group({
@@ -55,6 +58,10 @@ export class FormUserComponent implements OnInit {
   }
 
   createSala(){
+    if(this.formSala.value.apuesta > this.user.credito){
+      alert('La apuesta no puede superar el credito disponible')
+      return
+    }
     const datos = {
       name: this.formSala.value.name,
       apuesta: this.formSala.value.apuesta,
@@ -86,7 +93,6 @@ export class FormUserComponent implements OnInit {
     if(res.mensaje){
       alert(res.mensaje)
     }
-      console.log(res)
       const datos = {
         sala: res.data.name,
         idSala: res.data._id,
@@ -101,14 +107,6 @@ export class FormUserComponent implements OnInit {
       this.traeSalas()
     })
   }
-
-  // solicitar(){
-  //   if(confirm('Quiere solicitar usuario? Si acepta se')){
-
-  //   }else{
-
-  //   }
-  // }
 
   closed(){
     if(confirm('Desea cerrar sesión?')){
@@ -130,7 +128,6 @@ export class FormUserComponent implements OnInit {
       alert('La contraseña debe ser igual en los dos campos')
       return
     }
-    console.log(this.formPass.value)
     const id = this.cookie.get('jugador')
     this.servCons.newPass(id, this.formPass.value).subscribe(res=>{
       alert(res.mensaje)

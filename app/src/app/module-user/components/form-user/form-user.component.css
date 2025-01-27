@@ -125,6 +125,7 @@ nav .set{
     justify-content: space-between;
     margin-top: 10px;
     border: solid .7px #fff;
+    align-items: center;
 }
 .form-block button.crear:hover, .form-user button:hover{
     background: var(--bordeBajo);

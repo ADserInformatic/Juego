@@ -292,7 +292,7 @@ nav .set{
     justify-content: center;
 }
 .canto .contCanto .btns button{
-    background: #f30101b6;
+    background: #3f3a3ab6;
     color: #fff;
     padding: 5px;
     border: solid .7px #000;
@@ -302,11 +302,11 @@ nav .set{
     /* width: 30%; */
     cursor: pointer;
 }
-.canto .contCanto .btns button:nth-child(1){
+.canto .contCanto .btns button.quiero{
     background: rgba(0, 88, 0, 0.719);
 }
-.canto .contCanto .btns button:nth-child(2){
-    background: rgba(202, 139, 2, 0.719);
+.canto .contCanto .btns button.noQuiero{
+    background: rgba(202, 2, 2, 0.767);
     font-weight: bold;
 }
 .canto .contCanto .flor button:nth-child(1){
