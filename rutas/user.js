@@ -11,6 +11,13 @@ router.put('/addCredit/:id', controlersUsers.addCredit)
 router.put('/removeCredit/:id', controlersUsers.removeCredit)
 router.post('/login', controlersUsers.login)
 router.put('/changePass/:id', controlersUsers.changePass)
+router.put('/clearEarning/:id', controlersUsers.clearEarnings)
+router.get('/earningHistory/:id', controlersUsers.getEarningHistory)
+router.get('/dataAdmin/:id', controlersUsers.getAdmin)
+router.get('/chargeHistory/:id', controlersUsers.getChargeHistory)
+
+
+
 
 
 /* // Generar el token

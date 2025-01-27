@@ -29,6 +29,12 @@ const getUsers = async (req, res) => {
 const getUser = async (req, res) => {
     let id = req.params.id
     const userX = await user.findOne({ _id: id })
+    if (!userX) {
+        res.json({
+            error: true,
+            mensaje: `No se encuentra el usuario`
+        })
+    }
     try {
         res.json({
             error: false,
@@ -43,12 +49,22 @@ const getUser = async (req, res) => {
     }
 }
 const getAdmin = async (req, res) => {
-    let id = req.params.id
-    const userX = await admin.findOne({ _id: id })
     try {
+        let id = req.params.id
+        const userX = await admin.findOne({ _id: id })
+        if (!userX) {
+            res.json({
+                error: true,
+                mensaje: `No se encuentra el usuario administrador`
+            })
+        }
+        const data = {
+            name: userX.name,
+            earning: userX.earning
+        }
         res.json({
             error: false,
-            data: userX,
+            data: data,
             mensaje: 'La solicitud ha sido resuelta exitosamente'
         })
     } catch (e) {
@@ -365,7 +381,50 @@ const clearEarnings = async (req, res) => {
         });
     }
 };
-
+const getEarningHistory = async (req, res) => {
+    try {
+        let id = req.params.id
+        const userX = await admin.findOne({ _id: id })
+        if (!userX) {
+            res.json({
+                error: true,
+                mensaje: `No se encuentra el usuario administrador`
+            })
+        }
+        res.json({
+            error: false,
+            data: userX.earningsHistory,
+            mensaje: 'La solicitud ha sido resuelta exitosamente'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+}
+const getChargeHistory = async (req, res) => {
+    try {
+        let id = req.params.id
+        const userX = await user.findOne({ _id: id })
+        if (!userX) {
+            res.json({
+                error: true,
+                mensaje: `No se encuentra el usuario`
+            })
+        }
+        res.json({
+            error: false,
+            data: userX.loadHistory,
+            mensaje: 'La solicitud ha sido resuelta exitosamente'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+}
 const funtions = {
     getUsers, //devuelve todos los apostadores
     getUser,//devuelve un apostador en particular con un id
@@ -375,7 +434,9 @@ const funtions = {
     login,//login de apostador o administrador
     changePass,//cambia la contraseña del apostador o administrador
     clearEarnings, //para bajar ganancia
-    getAdmin //devuelve los datos del administrador
+    getAdmin, //devuelve los datos del administrador
+    getEarningHistory, //devuelve el historial de ganancias de administrador
+    getChargeHistory, //devuelve el historial de cargas de un usuario
 
 }
 module.exports = funtions
