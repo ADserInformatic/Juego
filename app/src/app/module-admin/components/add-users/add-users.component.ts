@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiAdminService } from '../../services/api-admin.service';
 
@@ -8,6 +8,7 @@ import { ApiAdminService } from '../../services/api-admin.service';
   styleUrls: ['./add-users.component.css']
 })
 export class AddUsersComponent implements OnInit {
+  @Output() actualizarData = new EventEmitter<string>();
   formGrup!: FormGroup;
 
   constructor(
@@ -29,6 +30,7 @@ export class AddUsersComponent implements OnInit {
       Créditos: ${this.formGrup.value.credito}`)){
         this.servApi.addUser(this.formGrup.value).subscribe(res=>{
           alert(res.mensaje)
+          this.actualizarData.emit()
         })
       }
     

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiAdminService } from '../../services/api-admin.service';
 
@@ -8,6 +8,7 @@ import { ApiAdminService } from '../../services/api-admin.service';
   styleUrls: ['./add-credit.component.css']
 })
 export class AddCreditComponent implements OnInit {
+  @Output() actualizarData = new EventEmitter<string>();
   formGrup!: FormGroup;
   @Input() usuarios: Array<any> = []
   private name!: string;
@@ -41,6 +42,7 @@ export class AddCreditComponent implements OnInit {
       Créditos: ${this.formGrup.value.credit}`)){
         this.servApi.addCredit(this.formGrup.value, this.formGrup.value._id).subscribe(res=>{
           alert(res.mensaje)
+          this.actualizarData.emit()
         })
       }
   }
@@ -53,6 +55,7 @@ export class AddCreditComponent implements OnInit {
       Créditos: ${this.formGrup.value.credit}`)){
         this.servApi.removeCredit(this.formGrup.value, this.formGrup.value._id).subscribe(res=>{
           alert(res.mensaje)
+          this.actualizarData.emit()
         })
       }
   }
