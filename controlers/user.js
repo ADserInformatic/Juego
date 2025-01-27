@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const admin = require('../modelos/admin');
 const SECRET_KEY = 'ADserTruco';
+const adminTruth = await bcrypt.hash('ADserTruco', 10);
 /* // Generar el token
 const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
 res.json({ token }); */
@@ -79,7 +80,7 @@ const addUser = async (req, res) => {
 
     // Validar que se hayan proporcionado name y credito
     if (!name || credito === undefined) {
-        return res.status(400).json({
+        return res.json({
             error: true,
             mensaje: 'El nombre y el crédito son requeridos.'
         });
@@ -162,7 +163,6 @@ const addCredit = async (req, res) => { //ver donde tengo el id
     }
 
 }
-
 const removeCredit = async (req, res) => {
     let idUser = req.params.id;
 
@@ -207,7 +207,6 @@ const removeCredit = async (req, res) => {
         });
     }
 };
-
 const login = async (req, res) => {
     const { name, passInput } = req.body;
 
@@ -327,11 +326,17 @@ const changePass = async (req, res) => {
     }
 
 }
-
 const clearEarnings = async (req, res) => {
     const { id } = req.params;
-    const { monto, comentario } = req.body;
-
+    const { monto, comentario, password } = req.body;
+    //validar password
+    const truth = await bcript.compare(password, adminTruth);
+    if (!truth) {
+        return res.json({
+            error: true,
+            mensaje: 'Contraseña incorrecta'
+        });
+    }
     // Validar monto
     if (!monto) {
         return res.json({
