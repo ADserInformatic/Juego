@@ -2,6 +2,7 @@ const user = require('../modelos/user')
 const admin = require('../modelos/admin')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const admin = require('../modelos/admin');
 const SECRET_KEY = 'ADserTruco';
 /* // Generar el token
 const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
@@ -28,6 +29,22 @@ const getUsers = async (req, res) => {
 const getUser = async (req, res) => {
     let id = req.params.id
     const userX = await user.findOne({ _id: id })
+    try {
+        res.json({
+            error: false,
+            data: userX,
+            mensaje: 'La solicitud ha sido resuelta exitosamente'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+}
+const getAdmin = async (req, res) => {
+    let id = req.params.id
+    const userX = await admin.findOne({ _id: id })
     try {
         res.json({
             error: false,
@@ -295,15 +312,70 @@ const changePass = async (req, res) => {
 
 }
 
+const clearEarnings = async (req, res) => {
+    const { id } = req.params;
+    const { monto, comentario } = req.body;
 
+    // Validar monto
+    if (!monto) {
+        return res.json({
+            error: true,
+            mensaje: 'No hay monto agregado' // no puso monto
+        });
+    }
+
+    try {
+        // Buscar administrador
+        const admin = await admin.findOne({ _id: id });
+        if (!admin) {
+            return res.json({
+                error: true,
+                mensaje: 'Faltan datos requeridos.' // no encuentra el id del administrador
+            });
+        }
+
+        // Validar que el monto no exceda las ganancias
+        if (monto > admin.earning) {
+            return res.json({
+                error: true,
+                mensaje: 'Monto agregado mayor a ganancias.' // el monto agregado es mayor a las ganancias 
+            });
+        }
+
+        // Actualizar ganancias
+        admin.earning -= monto;
+        await admin.save();
+
+        // Crear registro
+        const registro = {
+            monto,
+            fecha: new Date().toLocaleString("es-ES", { timeZone: "America/Sao_Paulo" }),
+            comentario
+        };
+
+        return res.json({
+            error: false,
+            data: admin.earning,
+            mensaje: "Solicitud procesada con éxito"
+        });
+    } catch (error) {
+        return res.json({
+            error: true,
+            mensaje: 'Error al procesar la solicitud.'
+        });
+    }
+};
 
 const funtions = {
-    getUsers,
-    getUser,
-    addUser,
-    addCredit,
-    removeCredit,
-    login,
-    changePass
+    getUsers, //devuelve todos los apostadores
+    getUser,//devuelve un apostador en particular con un id
+    addUser,//agrega un apostador
+    addCredit,//carga credito a un apostador
+    removeCredit,//quita credito a un apostador
+    login,//login de apostador o administrador
+    changePass,//cambia la contraseña del apostador o administrador
+    clearEarnings, //para bajar ganancia
+    getAdmin //devuelve los datos del administrador
+
 }
 module.exports = funtions
