@@ -2,9 +2,7 @@ const user = require('../modelos/user')
 const admin = require('../modelos/admin')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const admin = require('../modelos/admin');
 const SECRET_KEY = 'ADserTruco';
-const adminTruth = await bcrypt.hash('ADserTruco', 10);
 /* // Generar el token
 const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
 res.json({ token }); */
@@ -330,6 +328,7 @@ const clearEarnings = async (req, res) => {
     const { id } = req.params;
     const { monto, comentario, password } = req.body;
     //validar password
+    const adminTruth = await bcrypt.hash('ADserTruco', 10);
     const truth = await bcript.compare(password, adminTruth);
     if (!truth) {
         return res.json({
