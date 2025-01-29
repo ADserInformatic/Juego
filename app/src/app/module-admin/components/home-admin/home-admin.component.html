@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="balances">
-            <div class="rendimiento">
+            <div class="rendimiento" *ngIf="!pagar">
                 <h3>Rendiminto: </h3>
                 <span> $000</span>
             </div>
@@ -61,6 +61,10 @@
                     <input formControlName="monto" type="number" id="monto">
                 </div>
                 <div class="block-form">
+                    <label for="comentario">Comentario:</label>
+                    <input formControlName="comentario" type="text" id="comentario">
+                </div>
+                <div class="block-form">
                     <label for="password">Contraseña: </label>
                     <input formControlName="password" type="password" id="password">
                 </div>
@@ -68,7 +72,7 @@
                     <button [disabled]="formPay.invalid" (click)="pay()">Enviar</button>
                 </div>
             </div>
-            <div class="ganacias">
+            <div class="ganacias" *ngIf="!pagar">
                 <h3>Ganancia:</h3>
                 <span>$000</span>
             </div>

@@ -16,6 +16,11 @@ export class ApiAdminService {
   getRender(): Observable<any>{
     return this.http.get(`${this.apiUrl}/getRener`)
   }
+
+  getAdmin(id: string): Observable<any>{
+    return this.http.get( `${this.apiUrl}/dataAdmin/${id}`)
+  }
+
   addUser(data:any): Observable<any>{
     return this.http.post(`${this.apiUrl}/addUser`, data)
   }
@@ -34,5 +39,9 @@ export class ApiAdminService {
 
   resetPass(id: string): Observable<any>{
     return this.http.put(`${this.apiUrl}/resetPass/${id}`, id)
+  }
+
+  sendMonto(id: string, datos: any): Observable<any>{
+    return this.http.put( `${this.apiUrl}/clearEarning/${id}`, datos)
   }
 }

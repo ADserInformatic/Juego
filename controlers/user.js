@@ -1,8 +1,10 @@
 const user = require('../modelos/user')
-const admin = require('../modelos/admin')
+// const admin = require('../modelos/admin')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const admin = require('../modelos/admin');
 const SECRET_KEY = 'ADserTruco';
+const adminTruth = await bcrypt.hash('ADserTruco', 10);
 /* // Generar el token
 const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
 res.json({ token }); */
@@ -28,10 +30,42 @@ const getUsers = async (req, res) => {
 const getUser = async (req, res) => {
     let id = req.params.id
     const userX = await user.findOne({ _id: id })
+    if (!userX) {
+        res.json({
+            error: true,
+            mensaje: `No se encuentra el usuario`
+        })
+    }
     try {
         res.json({
             error: false,
             data: userX,
+            mensaje: 'La solicitud ha sido resuelta exitosamente'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+}
+const getAdmin = async (req, res) => {
+    try {
+        let id = req.params.id
+        const userX = await admin.findOne({ _id: id })
+        if (!userX) {
+            res.json({
+                error: true,
+                mensaje: `No se encuentra el usuario administrador`
+            })
+        }
+        const data = {
+            name: userX.name,
+            earning: userX.earning
+        }
+        res.json({
+            error: false,
+            data: data,
             mensaje: 'La solicitud ha sido resuelta exitosamente'
         })
     } catch (e) {
@@ -46,7 +80,7 @@ const addUser = async (req, res) => {
 
     // Validar que se hayan proporcionado name y credito
     if (!name || credito === undefined) {
-        return res.status(400).json({
+        return res.json({
             error: true,
             mensaje: 'El nombre y el crédito son requeridos.'
         });
@@ -129,7 +163,6 @@ const addCredit = async (req, res) => { //ver donde tengo el id
     }
 
 }
-
 const removeCredit = async (req, res) => {
     let idUser = req.params.id;
 
@@ -174,7 +207,6 @@ const removeCredit = async (req, res) => {
         });
     }
 };
-
 const login = async (req, res) => {
     const { name, passInput } = req.body;
 
@@ -294,16 +326,122 @@ const changePass = async (req, res) => {
     }
 
 }
+const clearEarnings = async (req, res) => {
+    const { id } = req.params;
+    const { monto, comentario, password } = req.body;
+    //validar password
+    const truth = await bcript.compare(password, adminTruth);
+    if (!truth) {
+        return res.json({
+            error: true,
+            mensaje: 'Contraseña incorrecta'
+        });
+    }
+    // Validar monto
+    if (!monto) {
+        return res.json({
+            error: true,
+            mensaje: 'No hay monto agregado' // no puso monto
+        });
+    }
 
+    try {
+        // Buscar administrador
+        const admin = await admin.findOne({ _id: id });
+        if (!admin) {
+            return res.json({
+                error: true,
+                mensaje: 'Faltan datos requeridos.' // no encuentra el id del administrador
+            });
+        }
 
+        // Validar que el monto no exceda las ganancias
+        if (monto > admin.earning) {
+            return res.json({
+                error: true,
+                mensaje: 'Monto agregado mayor a ganancias.' // el monto agregado es mayor a las ganancias 
+            });
+        }
 
+        // Actualizar ganancias
+        admin.earning -= monto;
+        await admin.save();
+
+        // Crear registro
+        const registro = {
+            monto,
+            fecha: new Date().toLocaleString("es-ES", { timeZone: "America/Sao_Paulo" }),
+            comentario
+        };
+
+        return res.json({
+            error: false,
+            data: admin.earning,
+            mensaje: "Solicitud procesada con éxito"
+        });
+    } catch (error) {
+        return res.json({
+            error: true,
+            mensaje: 'Error al procesar la solicitud.'
+        });
+    }
+};
+const getEarningHistory = async (req, res) => {
+    try {
+        let id = req.params.id
+        const userX = await admin.findOne({ _id: id })
+        if (!userX) {
+            res.json({
+                error: true,
+                mensaje: `No se encuentra el usuario administrador`
+            })
+        }
+        res.json({
+            error: false,
+            data: userX.earningsHistory,
+            mensaje: 'La solicitud ha sido resuelta exitosamente'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+}
+const getChargeHistory = async (req, res) => {
+    try {
+        let id = req.params.id
+        const userX = await user.findOne({ _id: id })
+        if (!userX) {
+            res.json({
+                error: true,
+                mensaje: `No se encuentra el usuario`
+            })
+        }
+        res.json({
+            error: false,
+            data: userX.loadHistory,
+            mensaje: 'La solicitud ha sido resuelta exitosamente'
+        })
+    } catch (e) {
+        res.json({
+            error: true,
+            mensaje: `El servidor devuelve el siguiente error ${e}`
+        })
+    }
+}
 const funtions = {
-    getUsers,
-    getUser,
-    addUser,
-    addCredit,
-    removeCredit,
-    login,
-    changePass
+    getUsers, //devuelve todos los apostadores
+    getUser,//devuelve un apostador en particular con un id
+    addUser,//agrega un apostador
+    addCredit,//carga credito a un apostador
+    removeCredit,//quita credito a un apostador
+    login,//login de apostador o administrador
+    changePass,//cambia la contraseña del apostador o administrador
+    clearEarnings, //para bajar ganancia
+    getAdmin, //devuelve los datos del administrador
+    getEarningHistory, //devuelve el historial de ganancias de administrador
+    getChargeHistory, //devuelve el historial de cargas de un usuario
+
 }
 module.exports = funtions

@@ -128,7 +128,7 @@
     background: #000;
     border-radius: 5px;
     border: solid .3px var(--bordeBajo);
-    max-width: 50%;
+    min-width: 50%;
     position: relative;
 }
 .formPay .btnClosed{

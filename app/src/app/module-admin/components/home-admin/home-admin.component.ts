@@ -18,6 +18,8 @@ export class HomeAdminComponent implements OnInit {
   public usersFilter: Array<any> = []
   public pagar: boolean = false
   public cambiarPass: boolean = false;
+  private id!: string;
+  public admin: any;
 
   constructor( 
     private apiServ: ApiAdminService,
@@ -30,9 +32,16 @@ export class HomeAdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.traeUsers()
+    this.id = this.cookie.get('jugador')
+
+this.apiServ.getAdmin(this.id).subscribe(res=>{
+  console.log(res)
+  this.admin = res.data
+})
 
     this.formPay = this.fb.group({
       monto: ['', Validators.required],
+      comentario: ['', Validators.required],
       password: ['', Validators.required ]
     })
 
@@ -89,7 +98,9 @@ export class HomeAdminComponent implements OnInit {
   }
 
   pay(){
-    console.log(this.formPay.value)
+    this.apiServ.sendMonto(this.id, this.formPay.value).subscribe(res=>{
+      alert(res.mensaje)
+    })
   }
 
   cambiar(){
