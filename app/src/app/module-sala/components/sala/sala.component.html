@@ -26,6 +26,11 @@
                     <div class="pintarPuntos">
                         <div *ngFor="let item of tantos3" class="punto{{tantos3.indexOf(item)}}"></div>
                     </div>
+                    <div class="pintarPuntos">
+                        <span *ngIf="buenas" class="material-symbols-outlined punto">
+                            check_circle
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="puntos">
@@ -39,6 +44,11 @@
                     </div>
                     <div class="pintarPuntos">
                         <div *ngFor="let item of tantosCont3" class="punto{{tantosCont3.indexOf(item)}}"></div>
+                    </div>
+                    <div class="pintarPuntos">
+                        <span *ngIf="buenasCont" class="material-symbols-outlined punto">
+                            check_circle
+                        </span>
                     </div>
                 </div>
             </div>

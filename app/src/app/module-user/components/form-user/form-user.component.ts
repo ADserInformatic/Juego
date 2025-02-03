@@ -62,6 +62,10 @@ export class FormUserComponent implements OnInit {
       alert('La apuesta no puede superar el credito disponible')
       return
     }
+    if(this.formSala.value.apuesta < 500){
+      alert('La apuesta mínima es de $500')
+      return
+    }
     const datos = {
       name: this.formSala.value.name,
       apuesta: this.formSala.value.apuesta,

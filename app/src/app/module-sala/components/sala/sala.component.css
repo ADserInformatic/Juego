@@ -165,6 +165,13 @@ nav .set{
     height: 100%;
     transform: rotate(50deg);
 }
+.pintarPuntos .punto{
+    color: var(--bordeBajo);
+    font-size: 14px;
+    margin: auto;
+    top: 0;
+    height: 100%;
+}
 .titulo{
     padding: 10px 0px;
     display: flex;

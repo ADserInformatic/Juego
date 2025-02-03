@@ -58,6 +58,8 @@ export class SalaComponent implements OnInit {
   public tantosCont2: Array<number> = []
   public tantos3: Array<number> = []
   public tantosCont3: Array<number> = [] 
+  public buenas: boolean = false;
+  public buenasCont: boolean = false;
 
 
 
@@ -191,22 +193,47 @@ export class SalaComponent implements OnInit {
     this.tantosCont2 = []
     this.tantos3 = []
     this.tantosCont3 = []
-    for (let i = 0; i < this.jugador.tantos; i++) {
-      this.tantos1.push(i)
-      if (i > 3) {
-        break
+    if(this.jugador.tantos < 16){
+      for (let i = 0; i < this.jugador.tantos; i++) {
+        this.tantos1.push(i)
+        if (i > 3) {
+          break
+        }
       }
-    }
-    for (let i = 0; i < this.jugadorCont.tantos; i++) {
-      this.tantosCont1.push(i)
-      if (i > 3) {
-        break
+      this.pintarPuntos(this.jugador.tantos, this.tantos2, 5, 8)
+      this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
+    }else{
+      this.buenas = true
+      for (let i = 15; i < this.jugador.tantos; i++) {
+        this.tantos1.push(i)
+        if (i > 18) {
+          break
+        }
       }
+      this.pintarPuntos(this.jugador.tantos, this.tantos2, 20, 23)
+      this.pintarPuntos(this.jugador.tantos, this.tantos3, 25, 28)
     }
-    this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont2, 5, 8)
-    this.pintarPuntos(this.jugador.tantos, this.tantos2, 5, 8)
-    this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
-    this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
+    if(this.jugadorCont.tantos < 16){
+      for (let i = 0; i < this.jugadorCont.tantos; i++) {
+        this.tantosCont1.push(i)
+        if (i > 3) {
+          break
+        }
+      }
+      this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont2, 5, 8)
+      this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
+    }else{
+      this.buenasCont = true
+      for (let i = 15; i < this.jugadorCont.tantos; i++) {
+        this.tantosCont1.push(i)
+        if (i > 18) {
+          break
+        }
+      }
+      this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont2, 20, 23)
+      this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 25, 28)
+    }
+    
     
     this.verCartas.next(this.jugador.valores)
     this.verGuard.observarGuard.next(res.partidaFinalizada)
@@ -275,6 +302,7 @@ export class SalaComponent implements OnInit {
   }
 
   pintarPuntos(jugador: number, puntos: Array<any>, min: number, max: number){
+    console.log(jugador)
     if(jugador > min){
       for(let i = min; i < jugador; i++){
         puntos.push(i)
