@@ -72,6 +72,7 @@ this.apiServ.getAdmin(this.id).subscribe(res=>{
   closed(){
     if(confirm('De veras desea cerrar sesión?')){
       this.authLog.logout()
+      this.cookie.delete('isAMadafaka?')
       this.router.navigate(['/'])
     }
   }

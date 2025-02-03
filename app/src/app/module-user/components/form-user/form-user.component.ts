@@ -77,6 +77,11 @@ export class FormUserComponent implements OnInit {
   }
 
   sala(e: any){
+    console.log(e)
+    if(e.apuesta > this.user.credito){
+      alert('La apuesta no puede superar el credito disponible')
+      return
+    }
     const dato = {
       id: this.cookie.get('jugador'),
       valores: [],

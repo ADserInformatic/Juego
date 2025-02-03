@@ -172,6 +172,7 @@ export class SalaComponent implements OnInit {
     this.sala.usuarios.forEach((element: any) => {
       if (element.id == this.cookies.get('jugador')) {
         this.jugador = element
+        console.log(this.jugador)
       } else {
         this.jugadorCont = element
       }
