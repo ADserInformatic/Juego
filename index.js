@@ -327,27 +327,50 @@ io.on('connection', (socket) => {
       case 'faltaEnvido':
         switch (res.respuesta) {
           case 'quiero':
-            const Indiceganador = await ganadorEnvido(users);
-            if (Indiceganador == 0) {
+            if (users[0].puntosMentira > users[1].puntosMentira) {
+              mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
               if (sala.unaFalta) {
-                users[Indiceganador].tantos += 30 - users[1].tantos;
+                users[0].tantos += 30 - users[1].tantos;
               } else {
-                if (user[1].tantos < 15) { users[Indiceganador].tantos += 15 - users[1].tantos; }
-                else { { users[Indiceganador].tantos += 30 - users[1].tantos; } }
+                if (user[1].tantos < 15) { users[0].tantos += 15 - users[1].tantos; }
+                else { { users[0].tantos += 30 - users[1].tantos; } }
               }
 
             } else {
-
-              if (sala.unaFalta) {
-                users[Indiceganador].tantos += 30 - users[0].tantos;
-              } else {
-                if (user[0].tantos < 15) { users[Indiceganador].tantos += 15 - users[0].tantos; }
-                else { { users[Indiceganador].tantos += 30 - users[0].tantos; } }
+              if (users[1].puntosMentira > users[0].puntosMentira) {
+                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                if (sala.unaFalta) {
+                  users[1].tantos += 30 - users[0].tantos;
+                } else {
+                  if (user[0].tantos < 15) { users[1].tantos += 15 - users[0].tantos; }
+                  else { { users[1].tantos += 30 - users[0].tantos; } }
+                }
               }
+              else {
+                if (users[0].puntosMentira == users[1].puntosMentira) {
+                  if (users[0].mano) {
+                    mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos POR MANO`
+                    if (sala.unaFalta) {
+                      users[0].tantos += 30 - users[1].tantos;
+                    } else {
+                      if (user[1].tantos < 15) { users[0].tantos += 15 - users[1].tantos; }
+                      else { { users[0].tantos += 30 - users[1].tantos; } }
+                    }
+                  } else {
+                    mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos POR MANO`
+                    if (sala.unaFalta) {
+                      users[1].tantos += 30 - users[0].tantos;
+                    } else {
+                      if (user[0].tantos < 15) { users[1].tantos += 15 - users[0].tantos; }
+                      else { { users[1].tantos += 30 - users[0].tantos; } }
+                    }
+                  }
+                }
 
+              }
             }
+            //***********************************************************************LLAMAR A FUNCION PARA FINALIZAR PARTIDA
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
             datos = {
               mensaje,
               sala
@@ -357,27 +380,39 @@ io.on('connection', (socket) => {
           case 'noquiero':
             var me;
             users.forEach(us => {
+              me = `${us.name} no quiere`
               if (us.name === res.jugador.name) {
-                if (sala.usuarios.boolrealenvido) {
-                  if (sala.usuarios.boolreenvido) { us.tantos += 7 } //se cantó envido envido realenvido y dsp la falta
+                if (sala.cantosenmano.boolRealEnvido) {
+                  if (sala.usuarios.boolReEnvido) {
+                    us.tantos += 7
+                  } //se cantó envido envido realenvido y dsp la falta
                   else {
-                    if (sala.usuarios.boolenvido) { us.tantos += 5 } //se canto envido realenvido y dsp la falta
-                    else { us.tantos += 3 } //se canto solo real envido y dsp la falta
+                    if (sala.cantosenmano.boolEnvido) {
+                      us.tantos += 5
+                    } //se canto envido realenvido y dsp la falta
+                    else {
+                      us.tantos += 3
+                    } //se canto solo real envido y dsp la falta
                   }
                 }
                 else {
-                  if (sala.usuarios.boolreenvido) { us.tantos += 4 } //se canto envido reenvido y dsp la falta
+                  if (sala.cantosenmano.boolReEnvido) {
+                    us.tantos += 4
+                  } //se canto envido reenvido y dsp la falta
                   else {
-                    if (sala.usuarios.boolenvido) { us.tantos += 2 } //se canto envido y dsp la falta
+                    if (sala.cantosenmano.boolEnvido) {
+                      us.tantos += 2
+                    } //se canto envido y dsp la falta
                     else {
                       us.tantos += 1  //solo se canto la falta
                     }
                   }
-                }//solo se cantó real envido
-              } else {
-                me = `${us.name} no quiere`
+                }
+
               }
-            })
+              //solo se cantó real envido
+            }
+            )
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             datos = {
               mensaje: me,
