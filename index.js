@@ -383,15 +383,20 @@ io.on('connection', (socket) => {
               me = `${us.name} no quiere`
               if (us.name === res.jugador.name) {
                 if (sala.cantosenmano.boolRealEnvido) {
-                  if (sala.usuarios.boolReEnvido) {
-                    us.tantos += 7
+                  if (sala.cantosenmano.boolReEnvido) {
+                    if (sala.cantosenmano.boolEnvido) {
+                      us.tantos += 7
+                    } //se canto envido realenvido y dsp la falta
+                    else {
+                      us.tantos += 5
+                    } //se canto solo real envido y dsp la falta
                   } //se cantó envido envido realenvido y dsp la falta
                   else {
                     if (sala.cantosenmano.boolEnvido) {
-                      us.tantos += 5
+                      us.tantos += 2
                     } //se canto envido realenvido y dsp la falta
                     else {
-                      us.tantos += 3
+                      us.tantos += 1
                     } //se canto solo real envido y dsp la falta
                   }
                 }
@@ -408,7 +413,6 @@ io.on('connection', (socket) => {
                     }
                   }
                 }
-
               }
               //solo se cantó real envido
             }
@@ -420,7 +424,6 @@ io.on('connection', (socket) => {
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
-
         }
         //socket.to(res.sala).emit('cantando', res)
 
