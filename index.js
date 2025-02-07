@@ -34,7 +34,7 @@ const server = app.listen(process.env.PORT || 3006, () => {
 const socketIo = require('socket.io');
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:4200']
+    origin: ['http://localhost:4200', 'http://localhost:8100']
   }
 });
 
