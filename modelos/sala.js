@@ -7,7 +7,7 @@ const sala = new Schema({
     partida: { type: Number, default: 1 }, //Toda la partida arranca jugando el mismo
     unaFalta: { type: Boolean, default: true },
     finish: { type: Boolean, default: true },
-    juegoFinalizado: { type: Boolean, default: false },
+    partidaFinalizada: { type: Boolean, default: false },
     cantosenmano: {
         boolEnvido: { type: Boolean, default: false },
         boolReEnvido: { type: Boolean, default: false },
