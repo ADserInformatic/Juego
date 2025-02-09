@@ -5,7 +5,7 @@
                 <img src="assets/Logotruco.png" alt="">
             </div>
             <div class="range">
-                <h1>Administrador</h1>
+                <h1>Administrador: {{admin?.name}}</h1>
             </div>
             <div class="closeSesion">
                 <button title="Cambiar contraseña" (click)="cambiar()" >Contraseña</button>
@@ -74,7 +74,7 @@
             </div>
             <div class="ganacias" *ngIf="!pagar">
                 <h3>Ganancia:</h3>
-                <span>$000</span>
+                <span>{{admin?.earning | currency}}</span>
             </div>
         </div>
     </div>

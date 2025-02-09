@@ -98,6 +98,10 @@ export class FormUserComponent implements OnInit {
     // })
   }
 
+  reload(){
+    this.traeSalas()
+  }
+
   datosSala(res: any){
     if(res.mensaje){
       alert(res.mensaje)

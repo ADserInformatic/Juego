@@ -14,7 +14,7 @@
     <div class="forms">
         <div *ngIf="!isAdmin" class="user">
             <h3>Usuario: {{user.name}}</h3>
-            <h3>Credito: {{user.credito}}</h3>
+            <h3>Credito: {{user.credito | currency}}</h3>
         </div>
         <div *ngIf="isAdmin" class="user">
             <h3>Usuario: Administrador</h3>
@@ -30,7 +30,10 @@
                 <label for="apuesta">Apuesta:</label>
                 <input formControlName="apuesta" type="number">
                 <div class="error">
-                    <i  *ngIf="formSala.get('credit')?.invalid && formSala.get('credit')?.touched">Creditos es requerido.</i>
+                    <p *ngIf="formSala.get('apuesta')?.value > 499">Cada jugador apuesta {{formSala.get('apuesta')?.value | currency}}. El ganador recibe {{(formSala.get('apuesta')?.value * 2) * 0.85 | currency}}</p>
+                </div>
+                <div class="error">
+                    <i  *ngIf="formSala.get('apuesta')?.invalid && formSala.get('apuesta')?.touched">Apuesta es requerido.</i>
                 </div>
                 <button [disabled]="formSala.invalid" class="crear" (click)="createSala()">Crear</button>
             </div>
