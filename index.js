@@ -13,7 +13,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 app.use(cors())
 // Conexión a Base de datos
-
+const porcentajeGanancia = 0.85
 mongoose.connect(process.env.uri, {
   useUnifiedTopology: true,
   useNewUrlParser: true
@@ -139,7 +139,9 @@ io.on('connection', (socket) => {
                 mensaje,
                 sala
               }
+              let jf = await juegoFinalizado(res.sala)
               io.to(res.sala).emit('resultadoDeCanto', datos)
+              console.log("juego finalizado?: ", jf)
             }
             if (users[0].puntosMentira < users[1].puntosMentira) {
               users[1].tantos += 2
@@ -149,6 +151,8 @@ io.on('connection', (socket) => {
                 mensaje,
                 sala
               }
+              let jf = await juegoFinalizado(res.sala)
+              console.log("juego finalizado?: ", jf)
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira == users[1].puntosMentira) {
@@ -164,6 +168,8 @@ io.on('connection', (socket) => {
                 mensaje,
                 res
               }
+              let jf = await juegoFinalizado(res.sala)
+              console.log("juego finalizado?: ", jf)
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             break;
@@ -181,6 +187,8 @@ io.on('connection', (socket) => {
               mensaje: me,
               sala
             }
+            let jf = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jf)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
@@ -205,6 +213,8 @@ io.on('connection', (socket) => {
                 mensaje,
                 sala
               }
+              let jf = await juegoFinalizado(res.sala)
+              console.log("juego finalizado?: ", jf)
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira < users[1].puntosMentira) {
@@ -215,6 +225,8 @@ io.on('connection', (socket) => {
                 mensaje,
                 sala
               }
+              let jf = await juegoFinalizado(res.sala)
+              console.log("juego finalizado?: ", jf)
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira == users[1].puntosMentira) {
@@ -230,6 +242,8 @@ io.on('connection', (socket) => {
                 mensaje,
                 res
               }
+              let jf = await juegoFinalizado(res.sala)
+              console.log("juego finalizado?: ", jf)
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             break;
@@ -247,6 +261,8 @@ io.on('connection', (socket) => {
               mensaje: me,
               sala
             }
+            let jf = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jf)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
@@ -276,6 +292,8 @@ io.on('connection', (socket) => {
                 mensaje,
                 sala
               }
+              let jf = await juegoFinalizado(res.sala)
+              console.log("juego finalizado?: ", jf)
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira < users[1].puntosMentira) {
@@ -292,8 +310,12 @@ io.on('connection', (socket) => {
                 mensaje,
                 sala
               }
+              let jf = await juegoFinalizado(res.sala)
+              console.log("juego finalizado?: ", jf)
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
+            let jf = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jf)
             io.to(res.sala).emit('resultadoDeCanto', datos)
 
             break;
@@ -315,6 +337,8 @@ io.on('connection', (socket) => {
               mensaje: me,
               sala
             }
+            let jjf = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jjf)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
@@ -375,6 +399,8 @@ io.on('connection', (socket) => {
               mensaje,
               sala
             }
+            let jf = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jf)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           case 'noquiero':
@@ -422,6 +448,8 @@ io.on('connection', (socket) => {
               mensaje: me,
               sala
             }
+            let jff = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jff)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
         }
@@ -435,10 +463,12 @@ io.on('connection', (socket) => {
             datos = { mensaje, jugador: res.jugador, sala }
 
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            let jjf = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jjf)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;  //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
-            mensaje = `${res.jugador} dice: ${res.respuesta}`
+            mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
               if (element.id == res.jugador.id) {
@@ -454,7 +484,8 @@ io.on('connection', (socket) => {
             /////////////////////////////////////////////////////////////////////////////////////////////////////
             //FIN DE LA MANO, LLAMAR A LA FUNCION PARA RESETEAR Y REPARTIR
 
-
+            let jf = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jf)
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
           default:
@@ -471,7 +502,8 @@ io.on('connection', (socket) => {
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-
+            let jfz = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jfz)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
@@ -490,6 +522,8 @@ io.on('connection', (socket) => {
             /////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////
             //FIN DE LA MANO, LLAMAR A LA FUNCION PARA RESETEAR Y REPARTIR
+            let jf = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jf)
             io.to(res.sala).emit('resultadoDeCanto', data)
             break;
           default:
@@ -508,6 +542,8 @@ io.on('connection', (socket) => {
             datos = { mensaje, jugador: res.jugador, sala }
 
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            let jf = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jf)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
@@ -526,6 +562,8 @@ io.on('connection', (socket) => {
             /////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////
             //FIN DE LA MANO, LLAMAR A LA FUNCION PARA RESETEAR Y REPARTIR
+            let jfg = await juegoFinalizado(res.sala)
+            console.log("juego finalizado?: ", jfg)
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
         }
@@ -915,21 +953,65 @@ const compararValores = async (sala) => {
   }
 }
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
-const terminar = (sala) => {
+const terminar = async (sala) => {
+  console.log('cambio y hay q evaluar que haya terminado')
   console.log("dentro de funcion terminar...la variable finish es: ", sala.finish)
   if (sala.finish) {
     sala.partida += 1
     console.log("partida terminada")
-    setTimeout(() => {
-      repartir(sala)
-      console.log("repartido")
-    }, 2000);
+    /*     setTimeout(() => {
+          repartir(sala)
+          console.log("repartido")
+        }, 2000);
+    
+        ***********************************************HAY QUE REPARTIR
+     */
 
   } else {
     console.log('Aun no termina, siga')
   }
 }
+const juegoFinalizado = async (salaX) => {
+  try {
+    let sala = await salaM.findOne({ name: salaX })
 
+    let usuarios = sala.usuarios
+
+    usuarios.forEach(e => {
+      if (e.tantos >= 30) {
+        sala.juegoFinalizado = true;
+      }
+    })
+    if (sala.juegoFinalizado) {
+      let winner;
+      if (usuarios[0].tantos > usuarios[1].tantos) {
+        winner = await userM.findOne({ _id: usuarios[0].id })
+      } else {
+        winner = await userM.findOne({ _id: usuarios[1].id })
+      }
+      if (winner) {
+        console.log("ganador: ", winner.name)
+        let creditosFinales = winner.credito + (2 * sala.apuesta * porcentajeGanancia)
+        winner.credito = creditosFinales;
+        console.log("creditos: ", winner.credito)
+        winner.save()
+        console.log("partida terminada correctamente")
+        //DEBO ELIMINAR LA SALA
+        return true;
+      } else {
+        console.log("error no encuentra el usuario")
+
+      }
+
+    } else {
+      "todavia no termina el juego, se sigue nomas"
+      return false
+    }
+  } catch (err) {
+    console.log("un error en el backend en juegoFinalizado, error: ", err);
+
+  }
+}
 //La función getRandomInt está diseñada para generar un número entero aleatorio entre dos valores, min (incluido) y max (excluido).
 function getRandomInt(min, max) {
   min = Math.ceil(min);
