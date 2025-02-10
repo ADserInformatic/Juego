@@ -30,6 +30,16 @@ const saveSala = async (req, res) => {
         })
     }
     const usuario = await user.findOne({ _id: usuarios[0].id })
+    if (usuario.credito < apuesta) {
+        res.json({
+            error: true,
+            mensaje: `El crédito es insuficiente`
+        })
+    }
+
+
+    usuario.credito -= apuesta;
+    await usuario.save();
     usuarios[0].name = usuario.name
     usuarios[0].creditos = usuario.credito
     const creado = await sala.create({ name, apuesta, usuarios })
@@ -89,10 +99,8 @@ const addUser = async (req, res) => {
     const id = req.params.id
     //En el dato viene el id del usuario
     const _id = req.body.id
-    console.log(_id)
     //Busco el usuario a partir del id
     const buscar = await user.findOne({ _id })
-    console.log('El jugador 2 es: ', buscar)
     //Si existe el usuario se continúa
     if (buscar) {
         //Una vez que se sabe que existe el usuario se busca la sala a la que quiere ingresar
@@ -113,7 +121,17 @@ const addUser = async (req, res) => {
                 data: actual
             });
         }
+
+        //Corroboro que le alcance el credito
+        if (buscar.credito < actual.apuesta) {
+            res.json({
+                error: true,
+                mensaje: `El crédito es insuficiente`
+            })
+        }
         //Hechas las comprobaciones anteriores, se guarda al usuario en la sala
+        buscar.credito -= actual.apuesta;
+        await buscar.save()
         const dato = {
             name: buscar.name,
             creditos: buscar.credito,

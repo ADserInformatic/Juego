@@ -47,12 +47,12 @@ app.use('/carta', carta)
 io.on('connection', (socket) => {
   socket.on('sala', async (id) => {
     const sala = await salaM.findOne({ _id: id })
-
     try {
       socket.join(sala.name)
       //Lo que está entre parentesis limita los usuarios a los que emito. En este los usuarios que esten en la sala con el mismo nombre.
       //La diferencia entre io.to y socket.to es que, en el primer caso se emite para todos los usuarios que están dentro de la sala. En el siguiente caso se obvia a quien hizo la petición al back
       io.to(sala.name).emit('sala', sala)
+
     }
     catch {
       console.log("no existe la sala")
@@ -93,7 +93,6 @@ io.on('connection', (socket) => {
     //Una vez que se actualiza la jugada al usuario que la realizá, se compara los valores. La función compararValores compara las últimas jugadas de los jugadores y actualiza el puntaje dependiendo del resultado de la comparación.
     compararValores(salaOn)
     //La función terminar determina si una partida entre dos jugadores ha terminado basándose en el número de jugadas realizadas y declara al ganador
-    console.log("ya compararon valores y voy a terminar")
     terminar(salaOn)
     //Una vez actualizado el usuario se actualiza la sala
     await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users, partida: salaOn.partida } })
@@ -820,7 +819,7 @@ const sumarTantosAPartida = async (salaX, jugador) => {
   let sala = await salaM.findById({ _id: salaX._id });
   let usuarios = sala.usuarios;
   // console.log("sala dentro de sumarTantosAPartida: ", sala)
-  if (sala.cantosenmano.boolvalecuatro) {
+  if (sala.cantosenmano.boolValeCuatro) {
 
     usuarios[jugador].tantos += 4;
   } else {
@@ -1012,6 +1011,7 @@ const juegoFinalizado = async (salaX) => {
 
   }
 }
+
 //La función getRandomInt está diseñada para generar un número entero aleatorio entre dos valores, min (incluido) y max (excluido).
 function getRandomInt(min, max) {
   min = Math.ceil(min);
