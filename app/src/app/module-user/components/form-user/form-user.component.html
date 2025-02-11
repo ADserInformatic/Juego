@@ -39,6 +39,13 @@
             </div>
             <div class="form-block">
                 <h2 for="sala">Ingresar a una sala:</h2>
+                <div class="reload">
+                    <button title="Recargar salas" (click)="reload()">
+                        <span class="material-symbols-outlined">
+                            update
+                        </span>
+                    </button>
+                </div>
                 <br>
                 <ng-container *ngFor="let item of salas">
                     <div class="salaItem">

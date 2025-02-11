@@ -101,6 +101,14 @@ nav .set{
     cursor: pointer;
     transition: all .5s ease-in-out;
 }
+.reload{
+    width: auto;
+    text-align: right;
+}
+.reload button{
+    width: 20%;
+    background: #444343;
+}
 .form-block button.crear, .form-user button{
     background-color: #000;
     border-radius: 3px;
