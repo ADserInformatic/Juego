@@ -13,7 +13,9 @@ import { ConsultasService } from 'src/app/services/consultas.service';
 export class FormUserComponent implements OnInit {
   public formSala!: FormGroup;
   public formPass!: FormGroup;
+  form!: FormGroup;
   public salas: Array<any>= [];
+  public searchSalas: Array<any>= [];
   public user: any = {id: '', name: '', credito: 0};
   public cambiarPass: boolean = false;
   public isAdmin: any;
@@ -46,6 +48,16 @@ export class FormUserComponent implements OnInit {
       passOld: ['', [Validators.required, Validators.minLength(3)]],
       passNew: ['' , [Validators.required, Validators.minLength(3)]],
       passConf: ['' , [Validators.required, Validators.minLength(3)]]
+    })
+
+    this.form = this.fb.group({
+      texto: ''
+    })
+    this.form.valueChanges.subscribe(res=>{
+      this.searchSalas = this.salas.filter(e => e.name.toUpperCase().includes(res.texto.toUpperCase()))
+      if(res.texto === ''){
+        this.searchSalas = []
+      }
     })
     
     this.traeSalas()
@@ -151,6 +163,10 @@ export class FormUserComponent implements OnInit {
       this.cookie.delete('jugador')
       this.route.navigate(['/'])
     })
-
   }
+
+  // search(){
+  //   this.searchSalas = this.salas.filter(e=> e.name.toUpperCase().includes(this.form.value.texto.toUpperCase()))
+  //   console.log(this.searchSalas)
+  // }
 }
