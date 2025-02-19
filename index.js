@@ -9,11 +9,12 @@ const carta = require('./rutas/cartas')
 const userM = require('./modelos/user');
 const salaM = require('./modelos/sala');
 const cartaM = require('./modelos/carta')
+const adminA = require('./modelos/admin')
 const mongoose = require('mongoose');
 const cors = require('cors');
 app.use(cors())
 // Conexión a Base de datos
-const porcentajeGanancia = 0.85
+const porcentajePremio = 0.85
 mongoose.connect(process.env.uri, {
   useUnifiedTopology: true,
   useNewUrlParser: true
@@ -32,6 +33,7 @@ const server = app.listen(process.env.PORT || 3006, () => {
 
 //Conexión con socketIo, cambiar el localhos por el dominio del front.
 const socketIo = require('socket.io');
+const admin = require('./modelos/admin');
 const io = socketIo(server, {
   cors: {
     origin: ['http://localhost:4200', 'http://localhost:8100']
@@ -84,33 +86,79 @@ io.on('connection', (socket) => {
         //Esto lo que hace es filtrar todas la cartas que no coinciden con la que tiró, ya que son las que le quedan
         element.valores = element.valores.filter(e => e.name != jugada.carta)
         //Agregamos la nueva jugada al usuario en cuestión
-        element.jugada.push(jugada)
-        element.puedeFlor = false;//al tirar una carta ya no puede cantar flor
-        element.puedeMentir = false;//al tirar una carta ya no puede mentir
+        let existe = element.jugada.find(e => e.carta === jugada.carta)
+        if (!existe) {
+          element.jugada.push(jugada) //si no existe la jugada, la agrega
+          element.puedeFlor = false;//al tirar una carta ya no puede cantar flor
+          element.puedeMentir = false;//al tirar una carta ya no puede mentir
+        }
       }
 
     })
     //Una vez que se actualiza la jugada al usuario que la realizá, se compara los valores. La función compararValores compara las últimas jugadas de los jugadores y actualiza el puntaje dependiendo del resultado de la comparación.
-    let terminoPartida = await compararValores(salaOn)
-    console.log(terminoPartida)
+    let terminoMano = await compararValores(salaOn) //dentro de comparar valores comprueba en q tiro estan y suma puntos, indica si termino la mano con true o false
+    console.log("termino la Mano? ", terminoMano)
 
     //Una vez actualizado el usuario se actualiza la sala
     await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users, partida: salaOn.partida } })
     //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
     const salaActualizada = await salaM.findOne({ _id: salaOn._id })
     //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
-    io.to(salaOn.name).emit('muestra', salaActualizada)
+    io.to(salaOn.name).emit('muestra', salaActualizada) //muestra la ultima carta tirada,
 
     //La función terminar determina si una partida entre dos jugadores ha terminado basándose en el número de jugadas realizadas y declara al ganador
-    if (terminoPartida) {
-      salaOn.finish = true;
-      salaOn.save()
-      await terminar(salaOn)
-      setTimeout(() => {
-        repartir(salaActualizada)
-        console.log("repartido")
-      }, 5000); //reparte a los 5 segundos
+    if (terminoMano) { //si terminó la mano
+      /*       salaOn.finish = true; //ya deberia estar igual en true xq lo hace dentro de comparar valores o al no querer los rabones
+            salaOn.save() */
+      //SI TERMINO LA MANO PREGUNTO SI TERMINO EL JUEGO
+      let terminoJuego = await terminar(salaOn) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
+      if (!terminoJuego) { //si el resultado de la funcion terminar es falso, se sigue el juego y se reparte, solo termino una mano
+        setTimeout(() => {
+          repartir(salaActualizada)
+          console.log("repartido")
+        }, 5000); //reparte a los 5 segundos
+      } else {
+
+        try {
+          const admin = await adminA.findOne({})
+          let winner;
+          if (users[0].tantos > users[1].tantos) {
+            winner = await userM.findOne({ _id: users[0].id })
+          } else {
+            winner = await userM.findOne({ _id: users[1].id })
+          }
+          if (winner) { // le sumo el premio de la apuesta al jugador si ya ganó
+            console.log("ganador: ", winner.name)
+            let creditosFinales = winner.credito + (2 * sala.apuesta * porcentajePremio)
+            const admin = await adminA.findOne({})
+            admin.earning += (2 * sala.apuesta * (1 - porcentajePremio))
+            admin.save()
+            winner.credito = creditosFinales;
+            console.log("creditos ganados: ", (2 * sala.apuesta * porcentajePremio))
+            winner.save()
+            console.log("partida terminada correctamente")
+
+            //ahora destruyo sala y emito a ambos el cartel de juego terminado y al aceptar los mandamos al lobby
+            let mensaje = `El juego ha terminado...`
+            let data = { mensaje, sala }
+            io.to(res.sala).emit('resultadoDeCanto', data)
+
+            await salaM.findOneAndDelete({ name: res.sala })
+            salaM.save()
+
+          } else { console.log("NO SE ENCUENTRA EL ID GANADOR EN LA SALA") }
+
+
+
+
+
+          //aca tengo q ver q hago si ya termino ************************************************************************
+        } catch (err) {
+          console.log("error en destruir sala, el error es : ", err)
+        }
+      }
     }
+
   })
 
   //Cuando un jugador canta (envido, flor o truco), se emite al otro jugador el canto y, en caso de requerirse, se espera una respuesta.
@@ -771,7 +819,74 @@ io.on('connection', (socket) => {
     }
   }////////////////////////////////////////////////////////////////////
   )
+
+  //ESTA FUNCION ES PARA CUANDO UN USUARIO ABANDONA CLICKEANDO LA OPCION DE ABANDONAR
+  socket.on('abandonar', async (res) => {
+    //busco la sala que debo cerrar
+    try {
+      const sala = await salaM.findOne({ name: res.sala })
+      //capturo los usuarios que estan en esa sala
+      const users = sala.usuarios
+      const admin = await adminA.findOne({})
+      let usuarioAbandono;
+      users.forEach(async (element) => {
+        //el usuario con el id distinto de quien abandona gana la apuesta
+        if (res.idUser != element.id.toHexString()) {
+          element.credito += 2 * sala.apuesta * porcentajePremio
+          admin.earning += 2 * sala.apuesta * (1 - porcentajePremio)
+          users.save()
+          admin.save()
+        } else {
+          usuarioAbandono = element
+        }
+      })
+      //una vez guardado las ganancias al admin y premio al usuario, procedo a eliminar la sala
+      /****************************************
+       * *****************ANTES REDIRECCIONO A LOS USUARIOS AL LOBBY Y LE AVISO AL VENCEDOR Q ABANDONARON y al aceptar lo mando al lobby
+       * ************************************************************
+       *  ************************************************************ */
+      let mensaje = `${usuarioAbandono.name} abandonó el juego`
+      let data = { mensaje, jugador: usuarioAbandono, sala }
+      socket.to(res.sala).emit('resultadoDeCanto', data)
+
+      await salaM.findOneAndDelete({ name: res.sala })
+      salaM.save()
+    } catch (err) {
+      console.log("error en abandonar sala, el error es : ", err)
+    }
+  })
+
 });
+
+
+//ESTA FUNCION ES PARA CUANDO UN USUARIO SALIÓ Y PASA DETERMINADO TIEMPO O SE DESCONECTO Y DEBO ELIMINAR LA SALA, 
+const destruirSala = async (salaX, idGanador) => { //
+  try {
+    const sala = await salaM.findOne({ name: salaX })
+    const users = sala.usuarios
+    const admin = await adminA.findOne({})
+    users.forEach(async (element) => {
+      //entrego premio y guardo ganancia
+      if (res.idUser === idGanador.toHexString()) {
+        element.credito += 2 * sala.apuesta * porcentajePremio
+        admin.earning += 2 * sala.apuesta * (1 - porcentajePremio)
+        users.save()
+        admin.save()
+      }
+    })
+    //ahora destruyo sala y emito a ambos el cartel de juego terminado y al aceptar los mandamos al lobby
+    let mensaje = `El juego ha terminado...`
+    let data = { mensaje, sala }
+    io.to(res.sala).emit('resultadoDeCanto', data)
+
+    await salaM.findOneAndDelete({ name: res.sala })
+    salaM.save()
+
+  } catch (err) {
+    console.log("error en destruir sala, el error es : ", err)
+  }
+}
+
 
 
 
@@ -846,31 +961,44 @@ const booleanos = async (res) => {
   sala.save();
   return (res)
 }
+
+
+
+
+//al terminar la partida sumo los tantos deacuerdo a lo cantado y al jugador q ganó
 const sumarTantosAPartida = async (salaX, jugador) => {
   let sala = await salaM.findById({ _id: salaX._id });
   let usuarios = sala.usuarios;
-  // console.log("sala dentro de sumarTantosAPartida: ", sala)
+  console.log("sala dentro de sumarTantosAPartida ")
+  console.log("boleanos: ", sala.cantosenmano)
   if (sala.cantosenmano.boolValeCuatro) {
-
+    console.log("llegamos al valecuatro")
     usuarios[jugador].tantos += 4;
   } else {
     if (sala.cantosenmano.boolReTruco) {
-
+      console.log("llegamos al retruco")
       usuarios[jugador].tantos += 3;
     } else {
       if (sala.cantosenmano.boolTruco) {
+        console.log("llegamos al truco")
         sala.usuarios[jugador].tantos += 2;
       } else {
+        console.log("no hubo rabon")
         usuarios[jugador].tantos += 1;
       }
     }
   } try {
+
     await salaM.findByIdAndUpdate({ _id: salaX._id }, { $set: { usuarios: usuarios } })
   } catch (err) { console.log(err) }
 
   return
 }
+
+
 //Acá tengo que pasar los dos jugadores que están en la sala cada vez que se tira
+//COMPARA VALORES DE LAS CARTAS PERO DETERMINA SI TERMINÓ LA MANO CON TRUE O FALSE
+//Y LLAMA A sumarTantosAPartida (QUE SUMA SOLO EL RABON) SI YA TERMINÓ
 const compararValores = async (sala) => {
   //Aquí, se obtienen las últimas jugadas de cada jugador.
   let users = sala.usuarios;
@@ -1000,23 +1128,36 @@ const compararValores = async (sala) => {
   }
 }
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
-const terminar = async (sala) => {
+const terminar = async (salaX) => {
+  let sala = await salaM.findOne({ name: salaX.name })
   console.log("dentro de funcion terminar...la variable finish es: ", sala.finish)
   if (sala.finish) {
     sala.partida += 1
     console.log("partida terminada")
-    /*     setTimeout(() => {
-          repartir(sala)
-          console.log("repartido")
-        }, 2000);
-    
-        ***********************************************HAY QUE REPARTIR
-     */
+    let terminoTodo = await juegoFinalizado(sala)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   } else {
     console.log('Aun no termina, siga')
   }
 }
+
 const juegoFinalizado = async (salaX) => {
   try {
     let sala = await salaM.findOne({ name: salaX })
@@ -1029,26 +1170,7 @@ const juegoFinalizado = async (salaX) => {
       }
     })
     if (sala.juegoFinalizado) {
-      let winner;
-      if (usuarios[0].tantos > usuarios[1].tantos) {
-        winner = await userM.findOne({ _id: usuarios[0].id })
-      } else {
-        winner = await userM.findOne({ _id: usuarios[1].id })
-      }
-      if (winner) {
-        console.log("ganador: ", winner.name)
-        let creditosFinales = winner.credito + (2 * sala.apuesta * porcentajeGanancia)
-        winner.credito = creditosFinales;
-        console.log("creditos: ", winner.credito)
-        winner.save()
-        console.log("partida terminada correctamente")
-        //DEBO ELIMINAR LA SALA
-        return true;
-      } else {
-        console.log("error no encuentra el usuario")
-
-      }
-
+      return true;
     } else {
       "todavia no termina el juego, se sigue nomas"
       return false
