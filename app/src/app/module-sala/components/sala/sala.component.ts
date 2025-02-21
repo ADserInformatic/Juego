@@ -169,7 +169,8 @@ export class SalaComponent implements OnInit {
     this.truco = res.cantosenmano.boolTruco;
     this.reTruco = res.cantosenmano.boolReTruco;
     this.valeCuatro = res.cantosenmano.boolValeCuatro;
-    this.cantoConf = res.cantosenmano.faltaRespuesta
+    this.cantoConf = res.cantosenmano.faltaRespuesta.bool
+    this.cantoI = res.cantosenmano.faltaRespuesta.bool
     
     
     this.sala.usuarios.forEach((element: any) => {
@@ -283,7 +284,6 @@ export class SalaComponent implements OnInit {
         jugador: this.jugador,
         canto: this.selected.nativeElement.value
       }
-      console.log(data)
       this.socket.emit('canto', data)
       this.cantoConf = !this.cantoConf
       return
@@ -294,7 +294,6 @@ export class SalaComponent implements OnInit {
       sala: this.nameSala,
       canto: this.cantoI
     }
-    console.log(respons)
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
     if (bool === false) {
@@ -303,7 +302,6 @@ export class SalaComponent implements OnInit {
   }
 
   pintarPuntos(jugador: number, puntos: Array<any>, min: number, max: number){
-    console.log(jugador)
     if(jugador > min){
       for(let i = min; i < jugador; i++){
         puntos.push(i)
@@ -327,7 +325,6 @@ export class SalaComponent implements OnInit {
   }
 
   abandonar(){
-    console.log(this.sala)
     this.socket.emit('abandonarSala', {sala: this.sala.name, idUser: this.jugador.id})
   }
   
