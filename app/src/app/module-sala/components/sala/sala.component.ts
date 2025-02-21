@@ -129,12 +129,11 @@ export class SalaComponent implements OnInit {
       } else {
         console.log('bueeee',)
       }
-      this.cantoConf = true
+      this.cantoConf = res.cantosenmano.faltaRespuesta
       this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
     })
 
     this.socket.on('respuestaCanto', (res: any) => {
-      console.log("tu oponente dice: ", res)
       confirm(`Tu oponente dice ${res}`)
     })
 
@@ -157,6 +156,7 @@ export class SalaComponent implements OnInit {
   
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
+    console.log(res)
     this.sala = res;
     this.envido = res.cantosenmano.boolEnvido
     this.reEnvido = res.cantosenmano.boolReEnvido
@@ -169,6 +169,7 @@ export class SalaComponent implements OnInit {
     this.truco = res.cantosenmano.boolTruco;
     this.reTruco = res.cantosenmano.boolReTruco;
     this.valeCuatro = res.cantosenmano.boolValeCuatro;
+    this.cantoConf = res.cantosenmano.faltaRespuesta
     
     
     this.sala.usuarios.forEach((element: any) => {
