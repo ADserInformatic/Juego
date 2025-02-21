@@ -197,9 +197,7 @@ io.on('connection', (socket) => {
                 mensaje,
                 sala
               }
-              let jf = await juegoFinalizado(res.sala)
               io.to(res.sala).emit('resultadoDeCanto', datos)
-              console.log("juego finalizado?: ", jf)
             }
             if (users[0].puntosMentira < users[1].puntosMentira) {
               users[1].tantos += 2
@@ -271,8 +269,6 @@ io.on('connection', (socket) => {
                 mensaje,
                 sala
               }
-              let jf = await juegoFinalizado(res.sala)
-              console.log("juego finalizado?: ", jf)
               io.to(res.sala).emit('resultadoDeCanto', datos)
             }
             if (users[0].puntosMentira < users[1].puntosMentira) {
@@ -821,7 +817,7 @@ io.on('connection', (socket) => {
   )
 
   //ESTA FUNCION ES PARA CUANDO UN USUARIO ABANDONA CLICKEANDO LA OPCION DE ABANDONAR
-  socket.on('abandonar', async (res) => {
+  socket.on('abandonarSala', async (res) => {
     //busco la sala que debo cerrar
     try {
       const sala = await salaM.findOne({ name: res.sala })
@@ -856,7 +852,51 @@ io.on('connection', (socket) => {
     }
   })
 
+  //esta función es para cuando uno se va al mazo, recibe un res con la sala y el jugador q abandono
+  socket.on('meVoyAlMazo', async (res) => {
+    const sala = await salaM.findOne({ name: res.sala })
+    let ganador, abandono;
+    //capturo los usuarios que estan en esa sala
+    const users = sala.usuarios
+    users.forEach(async (element) => {
+      //el usuario con el id distinto de quien abandona gana la apuesta
+      if (res.jugador.id != element.id.toHexString()) {
+        ganador = element
+      } else {
+        abandono = element
+      }
+    })
+    if (abandono.mano) {
+
+    }
+    //si el que abandonó era mano y aun no tiro ninguna carta 
+    //no mintio? 
+    //le sumo 1 x la mentira
+    //si ya mintio no hago nada xq se repartieron los puntos de la mentira
+
+    //miro lo del rabon
+
+    //si era mano y ya tiro una carta...
+    //el otro ya tiró?
+    //miro solo el rabon
+    //mintieron?
+    //sumo 1 si no mintieron x la mentira
+    //si ya mintieron no hago nada xq ya se repartieron los puntos
+
+    //miro el rabon
+
+    //si no era mano, quiere decir q el otro ya tiró una carta...
+    //si hubo mentira no hago nada,
+    //si no hubo y aun no tiró carta sumo 1 de mentira
+
+
+  })
+
 });
+
+/* const meVoyAlMazo = async (salaX, jugadorGanador) => {
+
+} */
 
 
 //ESTA FUNCION ES PARA CUANDO UN USUARIO SALIÓ Y PASA DETERMINADO TIEMPO O SE DESCONECTO Y DEBO ELIMINAR LA SALA, 
@@ -904,6 +944,7 @@ const booleanos = async (res) => {
     case 'envido':
       sala.cantosenmano.boolEnvido = true;
       sala.cantosenmano.boolTruco = false;
+
       break;
     case 'reEnvido':
       sala.cantosenmano.boolReEnvido = true;
@@ -994,6 +1035,8 @@ const sumarTantosAPartida = async (salaX, jugador) => {
 
   return
 }
+
+
 
 
 //Acá tengo que pasar los dos jugadores que están en la sala cada vez que se tira
@@ -1142,7 +1185,7 @@ const terminar = async (salaX) => {
 
 
 
-
+    //asdfsadasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd
 
 
 
@@ -1160,10 +1203,11 @@ const terminar = async (salaX) => {
 
 const juegoFinalizado = async (salaX) => {
   try {
-    let sala = await salaM.findOne({ name: salaX })
+    let sala = await salaM.findOne({ name: salaX.name })
+    console.log("sala:", sala);
 
     let usuarios = sala.usuarios
-
+    console.log("usuarios", usuarios)
     usuarios.forEach(e => {
       if (e.tantos >= 30) {
         sala.juegoFinalizado = true;
@@ -1261,13 +1305,17 @@ const repartir = async (_sala) => {
     users[0].juega = false;
     users[1].puedeCantar = true;
     users[0].puedeCantar = false;
+    users[1].puedeMentir = true;
+    users[0].puedeMentir = true;
   } else {
     users[0].mano = true;
     users[1].mano = false;
     users[0].juega = true;
     users[1].juega = false;
     users[1].puedeCantar = false;
-    users[0].puedeCantar = true;;
+    users[0].puedeCantar = true;
+    users[1].puedeMentir = true;
+    users[0].puedeMentir = true;
   }
   salaOn.save();
   /*   const paraGuardar = await salaM.findOne({ _id: _sala._id })
