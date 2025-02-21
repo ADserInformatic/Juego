@@ -172,10 +172,9 @@ io.on('connection', (socket) => {
 
   //Cuando un jugador canta (envido, flor o truco), se emite al otro jugador el canto y, en caso de requerirse, se espera una respuesta.
   socket.on('canto', async (res) => {
-    let ores = await booleanos(res);
-    // console.log("dentro de canto: ", res.sala)
-    const sala = await salaM.findOne({ name: res.sala });
 
+    let ores = await booleanos(res);
+    const sala = await salaM.findOne({ name: res.sala });
     if (res.canto == 'envido' || res.canto == 'reenvido' || res.canto == 'realEnvido' || res.canto == 'faltaEnvido' || res.canto == 'flor') {
       sala.cantosenmano.boolTruco = false;
       sala.save()
@@ -196,11 +195,12 @@ io.on('connection', (socket) => {
       case 'envido':
         switch (res.respuesta) {
           case 'quiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             //Acá paso los usuarios a la función que calcula los puntos
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 2
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-
               mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
               datos = {
                 mensaje,
@@ -235,6 +235,8 @@ io.on('connection', (socket) => {
             }
             break;
           case 'noquiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -262,8 +264,9 @@ io.on('connection', (socket) => {
       case 'reEnvido':
         switch (res.respuesta) {
           case 'quiero':
-            // const sala = await salaM.findOne({ name: res.sala })
-            // const users = sala.usuarios
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
+
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 4
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -301,6 +304,8 @@ io.on('connection', (socket) => {
             }
             break;
           case 'noquiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -327,8 +332,8 @@ io.on('connection', (socket) => {
       case 'realEnvido':
         switch (res.respuesta) {
           case 'quiero':
-            // const sala = await salaM.findOne({ name: res.sala })
-            // const users = sala.usuarios
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             if (users[0].puntosMentira > users[1].puntosMentira) {
               // console.log(sala.cantosenmano)
               if (sala.cantosenmano.boolReEnvido) { users[0].tantos += 7 } //se cantó envido envido realenvido
@@ -366,6 +371,8 @@ io.on('connection', (socket) => {
 
             break;
           case 'noquiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -396,6 +403,8 @@ io.on('connection', (socket) => {
       case 'faltaEnvido':
         switch (res.respuesta) {
           case 'quiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             if (users[0].puntosMentira > users[1].puntosMentira) {
               mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
               if (sala.unaFalta) {
@@ -447,6 +456,8 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           case 'noquiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             var me;
             users.forEach(us => {
               me = `${us.name} no quiere`
@@ -501,6 +512,8 @@ io.on('connection', (socket) => {
       case 'truco':
         switch (res.respuesta) {
           case 'quiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
 
@@ -508,6 +521,8 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;  //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
@@ -541,12 +556,16 @@ io.on('connection', (socket) => {
       case 'reTruco':
         switch (res.respuesta) {
           case 'quiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
@@ -580,6 +599,8 @@ io.on('connection', (socket) => {
       case 'valeCuatro':
         switch (res.respuesta) {
           case 'quiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
 
@@ -588,6 +609,8 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
@@ -619,7 +642,8 @@ io.on('connection', (socket) => {
       case 'flor':
         switch (res.respuesta) {
           case 'aceptar':
-
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             users.forEach(element => {
               if (element.id == res.jugador.id) {
 
@@ -639,6 +663,8 @@ io.on('connection', (socket) => {
       case 'florflor':
         switch (res.respuesta) {
           case 'quiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 6
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -678,6 +704,8 @@ io.on('connection', (socket) => {
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
 
           case 'no quiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             users.forEach(element => {
               if (element.id == res.jugador.id) {
                 console.log("dentro del for flor")
@@ -707,7 +735,8 @@ io.on('connection', (socket) => {
       case 'florMeAchico':
         switch (res.respuesta) {
           case 'aceptar':
-
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -728,6 +757,8 @@ io.on('connection', (socket) => {
       case 'contraflor':
         switch (res.respuesta) {
           case 'quiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 30
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -767,6 +798,8 @@ io.on('connection', (socket) => {
             break;
 
           case 'no quiero':
+            sala.cantosenmano.faltaRespuesta = false;
+            sala.save()
             var me;
             users.forEach(us => {
               if (us.name === res.jugador.name) {
@@ -972,6 +1005,7 @@ const booleanos = async (res) => {
       sala.cantosenmano.boolValeCuatro = true;
       break;
   }
+  sala.cantosenmano.faltaRespuesta = true;
   res.cantosenmano = sala.cantosenmano;
   sala.save();
   return (res)
