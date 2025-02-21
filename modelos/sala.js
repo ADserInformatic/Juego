@@ -21,7 +21,8 @@ const sala = new Schema({
         boolReTruco: { type: Boolean, default: false },
         boolValeCuatro: { type: Boolean, default: false },
         pardaPrimera: { type: Boolean, default: false },
-        faltaRespuesta: { type: Boolean, default: false },
+        faltaRespuesta: { type: Object, default: false },
+
 
     },
 
