@@ -195,7 +195,7 @@ io.on('connection', (socket) => {
       case 'envido':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             //Acá paso los usuarios a la función que calcula los puntos
             if (users[0].puntosMentira > users[1].puntosMentira) {
@@ -235,7 +235,7 @@ io.on('connection', (socket) => {
             }
             break;
           case 'noquiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             var me;
             users.forEach(us => {
@@ -264,7 +264,7 @@ io.on('connection', (socket) => {
       case 'reEnvido':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
 
             if (users[0].puntosMentira > users[1].puntosMentira) {
@@ -304,7 +304,7 @@ io.on('connection', (socket) => {
             }
             break;
           case 'noquiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             var me;
             users.forEach(us => {
@@ -332,7 +332,7 @@ io.on('connection', (socket) => {
       case 'realEnvido':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             if (users[0].puntosMentira > users[1].puntosMentira) {
               // console.log(sala.cantosenmano)
@@ -371,7 +371,7 @@ io.on('connection', (socket) => {
 
             break;
           case 'noquiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             var me;
             users.forEach(us => {
@@ -403,7 +403,7 @@ io.on('connection', (socket) => {
       case 'faltaEnvido':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             if (users[0].puntosMentira > users[1].puntosMentira) {
               mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
@@ -456,7 +456,7 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           case 'noquiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             var me;
             users.forEach(us => {
@@ -512,7 +512,7 @@ io.on('connection', (socket) => {
       case 'truco':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
@@ -556,7 +556,7 @@ io.on('connection', (socket) => {
       case 'reTruco':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
@@ -599,7 +599,7 @@ io.on('connection', (socket) => {
       case 'valeCuatro':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
@@ -609,7 +609,7 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
@@ -642,7 +642,7 @@ io.on('connection', (socket) => {
       case 'flor':
         switch (res.respuesta) {
           case 'aceptar':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             users.forEach(element => {
               if (element.id == res.jugador.id) {
@@ -663,7 +663,7 @@ io.on('connection', (socket) => {
       case 'florflor':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 6
@@ -704,7 +704,7 @@ io.on('connection', (socket) => {
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
 
           case 'no quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             users.forEach(element => {
               if (element.id == res.jugador.id) {
@@ -735,7 +735,7 @@ io.on('connection', (socket) => {
       case 'florMeAchico':
         switch (res.respuesta) {
           case 'aceptar':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             var me;
             users.forEach(us => {
@@ -757,7 +757,7 @@ io.on('connection', (socket) => {
       case 'contraflor':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 30
@@ -798,7 +798,7 @@ io.on('connection', (socket) => {
             break;
 
           case 'no quiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
+            sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             var me;
             users.forEach(us => {
@@ -945,6 +945,7 @@ const destruirSala = async (salaX, idGanador) => { //
 
 
 const booleanos = async (res) => {
+  console.log(res)
   const sala = await salaM.findOne({ name: res.sala });
   const users = sala.usuarios;
   switch (res.canto) {
@@ -1005,9 +1006,12 @@ const booleanos = async (res) => {
       sala.cantosenmano.boolValeCuatro = true;
       break;
   }
-  sala.cantosenmano.faltaRespuesta.bool = true;
-  sala.cantosenmano.faltaRespuesta.canto = res.canto;
-  sala.cantosenmano.faltaRespuesta.jugador = res.jugador;
+  sala.cantosenmano.faltaRespuesta = true;
+  sala.cantosenmano.canto = res.canto;
+  sala.cantosenmano.jugador = res.jugador._id
+
+
+
 
   res.cantosenmano = sala.cantosenmano;
   sala.save();

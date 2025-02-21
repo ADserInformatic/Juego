@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose')
 const user = require('./user')
 
+
 const sala = new Schema({
     name: { type: String, required: true },
     apuesta: { type: Number, required: true },
@@ -21,7 +22,11 @@ const sala = new Schema({
         boolReTruco: { type: Boolean, default: false },
         boolValeCuatro: { type: Boolean, default: false },
         pardaPrimera: { type: Boolean, default: false },
-        faltaRespuesta: { type: Object, default: false },
+        faltaRespuesta: { type: Boolean, default: false },// booleano si no contestaron
+        canto: { type: String, require: false },// cual fue el ultimo canto
+        respuesta: { type: String, require: false },// 
+        jugador: { type: String, require: false },// jugador que falta contestar
+
 
 
     },
