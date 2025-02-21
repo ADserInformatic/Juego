@@ -26,15 +26,16 @@ const getUsers = async (req, res) => {
     }
 }
 const getUser = async (req, res) => {
-    let id = req.params.id
-    const userX = await user.findOne({ _id: id })
-    if (!userX) {
-        res.json({
-            error: true,
-            mensaje: `No se encuentra el usuario`
-        })
-    }
     try {
+        let id = req.params.id
+        const userX = await user.findOne({ _id: id })
+        if (!userX) {
+            res.json({
+                error: true,
+                mensaje: `No se encuentra el usuario`
+            })
+        }
+
         res.json({
             error: false,
             data: userX,
