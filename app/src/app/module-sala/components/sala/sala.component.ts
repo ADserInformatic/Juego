@@ -289,7 +289,7 @@ export class SalaComponent implements OnInit {
       return
     }
     const respons = {
-      jugador: this.jugadorCont,
+      jugador: this.jugador,
       respuesta: resp,
       sala: this.nameSala,
       canto: this.cantoI
