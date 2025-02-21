@@ -324,6 +324,11 @@ export class SalaComponent implements OnInit {
       this.router.navigate(['/'])
     }
   }
+
+  abandonar(){
+    console.log(this.sala)
+    this.socket.emit('abandonarSala', {sala: this.sala.name, idUser: this.jugador.id})
+  }
   
 
 }
