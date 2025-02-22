@@ -826,18 +826,20 @@ io.on('connection', (socket) => {
   //ESTA FUNCION ES PARA CUANDO UN USUARIO ABANDONA CLICKEANDO LA OPCION DE ABANDONAR
   socket.on('abandonarSala', async (res) => {
     try {
-      const sala = await salaM.findOne({ _id: res.sala })
+      const sala = await salaM.findOne({ name: res.sala })
       //capturo los usuarios que estan en esa sala
       const admin = await adminA.findOne({})
       let usuarioAbandono;
+      if (!sala) {
+
+        return console.log("ya estaba eliminada la sala")
+      }
       sala.usuarios.forEach(async (element) => {
         //el usuario con el id distinto de quien abandona gana la apuesta
         if (res.idUser != element.id.toHexString()) {
           element.credito += 2 * sala.apuesta * porcentajePremio
           admin.earning += 2 * sala.apuesta * (1 - porcentajePremio)
-          console.log("id distinto: ", element.id.toHexString())
         } else {
-          console.log("id igual: ", element.id.toHexString())
           usuarioAbandono = element
         }
       })
@@ -850,10 +852,9 @@ io.on('connection', (socket) => {
        *  ************************************************************ */
       let mensaje = `${usuarioAbandono.name} abandonó el juego`
       let data = { mensaje, jugador: usuarioAbandono, sala }
-      socket.to(res.sala).emit('resultadoDeCanto', data)
+      socket.to(res.sala).emit('salaAbandonada', data)
 
       await salaM.findOneAndDelete({ name: res.sala })
-      salaM.save()
     } catch (err) {
       console.log("error en abandonar sala, el error es : ", err)
     }
