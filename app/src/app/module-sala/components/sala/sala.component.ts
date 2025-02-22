@@ -279,6 +279,7 @@ export class SalaComponent implements OnInit {
     }
     if(canto === 'truco'){
       this.truco = true
+      this.jugador.juega = false
     }
     let data = {
       sala: this.nameSala,
@@ -301,6 +302,10 @@ export class SalaComponent implements OnInit {
       this.socket.emit('canto', data)
       this.cantoConf = !this.cantoConf
       return
+    }
+    if(resp === 'reTruco'){
+      this.reTruco = true
+      this.jugador.juega = false
     }
     const respons = {
       jugador: this.jugador,
