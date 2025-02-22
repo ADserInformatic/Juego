@@ -148,12 +148,13 @@ export class SalaComponent implements OnInit {
 
     
     this.socket.on('salaAbandonada', (res: any) => {
+      console.log(res)
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
+        this.cookies.set('abandono', res.jugador)
+        this.router.navigate(['/appTruco'])
       }, 2000)
-      
-      this.router.navigate(['/appTruco'])
     })
 
     //desactivar el boton de envido
@@ -279,6 +280,7 @@ export class SalaComponent implements OnInit {
     }
     if(canto === 'truco'){
       this.truco = true
+      this.jugador.juega = false
     }
     let data = {
       sala: this.nameSala,
@@ -301,6 +303,10 @@ export class SalaComponent implements OnInit {
       this.socket.emit('canto', data)
       this.cantoConf = !this.cantoConf
       return
+    }
+    if(resp === 'reTruco'){
+      this.reTruco = true
+      this.jugador.juega = false
     }
     const respons = {
       jugador: this.jugador,
@@ -341,6 +347,7 @@ export class SalaComponent implements OnInit {
   abandonar(){
     if(confirm('Al abandonar la sala pierde el credito en juego. Desea abandonar de todos modos?')){
       this.socket.emit('abandonarSala', {sala: this.sala.name, idUser: this.jugador.id})
+      this.cookies.set('abandono', 'sí')
       this.router.navigate(['/appTruco']) 
     }
   }

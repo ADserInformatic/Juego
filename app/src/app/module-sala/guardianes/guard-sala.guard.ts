@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 import { map, Observable } from 'rxjs';
 import { ServicGuardService } from '../services/servic-guard.service';
 
@@ -8,7 +9,8 @@ import { ServicGuardService } from '../services/servic-guard.service';
 })
 export class GuardSalaGuard implements CanDeactivate<unknown> {
   finalPartida!: boolean;
-  constructor(private servGuard: ServicGuardService){}
+  constructor(private servGuard: ServicGuardService,
+    private cookie: CookieService){}
 
   canDeactivate(
     component: unknown,
@@ -21,6 +23,9 @@ export class GuardSalaGuard implements CanDeactivate<unknown> {
             alert('Desea salir?')
             return true
           }else{
+            if(this.cookie.get('abandono')){
+              return true
+            }
             if(confirm('Al salir de la partida pierde el dinero apostado en la misma. ¿Desea salir de todas formas?')){
               return true
             }else{
