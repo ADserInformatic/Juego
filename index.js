@@ -564,7 +564,6 @@ io.on('connection', (socket) => {
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
             sala.cantosenmano.faltaRespuesta.bool = false;
-            sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
@@ -650,12 +649,17 @@ io.on('connection', (socket) => {
                 element.tantos += 3;
               }
             })
+            datos = {
+              mensaje: "",
+              sala
+            }
+            io.to(res.sala).emit('resultadoDeCanto', datos)
             break;
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
             // console.log(res)
-            socket.to(res.sala).emit('cantando', res)
+            io.to(res.sala).emit('cantando', res)
             break;
         }
 
@@ -710,11 +714,12 @@ io.on('connection', (socket) => {
               if (element.id != res.jugador.id) {
                 console.log("dentro del for flor")
                 element.tantos += 4;
+              } else {
+                mensaje = mensaje = `Gana ${element.name} no quiere`
               }
             })
 
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            mensaje = `sumados los 4 puntos`
             datos = {
               mensaje,
               sala
@@ -734,20 +739,18 @@ io.on('connection', (socket) => {
         break;
       case 'florMeAchico':
         switch (res.respuesta) {
-          case 'aceptar':
+          case 'aceptar': z
             sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             var me;
             users.forEach(us => {
               if (us.name != res.jugador.name) {
                 us.tantos += 4
-              } else {
-                me = `${us.name} con flor se achica`
               }
             })
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             datos = {
-              mensaje: me,
+              mensaje: "",
               sala
             }
             io.to(res.sala).emit('resultadoDeCanto', datos)
@@ -1303,6 +1306,8 @@ const repartir = async (_sala) => {
   salaOn.cantosenmano.boolTruco = false;
   salaOn.cantosenmano.boolReTruco = false;
   salaOn.cantosenmano.boolValeCuatro = false;
+  salaOn.cantosenmano.faltaRespuesta = false;
+
   salaOn.finish = false;
   salaOn.cantosenmano.pardaPrimera = false;
   if (users[0].mano) {
@@ -1330,7 +1335,7 @@ const repartir = async (_sala) => {
     await salaM.findByIdAndUpdate({ _id: paraGuardar._id }, { $set: { usuarios: users } })
    */
   //Una vez que se actualiza, se busca la sala (la acción anterior me devuelve la sala sin actualizar, por eso este paso adicional) y se devuelve a travez del emit 'repartir'
-  console.log("justo antes de emit repartir dentro de funcion repartir")
+
   io.to(salaOn.name).emit('repartir', salaOn)
 
 }
