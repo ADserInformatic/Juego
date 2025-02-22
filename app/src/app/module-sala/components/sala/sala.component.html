@@ -109,7 +109,7 @@
         <div class="texto">
             <h1>{{cantora | uppercase}}</h1>
         </div>
-        <div class="btns flor" *ngIf="respuesta.canto === 'flor' || respuesta.canto === 'florFlor' || respuesta.canto === 'contraFlor' || respuesta.canto === 'florMeAchico'">
+        <div class="btns flor" *ngIf="cantoI === 'flor' || cantoI === 'florFlor' || cantoI === 'contraFlor' || cantoI === 'florMeAchico'">
             <button *ngIf="flor && contraFlor" class="quiero" (click)="contestarCanto('quiero')">Quiero</button>
             <button *ngIf="!contraFlor" (click)="contestarCanto('aceptar')" >Aceptar</button>
             <button *ngIf="jugador.puedeFlor && !contraFlor" (click)="contestarCanto('contraFlor')">Contra flor</button>
