@@ -239,7 +239,7 @@ io.on('connection', (socket) => {
             sala.save()
             var me;
             users.forEach(us => {
-              if (us.name === res.jugador.name) {
+              if (us.name != res.jugador.name) {
                 us.tantos += 1
               } else {
                 me = `${us.name} no quiere`
@@ -308,7 +308,7 @@ io.on('connection', (socket) => {
             sala.save()
             var me;
             users.forEach(us => {
-              if (us.name === res.jugador.name) {
+              if (us.name != res.jugador.name) {
                 us.tantos += 2
               } else {
                 me = `${us.name} no quiere`
@@ -375,7 +375,7 @@ io.on('connection', (socket) => {
             sala.save()
             var me;
             users.forEach(us => {
-              if (us.name === res.jugador.name) {
+              if (us.name != res.jugador.name) {
                 if (sala.cantosenmano.boolReEnvido) { us.tantos += 4 } //se cantó envido envido realenvido
                 else {
                   if (sala.cantosenmano.boolEnvido) { us.tantos += 2 } //se canto envido realenvido
@@ -461,7 +461,7 @@ io.on('connection', (socket) => {
             var me;
             users.forEach(us => {
               me = `${us.name} no quiere`
-              if (us.name === res.jugador.name) {
+              if (us.name != res.jugador.name) {
                 if (sala.cantosenmano.boolRealEnvido) {
                   if (sala.cantosenmano.boolReEnvido) {
                     if (sala.cantosenmano.boolEnvido) {
@@ -522,16 +522,15 @@ io.on('connection', (socket) => {
             break;  //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
             sala.cantosenmano.faltaRespuesta.bool = false;
-            sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
-              if (element.id == res.jugador.id) {
+              if (element.id != res.jugador.id) {
                 element.tantos += 1;
               }
             })
             sala.finish = true;
-            sala.save();
+            await sala.save();
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users, finish: true } })
 
             io.to(res.sala).emit('resultadoDeCanto', data)
@@ -569,7 +568,7 @@ io.on('connection', (socket) => {
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             let data = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
-              if (element.id == res.jugador.id) {
+              if (element.id != res.jugador.id) {
                 element.tantos += 2;
               }
             })
@@ -614,7 +613,7 @@ io.on('connection', (socket) => {
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
             users.forEach(element => {
-              if (element.id == res.jugador.id) {
+              if (element.id != res.jugador.id) {
                 element.tantos += 3;
               }
             })
@@ -642,10 +641,11 @@ io.on('connection', (socket) => {
       case 'flor':
         switch (res.respuesta) {
           case 'aceptar':
+
             sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             users.forEach(element => {
-              if (element.id == res.jugador.id) {
+              if (element.name != res.jugador.name) {
 
                 element.tantos += 3;
               }
@@ -707,7 +707,7 @@ io.on('connection', (socket) => {
             sala.cantosenmano.faltaRespuesta = false;
             sala.save()
             users.forEach(element => {
-              if (element.id == res.jugador.id) {
+              if (element.id != res.jugador.id) {
                 console.log("dentro del for flor")
                 element.tantos += 4;
               }
@@ -739,7 +739,7 @@ io.on('connection', (socket) => {
             sala.save()
             var me;
             users.forEach(us => {
-              if (us.name === res.jugador.name) {
+              if (us.name != res.jugador.name) {
                 us.tantos += 4
               } else {
                 me = `${us.name} con flor se achica`
@@ -802,7 +802,7 @@ io.on('connection', (socket) => {
             sala.save()
             var me;
             users.forEach(us => {
-              if (us.name === res.jugador.name) {
+              if (us.name != res.jugador.name) {
                 us.tantos += 4
               } else {
                 me = `${us.name} no quiere`
