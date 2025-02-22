@@ -825,24 +825,24 @@ io.on('connection', (socket) => {
 
   //ESTA FUNCION ES PARA CUANDO UN USUARIO ABANDONA CLICKEANDO LA OPCION DE ABANDONAR
   socket.on('abandonarSala', async (res) => {
-    //busco la sala que debo cerrar
     try {
-      const sala = await salaM.findOne({ name: res.sala })
+      const sala = await salaM.findOne({ _id: res.sala })
       //capturo los usuarios que estan en esa sala
-      const users = sala.usuarios
       const admin = await adminA.findOne({})
       let usuarioAbandono;
-      users.forEach(async (element) => {
+      sala.usuarios.forEach(async (element) => {
         //el usuario con el id distinto de quien abandona gana la apuesta
         if (res.idUser != element.id.toHexString()) {
           element.credito += 2 * sala.apuesta * porcentajePremio
           admin.earning += 2 * sala.apuesta * (1 - porcentajePremio)
-          users.save()
-          admin.save()
+          console.log("id distinto: ", element.id.toHexString())
         } else {
+          console.log("id igual: ", element.id.toHexString())
           usuarioAbandono = element
         }
       })
+      await admin.save();
+      await sala.save()
       //una vez guardado las ganancias al admin y premio al usuario, procedo a eliminar la sala
       /****************************************
        * *****************ANTES REDIRECCIONO A LOS USUARIOS AL LOBBY Y LE AVISO AL VENCEDOR Q ABANDONARON y al aceptar lo mando al lobby
@@ -1008,7 +1008,7 @@ const booleanos = async (res) => {
   }
   sala.cantosenmano.faltaRespuesta = true;
   sala.cantosenmano.canto = res.canto;
-  sala.cantosenmano.jugador = res.jugador._id
+  sala.cantosenmano.jugador = res.jugador.id
 
 
 
