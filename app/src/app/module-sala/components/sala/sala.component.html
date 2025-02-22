@@ -133,7 +133,7 @@
             </select>
             <button *ngIf="truco && !reTruco" (click)="contestarCanto('reTruco')">Retruco</button>
             <button *ngIf="!valeCuatro && reTruco" (click)="contestarCanto('valeCuatro')">Vale cuatro</button>
-            <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido && !jugador.puedeFlor" (click)="contestarCanto('reEnvido')">Envido</button>
+            <button *ngIf="!flor && envido && !reEnvido && !realEnvido && !faltaEnvido && !jugador.puedeFlor" (click)="contestarCanto('reEnvido')">Envido</button>
             <button *ngIf="!realEnvido && !faltaEnvido && !truco && !jugador.puedeFlor" (click)="contestarCanto('realEnvido')">Real envido</button>
             <button *ngIf="!faltaEnvido && !truco && !jugador.puedeFlor" (click)="contestarCanto('faltaEnvido')">Falta Envido</button>
             <button *ngIf="envido && !reEnvido && !realEnvido && !faltaEnvido && jugador.puedeFlor" (click)="contestarCanto('flor')">Flor por atrevido</button>

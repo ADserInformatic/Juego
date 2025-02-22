@@ -100,8 +100,6 @@ export class SalaComponent implements OnInit {
 
     this.socket.on('cantando', (res: any) => {
       this.cantoI = res.canto
-      console.log(res)
-      
       res.jugador = this.jugadorCont
       this.respuesta = {
         jugador: this.jugador.name,
@@ -181,9 +179,8 @@ export class SalaComponent implements OnInit {
     this.reTruco = res.cantosenmano.boolReTruco;
     this.valeCuatro = res.cantosenmano.boolValeCuatro;
     this.cantoI = res.cantosenmano.canto
-    console.log(res.cantosenmano.jugador, this.cookies.get('jugador'))
     if(res.cantosenmano.jugador == this.cookies.get('jugador')){
-      this.cantoConf = !res.cantosenmano.faltaRespuesta
+      this.cantoConf = false
     }else{
       this.cantoConf = res.cantosenmano.faltaRespuesta
     }
