@@ -145,6 +145,7 @@ export class SalaComponent implements OnInit {
       
       this.resetSala(res.sala)
       // this.envido = false
+      this.cantoConf = false
     })
 
     
