@@ -26,20 +26,32 @@ const getUsers = async (req, res) => {
     }
 }
 const getUser = async (req, res) => {
-    let id = req.params.id
-    const userX = await user.findOne({ _id: id })
-    if (!userX) {
-        res.json({
-            error: true,
-            mensaje: `No se encuentra el usuario`
-        })
-    }
     try {
-        res.json({
-            error: false,
-            data: userX,
-            mensaje: 'La solicitud ha sido resuelta exitosamente'
-        })
+        let id = req.params.id
+        const userX = await user.findOne({ _id: id })
+        if (userX) {
+            res.json({
+                error: false,
+                data: userX,
+                mensaje: 'La solicitud ha sido resuelta exitosamente'
+            })
+        } else {
+            const adminX = await admin.findOne({ _id: id })
+
+            if (adminX) {
+                res.json({
+                    error: false,
+                    data: adminX,
+                    mensaje: 'La solicitud ha sido resuelta exitosamente'
+                })
+            } else {
+                res.json({
+                    error: true,
+                    mensaje: `No se encuentra el usuario`
+                })
+            }
+        }
+
     } catch (e) {
         res.json({
             error: true,

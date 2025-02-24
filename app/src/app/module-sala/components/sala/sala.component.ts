@@ -100,8 +100,6 @@ export class SalaComponent implements OnInit {
 
     this.socket.on('cantando', (res: any) => {
       this.cantoI = res.canto
-      console.log(res)
-      
       res.jugador = this.jugadorCont
       this.respuesta = {
         jugador: this.jugador.name,
@@ -129,12 +127,13 @@ export class SalaComponent implements OnInit {
       } else {
         console.log('bueeee',)
       }
-      this.cantoConf = true
-      this.cantora = `El jugador ${res.jugador.name} dice: ${res.canto}`
+      console.log(res)
+      this.cantoI = res.cantosenmano.canto
+      this.cantoConf = res.cantosenmano.faltaRespuesta
+      this.cantora = `El jugador ${res.jugador.name} dice: ${this.cantoI}`
     })
 
     this.socket.on('respuestaCanto', (res: any) => {
-      console.log("tu oponente dice: ", res)
       confirm(`Tu oponente dice ${res}`)
     })
 
@@ -143,9 +142,20 @@ export class SalaComponent implements OnInit {
       setTimeout(() => {
         this.mensaje = ''
       }, 2000)
-      console.log(res)
+      
       this.resetSala(res.sala)
       // this.envido = false
+    })
+
+    
+    this.socket.on('salaAbandonada', (res: any) => {
+      console.log(res)
+      this.mensaje = res.mensaje
+      setTimeout(() => {
+        this.mensaje = ''
+        this.cookies.set('abandono', res.jugador)
+        this.router.navigate(['/appTruco'])
+      }, 2000)
     })
 
     //desactivar el boton de envido
@@ -157,6 +167,7 @@ export class SalaComponent implements OnInit {
   
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
+    console.log(res)
     this.sala = res;
     this.envido = res.cantosenmano.boolEnvido
     this.reEnvido = res.cantosenmano.boolReEnvido
@@ -169,6 +180,12 @@ export class SalaComponent implements OnInit {
     this.truco = res.cantosenmano.boolTruco;
     this.reTruco = res.cantosenmano.boolReTruco;
     this.valeCuatro = res.cantosenmano.boolValeCuatro;
+    this.cantoI = res.cantosenmano.canto
+    if(res.cantosenmano.jugador == this.cookies.get('jugador')){
+      this.cantoConf = false
+    }else{
+      this.cantoConf = res.cantosenmano.faltaRespuesta
+    }
     
     
     this.sala.usuarios.forEach((element: any) => {
@@ -179,6 +196,9 @@ export class SalaComponent implements OnInit {
         this.jugadorCont = element
       }
     });
+
+    this.cantora = `El jugador ${this.jugadorCont.name} dice: ${this.cantoI}`
+    
     if(this.truco){
       this.cantoActual = "reTruco"
     }
@@ -263,6 +283,7 @@ export class SalaComponent implements OnInit {
     }
     if(canto === 'truco'){
       this.truco = true
+      this.jugador.juega = false
     }
     let data = {
       sala: this.nameSala,
@@ -282,18 +303,20 @@ export class SalaComponent implements OnInit {
         jugador: this.jugador,
         canto: this.selected.nativeElement.value
       }
-      console.log(data)
       this.socket.emit('canto', data)
       this.cantoConf = !this.cantoConf
       return
     }
+    if(resp === 'reTruco'){
+      this.reTruco = true
+      this.jugador.juega = false
+    }
     const respons = {
-      jugador: this.jugadorCont,
+      jugador: this.jugador,
       respuesta: resp,
       sala: this.nameSala,
       canto: this.cantoI
     }
-    console.log(respons)
     this.socket.emit('respuestaCanto', respons)
     this.cantoConf = !this.cantoConf
     if (bool === false) {
@@ -302,7 +325,6 @@ export class SalaComponent implements OnInit {
   }
 
   pintarPuntos(jugador: number, puntos: Array<any>, min: number, max: number){
-    console.log(jugador)
     if(jugador > min){
       for(let i = min; i < jugador; i++){
         puntos.push(i)
@@ -322,6 +344,14 @@ export class SalaComponent implements OnInit {
       this.servLogin.logout()
       this.cookies.delete('jugador')
       this.router.navigate(['/'])
+    }
+  }
+
+  abandonar(){
+    if(confirm('Al abandonar la sala pierde el credito en juego. Desea abandonar de todos modos?')){
+      this.socket.emit('abandonarSala', {sala: this.sala.name, idUser: this.jugador.id})
+      this.cookies.set('abandono', 'sí')
+      this.router.navigate(['/appTruco']) 
     }
   }
   
