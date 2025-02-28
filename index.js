@@ -951,48 +951,29 @@ io.on('connection', (socket) => {
   //esta función es para cuando uno se va al mazo, recibe un res con la sala y el jugador q abandono
   socket.on('meVoyAlMazo', async (res) => {
     const sala = await salaM.findOne({ name: res.sala })
-    let ganador, abandono;
+    let posGanador, posAlMazo
     //capturo los usuarios que estan en esa sala
     const users = sala.usuarios
-    users.forEach(async (element) => {
+    users.forEach(async (element, index) => {
       //el usuario con el id distinto de quien abandona gana la apuesta
       if (res.jugador.id != element.id.toHexString()) {
-        ganador = element
+        posGanador = index
       } else {
-        abandono = element
+        posAlMazo = index
       }
     })
-    if (abandono.mano) {
-
+    if (users[posAlMazo].mano) {
+      if (users[posAlMazo].puedeMentir && users[posGanador].jugada.length == 0) {//QUIERE DECIR Q EL Q ABANDONA ES MANO Y NO MINTIO  ni tiro cartas ASI Q SUMA 1 PUNTO AL GANADOR Y MIRO RABONES
+        users[posGanador].tantos += 1
+      }
     }
-    //si el que abandonó era mano y aun no tiro ninguna carta 
-    //no mintio? 
-    //le sumo 1 x la mentira
-    //si ya mintio no hago nada xq se repartieron los puntos de la mentira
-
-    //miro lo del rabon
-
-    //si era mano y ya tiro una carta...
-    //el otro ya tiró?
-    //miro solo el rabon
-    //mintieron?
-    //sumo 1 si no mintieron x la mentira
-    //si ya mintieron no hago nada xq ya se repartieron los puntos
-
-    //miro el rabon
-
-    //si no era mano, quiere decir q el otro ya tiró una carta...
-    //si hubo mentira no hago nada,
-    //si no hubo y aun no tiró carta sumo 1 de mentira
-
-
+    await sumarTantosAPartida(res.sala, users[ganador].id)
+    //muestro cartel y reparto
   })
 
 });
 
-/* const meVoyAlMazo = async (salaX, jugadorGanador) => {
 
-} */
 
 
 //ESTA FUNCION ES PARA CUANDO UN USUARIO GANO por lo que sea y debo repartir premio 
