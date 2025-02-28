@@ -67,7 +67,6 @@ io.on('connection', (socket) => {
   //Con socket.io se utiliza emit para emitir una acción y on para escuchar esa acción, lo que debe coinsidir es el nombre que va entre comillas
   //Se escucha la acción 'repartir' y se ejecuta la siguiente función
   socket.on('repartir', async (_sala) => {
-    console.log("dentro de socket on repartir y recibo: ", _sala)
     //Se recibe la sala para la que hay que repartir y se busca en la base de datos
     const salaOn = await salaM.findOne({ _id: _sala._id })
     await repartir(_sala)
@@ -97,9 +96,7 @@ io.on('connection', (socket) => {
           element.puedeMentir = false;//al tirar una carta ya no puede mentir
         }
       }
-
     })
-
     //Una vez que se actualiza la jugada al usuario que la realizá, se compara los valores. La función compararValores compara las últimas jugadas de los jugadores y actualiza el puntaje dependiendo del resultado de la comparación.
     let terminoMano = await compararValores(salaOn) //dentro de comparar valores comprueba en q tiro estan y suma puntos, indica si termino la mano con true o false
     const newSalaOn = await salaM.findOne({ name: jugada.sala })
@@ -107,18 +104,13 @@ io.on('connection', (socket) => {
     for (i = 0; i < usersUpdate.length; i++) {
       users[i].tantos = usersUpdate[i].tantos
     }
-
-
-
     console.log("termino la Mano?: ", terminoMano)
-
     //Una vez actualizado el usuario se actualiza la sala
     await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users, partida: salaOn.partida } })
     //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
     const salaActualizada = await salaM.findOne({ _id: salaOn._id })
     //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
     io.to(salaOn.name).emit('muestra', salaActualizada) //muestra la ultima carta tirada,
-
     //La función terminar determina si una partida entre dos jugadores ha terminado basándose en el número de jugadas realizadas y declara al ganador
     if (terminoMano) { //si terminó la mano
       /*       salaOn.finish = true; //ya deberia estar igual en true xq lo hace dentro de comparar valores o al no querer los rabones
@@ -141,10 +133,6 @@ io.on('connection', (socket) => {
             winner = users[1].id
           }
           await juegoTerminado(salaOn, winner)
-
-
-
-
         } catch (err) {
           console.log("error en destruir sala, el error es : ", err)
         }
@@ -1018,8 +1006,6 @@ const juegoTerminado = async (salaX, idGanador) => { //
       //entrego premio y guardo ganancia
       if (idGanador.toHexString() === element.id.toHexString()) {
         console.log("ganancias repartidas")
-        console.log("ganador: ", element)
-
         element.creditos += 2 * sala.apuesta * porcentajePremio
         admin.earning += 2 * sala.apuesta * (1 - porcentajePremio)
         nombreGanador = element.name
@@ -1029,8 +1015,6 @@ const juegoTerminado = async (salaX, idGanador) => { //
     })
     await salaM.findOneAndUpdate({ name: salaX.name }, { $set: { usuarios: users } })
     await admin.save()
-
-
     let mensaje = `${nombreGanador} gana el juego`
     let data = {
       mensaje,
@@ -1038,7 +1022,6 @@ const juegoTerminado = async (salaX, idGanador) => { //
       sala
     }
     io.to(sala).emit('salaAbandonada', data)
-
     await salaM.findOneAndDelete({ name: salaX.name })
     console.log("sala eliminada")
     return
@@ -1124,7 +1107,6 @@ const booleanos = async (res) => {
 //al terminar la partida sumo los tantos deacuerdo a lo cantado y al jugador q ganó
 const sumarTantosAPartida = async (salaX, jugador) => {
   let sala = await salaM.findById({ _id: salaX._id });
-
   if (sala.cantosenmano.boolValeCuatro) {
     console.log("llegamos al valecuatro")
     sala.usuarios[jugador].tantos += 4;
@@ -1161,7 +1143,6 @@ const compararValores = async (sala) => {
   let jugador2 = users[1];
   const jugada1 = jugador1.jugada[jugador1.jugada.length - 1]
   const jugada2 = jugador2.jugada[jugador2.jugada.length - 1]
-
   //Este if verifica que ambos jugadores tengan el mismo número de jugadas. Si no es así, se ejecutará el bloque else.
   if (jugador1.jugada.length === jugador2.jugada.length) {
     if (jugada1.valor === jugada2.valor) {
@@ -1283,7 +1264,6 @@ const compararValores = async (sala) => {
       }
 
     }
-
   } else {
     //Si los jugadores no tienen el mismo número de jugadas no se puede hacer la comparación.
     jugador2.juega = !jugador2.juega;
