@@ -515,15 +515,15 @@ io.on('connection', (socket) => {
                       us.tantos += 7
                     } //se canto envido realenvido y dsp la falta
                     else {
-                      us.tantos += 5
+                      us.tantos += 3
                     } //se canto solo real envido y dsp la falta
                   } //se cantó envido envido realenvido y dsp la falta
                   else {
                     if (sala.cantosenmano.boolEnvido) {
-                      us.tantos += 2
+                      us.tantos += 5
                     } //se canto envido realenvido y dsp la falta
                     else {
-                      us.tantos += 1
+                      us.tantos += 3
                     } //se canto solo real envido y dsp la falta
                   }
                 }
