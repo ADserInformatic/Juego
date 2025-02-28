@@ -1010,8 +1010,6 @@ io.on('connection', (socket) => {
 //ESTA FUNCION ES PARA CUANDO UN USUARIO GANO por lo que sea y debo repartir premio 
 const juegoTerminado = async (salaX, idGanador) => { //
   try {
-    console.log("JUEGO TERMINADO RECIBE salaX: ", salaX)
-    console.log("JUEGO TERMINADO RECIBE idGanador: ", idGanador)
     const sala = await salaM.findOne({ name: salaX.name })
     const users = sala.usuarios
     const admin = await adminA.findOne({})
@@ -1050,7 +1048,6 @@ const juegoTerminado = async (salaX, idGanador) => { //
 }
 
 const booleanos = async (res) => {
-  console.log(res)
   const sala = await salaM.findOne({ name: res.sala });
   const users = sala.usuarios;
   switch (res.canto) {
@@ -1296,10 +1293,7 @@ const compararValores = async (sala) => {
 }
 //Acá tengo que pasar los dos jugadores que están en la sala actualizados cada vez que se tira
 const terminar = async (salaX) => {
-  console.log("recibo en terminar: ", salaX)
   let sala = await salaM.findOne({ name: salaX.name })
-  console.log("dentro de terminar, la sala es: ", sala)
-  console.log("dentro de funcion terminar...la variable finish es: ", sala.finish)
   if (sala.finish) {
     sala.partida += 1
     console.log("partida terminada")
@@ -1420,7 +1414,7 @@ const repartir = async (_sala) => {
     users[1].juega = true;
     users[0].juega = false;
     users[1].puedeCantar = true;
-    users[0].puedeCantar = false;
+    users[0].puedeCantar = true;
     users[1].puedeMentir = true;
     users[0].puedeMentir = true;
   } else {
@@ -1428,7 +1422,7 @@ const repartir = async (_sala) => {
     users[1].mano = false;
     users[0].juega = true;
     users[1].juega = false;
-    users[1].puedeCantar = false;
+    users[1].puedeCantar = true;
     users[0].puedeCantar = true;
     users[1].puedeMentir = true;
     users[0].puedeMentir = true;
