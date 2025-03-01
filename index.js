@@ -1002,7 +1002,7 @@ const juegoTerminado = async (salaX, idGanador) => { //
       jugador: "abandono",
       sala
     }
-    io.to(sala).emit('salaAbandonada', data)
+    io.to(sala.name).emit('salaAbandonada', data)
     await salaM.findOneAndDelete({ name: salaX.name })
     console.log("sala eliminada")
     return
