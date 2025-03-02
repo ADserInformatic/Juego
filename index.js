@@ -146,8 +146,16 @@ io.on('connection', (socket) => {
 
     let ores = await booleanos(res);
     const sala = await salaM.findOne({ name: res.sala });
+    const users = sala.usuarios;
     if (res.canto == 'envido' || res.canto == 'reenvido' || res.canto == 'realEnvido' || res.canto == 'faltaEnvido' || res.canto == 'flor') {
-      sala.cantosenmano.boolTruco = false;
+      if (sala.cantosenmano.boolTruco) {
+        sala.cantosenmano.boolTruco = false;
+        ores.cantosenmano.boolTruco = false;
+        users.forEach(element => {
+          element.puedeCantar = true
+          ores.jugador.puedeCantar = true
+        })
+      }
       sala.save()
     }
     socket.to(res.sala).emit('cantando', ores)
@@ -1034,7 +1042,7 @@ const booleanos = async (res) => {
       break;
     case 'flor':
       sala.cantosenmano.boolFlor = true;
-      sala.cantosenmano.boolTruco = false;
+      sala.cantosenmano.boolTruco = false
       break;
     case 'florFlor':
       sala.cantosenmano.boolFlorFlor = true;
@@ -1075,10 +1083,6 @@ const booleanos = async (res) => {
   sala.cantosenmano.faltaRespuesta = true;
   sala.cantosenmano.canto = res.canto;
   sala.cantosenmano.jugador = res.jugador.id
-
-
-
-
   res.cantosenmano = sala.cantosenmano;
   sala.save();
   return (res)
