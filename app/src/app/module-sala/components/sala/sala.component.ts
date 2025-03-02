@@ -88,14 +88,16 @@ export class SalaComponent implements OnInit {
       this.resetSala(res)
     })
     this.socket.on('muestra', (res: any) => {
-      this.resetSala(res)
       console.log(res)
+      if(res.finish){
+        this.mensaje = 'Repartiendo...'
+      }
+      this.resetSala(res)
     })
 
     this.socket.on('repartir', (res: any) => {
+      this.mensaje = ''
       this.resetSala(res)
-
-      console.log(res)
     })
 
     this.socket.on('cantando', (res: any) => {
@@ -127,7 +129,6 @@ export class SalaComponent implements OnInit {
       } else {
         console.log('bueeee',)
       }
-      console.log(res)
       this.cantoI = res.cantosenmano.canto
       this.cantoConf = res.cantosenmano.faltaRespuesta
       this.cantora = `El jugador ${res.jugador.name} dice: ${this.cantoI}`
@@ -138,6 +139,7 @@ export class SalaComponent implements OnInit {
     })
 
     this.socket.on('resultadoDeCanto', (res: any) => {
+      console.log(res)
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
@@ -150,7 +152,6 @@ export class SalaComponent implements OnInit {
 
     
     this.socket.on('salaAbandonada', (res: any) => {
-      console.log(res)
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
@@ -168,7 +169,6 @@ export class SalaComponent implements OnInit {
   
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
-    console.log(res)
     this.sala = res;
     this.envido = res.cantosenmano.boolEnvido
     this.reEnvido = res.cantosenmano.boolReEnvido
@@ -192,7 +192,6 @@ export class SalaComponent implements OnInit {
     this.sala.usuarios.forEach((element: any) => {
       if (element.id == this.cookies.get('jugador')) {
         this.jugador = element
-        console.log(this.jugador)
       } else {
         this.jugadorCont = element
       }
@@ -292,6 +291,9 @@ export class SalaComponent implements OnInit {
       canto
     }
     this.socket.emit('canto', data)
+    if(canto === 'flor'){
+      this.cantoConf = false
+    }
   }
 
   contestarCanto(resp: string, bool?: boolean) {
