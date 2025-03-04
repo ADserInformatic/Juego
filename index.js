@@ -214,7 +214,6 @@ io.on('connection', (socket) => {
     let canto = res.canto
     res = await booleanos(res);
     if (res.canto == 'envido' || res.canto == 'reenvido' || res.canto == 'realEnvido' || res.canto == 'faltaEnvido') {
-
       if (res.respuesta == "quiero") {
         if (res.jugador.tieneFlor) {//si quien dice quiero tiene flor
           if (res.jugador.jugada.length == 0) { //si aun no ha tirado ninguna carta xq sino ya esta corregido
@@ -231,51 +230,54 @@ io.on('connection', (socket) => {
       case 'envido':
         switch (res.respuesta) {
           case 'quiero':
-            sala.cantosenmano.faltaRespuesta = false;
-            //Acá paso los usuarios a la función que calcula los puntos
-            if (users[0].puntosMentira > users[1].puntosMentira) {
-              users[0].tantos += 2
-              mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
-              winner = users[0].id
-
-
-            }
-            if (users[0].puntosMentira < users[1].puntosMentira) {
-              users[1].tantos += 2
-              winner = users[1].id
-              mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
-
-            }
-            if (users[0].puntosMentira == users[1].puntosMentira) {
-              if (users[1].mano == true) {
-                users[1].tantos += 2;
-                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
-                winner = users[1].id
-              } else {
-                users[0].tantos += 2;
-                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
+            try {
+              sala.cantosenmano.faltaRespuesta = false;
+              //Acá paso los usuarios a la función que calcula los puntos
+              if (users[0].puntosMentira > users[1].puntosMentira) {
+                users[0].tantos += 2
+                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
                 winner = users[0].id
-              }
-            }
-            sala.save()
-            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            terminado = await terminar(sala)
-            if (terminado) {
-              //console.log("dentro del envido y quiero, terminar arrojo true y le paso a juegoTerminado")
-              await juegoTerminado(sala, winner)
 
-            } else {
-              datos = {
-                mensaje,
-                sala
-              }
-              io.to(res.sala).emit('resultadoDeCanto', datos)
 
-            }
+              }
+              if (users[0].puntosMentira < users[1].puntosMentira) {
+                users[1].tantos += 2
+                winner = users[1].id
+                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+
+              }
+              if (users[0].puntosMentira == users[1].puntosMentira) {
+                if (users[1].mano == true) {
+                  users[1].tantos += 2;
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
+                  winner = users[1].id
+                } else {
+                  users[0].tantos += 2;
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
+                  winner = users[0].id
+                }
+              }
+              sala.save()
+              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+              terminado = await terminar(sala)
+              if (terminado) {
+                //console.log("dentro del envido y quiero, terminar arrojo true y le paso a juegoTerminado")
+                await juegoTerminado(sala, winner)
+
+              } else {
+                datos = {
+                  mensaje,
+                  sala
+                }
+                io.to(res.sala).emit('resultadoDeCanto', datos)
+
+              }
+            } catch (err) { console.log("error en envido envido quiero: ", err) }
             break;
           case 'noquiero':
             sala.cantosenmano.faltaRespuesta = false;
             sala.save()
+
             users.forEach(us => {
               if (us.name != res.jugador.name) {
                 us.tantos += 1
@@ -312,18 +314,14 @@ io.on('connection', (socket) => {
           case 'quiero':
             sala.cantosenmano.faltaRespuesta = false;
             sala.save()
-
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 4
               winner = users[0].id
-
-
               mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
             }
             if (users[0].puntosMentira < users[1].puntosMentira) {
               users[1].tantos += 4
               winner = users[1].id
-
               mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
             }
             if (users[0].puntosMentira == users[1].puntosMentira) {
@@ -336,20 +334,22 @@ io.on('connection', (socket) => {
                 users[0].tantos += 4;
                 mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
               }
-              await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-              terminado = await terminar(sala)
-              if (terminado) {
-                //console.log("dentro del re envido y quiero, terminar arrojo true y le paso a juegoTerminado")
-                await juegoTerminado(sala, winner)
-
-              } else {
-                datos = {
-                  mensaje,
-                  sala
-                }
-                io.to(res.sala).emit('resultadoDeCanto', datos)
-              }
             }
+            // sala.save()
+            await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
+            terminado = await terminar(sala)
+            if (terminado) {
+              //console.log("dentro del re envido y quiero, terminar arrojo true y le paso a juegoTerminado")
+              await juegoTerminado(sala, winner)
+
+            } else {
+              datos = {
+                mensaje,
+                sala
+              }
+              io.to(res.sala).emit('resultadoDeCanto', datos)
+            }
+
             break;
           case 'noquiero':
             sala.cantosenmano.faltaRespuesta = false;

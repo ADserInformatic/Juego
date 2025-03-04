@@ -58,7 +58,7 @@ export class SalaComponent implements OnInit {
   public tantos2: Array<number> = []
   public tantosCont2: Array<number> = []
   public tantos3: Array<number> = []
-  public tantosCont3: Array<number> = [] 
+  public tantosCont3: Array<number> = []
   public buenas: boolean = false;
   public buenasCont: boolean = false;
   private url: string = environment.apiUrl
@@ -90,7 +90,7 @@ export class SalaComponent implements OnInit {
     })
     this.socket.on('muestra', (res: any) => {
       console.log(res)
-      if(res.finish){
+      if (res.finish) {
         this.mensaje = 'Repartiendo...'
       }
       this.resetSala(res)
@@ -121,7 +121,7 @@ export class SalaComponent implements OnInit {
       this.reTruco = res.cantosenmano.boolReTruco;
       this.valeCuatro = res.cantosenmano.boolValeCuatro;
 
-      if(this.envido || this.realEnvido || this.faltaEnvido){
+      if (this.envido || this.realEnvido || this.faltaEnvido) {
         this.btnMentiras = false
       }
       if (res.respuesta === 'quiero' || res.respuesta === 'noquiero') {
@@ -145,13 +145,13 @@ export class SalaComponent implements OnInit {
       setTimeout(() => {
         this.mensaje = ''
       }, 2000)
-      
+
       this.resetSala(res.sala)
       // this.envido = false
       this.cantoConf = false
     })
 
-    
+
     this.socket.on('salaAbandonada', (res: any) => {
       this.mensaje = res.mensaje
       setTimeout(() => {
@@ -167,7 +167,7 @@ export class SalaComponent implements OnInit {
       this.btnMentiras = this.jugador.valores.length > 2 && !this.mentira
     })
   }
-  
+
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
     this.sala = res;
@@ -183,13 +183,13 @@ export class SalaComponent implements OnInit {
     this.reTruco = res.cantosenmano.boolReTruco;
     this.valeCuatro = res.cantosenmano.boolValeCuatro;
     this.cantoI = res.cantosenmano.canto
-    if(res.cantosenmano.jugador == this.cookies.get('jugador')){
+    if (res.cantosenmano.jugador == this.cookies.get('jugador')) {
       this.cantoConf = false
-    }else{
+    } else {
       this.cantoConf = res.cantosenmano.faltaRespuesta
     }
-    
-    
+
+
     this.sala.usuarios.forEach((element: any) => {
       if (element.id == this.cookies.get('jugador')) {
         this.jugador = element
@@ -199,11 +199,11 @@ export class SalaComponent implements OnInit {
     });
 
     this.cantora = `El jugador ${this.jugadorCont.name} dice: ${this.cantoI}`
-    
-    if(this.truco){
+
+    if (this.truco) {
       this.cantoActual = "reTruco"
     }
-    if(this.truco && this.reTruco){
+    if (this.truco && this.reTruco) {
       this.cantoActual = "valeCuatro"
     }
     this.invertCards = this.jugador.name == this.sala.usuarios[0].name
@@ -214,7 +214,7 @@ export class SalaComponent implements OnInit {
     this.tantosCont2 = []
     this.tantos3 = []
     this.tantosCont3 = []
-    if(this.jugador.tantos < 16){
+    if (this.jugador.tantos < 16) {
       for (let i = 0; i < this.jugador.tantos; i++) {
         this.tantos1.push(i)
         if (i > 3) {
@@ -223,7 +223,7 @@ export class SalaComponent implements OnInit {
       }
       this.pintarPuntos(this.jugador.tantos, this.tantos2, 5, 8)
       this.pintarPuntos(this.jugador.tantos, this.tantos3, 10, 13)
-    }else{
+    } else {
       this.buenas = true
       for (let i = 15; i < this.jugador.tantos; i++) {
         this.tantos1.push(i)
@@ -234,7 +234,7 @@ export class SalaComponent implements OnInit {
       this.pintarPuntos(this.jugador.tantos, this.tantos2, 20, 23)
       this.pintarPuntos(this.jugador.tantos, this.tantos3, 25, 28)
     }
-    if(this.jugadorCont.tantos < 16){
+    if (this.jugadorCont.tantos < 16) {
       for (let i = 0; i < this.jugadorCont.tantos; i++) {
         this.tantosCont1.push(i)
         if (i > 3) {
@@ -243,7 +243,7 @@ export class SalaComponent implements OnInit {
       }
       this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont2, 5, 8)
       this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 10, 13)
-    }else{
+    } else {
       this.buenasCont = true
       for (let i = 15; i < this.jugadorCont.tantos; i++) {
         this.tantosCont1.push(i)
@@ -254,13 +254,13 @@ export class SalaComponent implements OnInit {
       this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont2, 20, 23)
       this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 25, 28)
     }
-    
-    
+
+
     this.verCartas.next(this.jugador.valores)
     this.verGuard.observarGuard.next(res.partidaFinalizada)
-    
+
   }
-  
+
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
     const data: Jugada = {
@@ -277,12 +277,12 @@ export class SalaComponent implements OnInit {
   }
 
   canto(canto: string) {
-    if(this.truco && canto === 'envido'){
+    if (this.truco && canto === 'envido') {
     }
     if (canto === 'envido' || canto === 'realEnvido' || canto === 'faltaEnvido') {
       this.btnMentiras = false
     }
-    if(canto === 'truco'){
+    if (canto === 'truco') {
       this.truco = true
       this.jugador.juega = false
     }
@@ -292,14 +292,14 @@ export class SalaComponent implements OnInit {
       canto
     }
     this.socket.emit('canto', data)
-    if(canto === 'flor'){
+    if (canto === 'flor') {
       this.cantoConf = false
     }
   }
 
   contestarCanto(resp: string, bool?: boolean) {
-    if(this.truco && resp === 'primEnvido'){
-      if(this.selected.nativeElement.value === 'El envido va primero'){
+    if (this.truco && resp === 'primEnvido') {
+      if (this.selected.nativeElement.value === 'El envido va primero') {
         return
       }
       let data = {
@@ -311,7 +311,7 @@ export class SalaComponent implements OnInit {
       this.cantoConf = !this.cantoConf
       return
     }
-    if(resp === 'reTruco'){
+    if (resp === 'reTruco') {
       this.reTruco = true
       this.jugador.juega = false
     }
@@ -328,9 +328,9 @@ export class SalaComponent implements OnInit {
     }
   }
 
-  pintarPuntos(jugador: number, puntos: Array<any>, min: number, max: number){
-    if(jugador > min){
-      for(let i = min; i < jugador; i++){
+  pintarPuntos(jugador: number, puntos: Array<any>, min: number, max: number) {
+    if (jugador > min) {
+      for (let i = min; i < jugador; i++) {
         puntos.push(i)
         if (i > max) {
           break
@@ -339,25 +339,25 @@ export class SalaComponent implements OnInit {
     }
   }
 
-  cancel(){
+  cancel() {
     this.salir = !this.salir
   }
 
-  closed(){
-    if(confirm('Desea cerrar sesión?')){
+  closed() {
+    if (confirm('Desea cerrar sesión?')) {
       this.servLogin.logout()
       this.cookies.delete('jugador')
       this.router.navigate(['/'])
     }
   }
 
-  abandonar(){
-    if(confirm('Al abandonar la sala pierde el credito en juego. Desea abandonar de todos modos?')){
-      this.socket.emit('abandonarSala', {sala: this.sala.name, idUser: this.jugador.id})
+  abandonar() {
+    if (confirm('Al abandonar la sala pierde el credito en juego. Desea abandonar de todos modos?')) {
+      this.socket.emit('abandonarSala', { sala: this.sala.name, idUser: this.jugador.id })
       this.cookies.set('abandono', 'sí')
-      this.router.navigate(['/appTruco']) 
+      this.router.navigate(['/appTruco'])
     }
   }
-  
+
 
 }
