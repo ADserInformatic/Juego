@@ -7,6 +7,7 @@ import { Jugada } from 'src/app/interfaces/jugada';
 import { Jugador } from 'src/app/interfaces/jugador';
 import { ServicGuardService } from '../../services/servic-guard.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-sala',
@@ -60,7 +61,7 @@ export class SalaComponent implements OnInit {
   public tantosCont3: Array<number> = [] 
   public buenas: boolean = false;
   public buenasCont: boolean = false;
-
+  private url: string = environment.apiUrl
 
 
   private verCartas: BehaviorSubject<any> = new BehaviorSubject<any>(this.jugador.valores)
@@ -75,7 +76,7 @@ export class SalaComponent implements OnInit {
 
   ngOnInit(): void {
     this.routeAct.params.subscribe((res: any) => {
-      this.socket = io('http://localhost:3006',
+      this.socket = io(this.url,
         {
           query: { sala: res.sala }
         })
