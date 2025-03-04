@@ -26,9 +26,8 @@ const sala = new Schema({
         canto: { type: String, require: false },// cual fue el ultimo canto
         respuesta: { type: String, require: false },// 
         jugador: { type: String, require: false },// jugador que falta contestar
-
-
-
+        puntosDevolver: { type: Number, required: false },//puntos que se devuelven si tenia cantora y tiro todas o carta indebida
+        posGanMentira: { type: Number, required: false },//posicion del jugador que gano la mentira
     },
 
     usuarios: [{
@@ -36,6 +35,8 @@ const sala = new Schema({
         creditos: { type: Number },
         juega: { type: Boolean, default: false }, //Para saber a quien le toca tirar
         valores: { type: Array }, //Estas son las cartas
+        aMostrar: { type: Array }, //Estas son las cartas que se muestran al final x mentir o cantora
+        noTirar: { type: Array }, //Esta es la carta que si niega y miente no debo mostrar
         jugada: { type: Array }, //Esas son cada una de las jugadas (cada carta tirada)
         puntosMentira: { type: Number, default: 0 },//puntos de la mentira de cada partida
         //canto: { type: String, default: 'noHay' }, //Este es para saber si estamos en truco, re o vale cua

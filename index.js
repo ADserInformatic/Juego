@@ -83,9 +83,11 @@ io.on('connection', (socket) => {
     const salaOn = await salaM.findOne({ name: jugada.sala })
     //Se guarda los usuarios que están jugando en esa sala en un array
     let users = salaOn.usuarios
+    let idUltimoTiro;
     users.forEach(async (element) => {
       //Recorro los usuarios en esa sala y al que coincide con el id del que hizo la jugada se le actualizan los datos
       if (jugada.idUser === element.id.toHexString()) {
+        idUltimoTiro = element.id.toHexString();
         //Esto lo que hace es filtrar todas la cartas que no coinciden con la que tiró, ya que son las que le quedan
         element.valores = element.valores.filter(e => e.name != jugada.carta)
         //Agregamos la nueva jugada al usuario en cuestión
@@ -114,9 +116,18 @@ io.on('connection', (socket) => {
     //Una vez actualizado el usuario se actualiza la sala
     await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users, partida: salaOn.partida } })
     //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
-    const salaActualizada = await salaM.findOne({ _id: salaOn._id })
+    const salaCasiActualizada = await verificarCantora(salaOn.name, idUltimoTiro);
+    let salaActualizada = await salaM.findOne({ _id: salaOn._id })
+    if (salaCasiActualizada) {
+      console.log("devolvi bien")
+      io.to(salaOn.name).emit('muestra', salaCasiActualizada) //muestra la ultima carta tirada, 
+    } else {
+      console.log("devolvi mal")
+      io.to(salaOn.name).emit('muestra', salaActualizada) //muestra la ultima carta tirada, 
+    }
+
     //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
-    io.to(salaOn.name).emit('muestra', salaActualizada) //muestra la ultima carta tirada,
+
     //La función terminar determina si una partida entre dos jugadores ha terminado basándose en el número de jugadas realizadas y declara al ganador
     if (terminoMano) { //si terminó la mano
       /*       salaOn.finish = true; //ya deberia estar igual en true xq lo hace dentro de comparar valores o al no querer los rabones
@@ -131,7 +142,6 @@ io.on('connection', (socket) => {
       } else {
         //console.log("dentro de socket tirar, termino juego dsp de tirar cartas")
         try {
-          const admin = await adminA.findOne({})
           let winner;
           if (users[0].tantos > users[1].tantos) {
             winner = users[0].id
@@ -232,9 +242,11 @@ io.on('connection', (socket) => {
           case 'quiero':
             try {
               sala.cantosenmano.faltaRespuesta = false;
+              sala.cantosenmano.puntosDevolver = 2;
               //Acá paso los usuarios a la función que calcula los puntos
               if (users[0].puntosMentira > users[1].puntosMentira) {
                 users[0].tantos += 2
+                sala.cantosenmano.posGanMentira = 0;
                 mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
                 winner = users[0].id
 
@@ -244,6 +256,7 @@ io.on('connection', (socket) => {
                 users[1].tantos += 2
                 winner = users[1].id
                 mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                sala.cantosenmano.posGanMentira = 1;
 
               }
               if (users[0].puntosMentira == users[1].puntosMentira) {
@@ -251,10 +264,14 @@ io.on('connection', (socket) => {
                   users[1].tantos += 2;
                   mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
                   winner = users[1].id
+                  sala.cantosenmano.posGanMentira = 1;
+
                 } else {
                   users[0].tantos += 2;
                   mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
                   winner = users[0].id
+                  sala.cantosenmano.posGanMentira = 0;
+
                 }
               }
               sala.save()
@@ -276,16 +293,18 @@ io.on('connection', (socket) => {
             break;
           case 'noquiero':
             sala.cantosenmano.faltaRespuesta = false;
-            sala.save()
-
+            sala.cantosenmano.puntosDevolver = 1;
             users.forEach(us => {
               if (us.name != res.jugador.name) {
                 us.tantos += 1
                 winner = us.id
+                sala.cantosenmano.posGanMentira = users.indexOf(us);
+
               } else {
                 mensaje = `${us.name} no quiere`
               }
             })
+            sala.save()
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
@@ -335,7 +354,6 @@ io.on('connection', (socket) => {
                 mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
               }
             }
-            // sala.save()
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
@@ -1055,19 +1073,19 @@ const corregirPuntos = async (idLLega, nameSala) => {
         element.cantoFlor = false;
         let todoMenor9 = true
         let minimo = parseInt(element.valores[0].name)
+        //let cartaNegada = element.valores[0]
         element.valores.forEach(async (carta) => { //al terminar obtengo en todoMenor si debo restar el minimo y corrijo puntaje
           if (parseInt(carta.name) > 9) {
             todoMenor9 = false;
           }
           if (parseInt(carta.name) < minimo) {
-
+            //cartaNegada = carta
             minimo = parseInt(carta.name)
           }
         })
+        //element.noTirar.push(cartaNegada)
         if (todoMenor9) {
           element.puntosMentira -= minimo;
-          console.log("nuevos puntos de mentira: ", element.puntosMentira)
-          console.log("corregido")
         }
       }
     })
@@ -1184,6 +1202,99 @@ const booleanos = async (res) => {
   return (res)
 }
 
+const verificarCantora = async (salaName, userID) => {
+  try {
+    //Aquí, se obtienen las últimas jugadas de cada jugador.
+    //antes que comparen valores me fijo que la ultima jugada de cada uno no sea una carta q no pueden tirar
+    let sala = await salaM.findOne({ name: salaName });
+    let users = sala.usuarios;
+    let idJugador, posicion, ultimaJugada
+    if (typeof userID.toHexString === 'function') {
+      idJugador = userID.toHexString()
+    } else {
+      idJugador = userID
+    }
+    users.forEach(async (element) => {
+      if (element.id.toHexString() === idJugador) {
+        ultimaJugada = element.jugada[element.jugada.length - 1]
+        if (!ultimaJugada) {
+          console.log("la ultima jugada del usuario es undefinid")
+        }
+        posicion = users.indexOf(element);
+      }
+    })
+    if (users[posicion].tieneFlor && !users[posicion].cantoFlor) {
+      console.log("tiene flor y no la canto")
+      console.log("cantidad de cartas tiradas: ", users[posicion].jugada.length)
+      if (users[posicion].jugada.length == 3) {//tenia flor, no la canto y tiro las 3 cartas
+        console.log("puntosDevolver: ", sala.cantosenmano.puntosDevolver)
+        if (sala.cantosenmano.posGanMentira == posicion) {//si gano el punto el q tenia la flor
+          console.log("fue quien gano los puntos de la mentira")
+          users[posicion].tantos -= sala.cantosenmano.puntosDevolver; //le resto el puntaje que gano y le sumo los 3 puntos de la cantora al otro
+          if (posicion == 0) {//le pongo 3 al otro q no era
+            console.log("sumo 3 a ", users[1].name)
+            users[1].tantos += 3
+          } else {
+            users[0].tantos += 3
+            console.log("sumo 3 a ", users[0].name)
+          }
+
+        } else {//si gano el punto el q no tenia la flor
+          console.log("no gano los puntos de la mentira")
+          if (posicion == 0) {//le pongo 2 al otro q no era para completar los 3 puntos de la cantora
+            users[1].tantos -= sala.cantosenmano.puntosDevolver
+            users[1].tantos += 3
+            console.log("sumo 3 a ", users[1].name)
+            console.log("resto los a devolver a ", users[1].name)
+          } else {
+            users[0].tantos -= sala.cantosenmano.puntosDevolver
+            users[0].tantos += 3
+            console.log("sumo 3 a ", users[0].name)
+            console.log("resto los a devolver a ", users[0].name)
+          }
+        }
+
+      } else {
+        if (users[posicion].noTirar.length > 0) {//quiere decir que hay cartas que no debe tirar
+          console.log("hay cartas q no debe tirar y son: ", users[posicion].noTirar)
+        }
+      }
+    }
+    let devolver = await salaM.findOneAndUpdate({ name: salaName }, { $set: { usuarios: users } })
+    return devolver
+
+
+
+  } catch (err) {
+    console.log("error dentro de verificarCantora: ", err)
+    return
+  }
+  // let users = sala.usuarios;
+  // let jugador1 = users[0];
+  // let jugador2 = users[1];
+  // const jugada1 = jugador1.jugada[jugador1.jugada.length - 1]
+  // const jugada2 = jugador2.jugada[jugador2.jugada.length - 1]
+  /*   
+    if (jugador1.tieneFlor && !jugador1.cantoFlor) {//me fijo del jugador1
+      if (jugador1.jugada.length == 3) {//antes que comparen valores me fijo que la ultima jugada de cada uno no sea la 3ra y haya negado flor
+        console.log("jugo las 3 cartas y habia negado flor el jugador: ", jugador1.name)
+      } else {
+        if (jugador1.jugada.length < 3) {//si la ultima jugada no es una carta que no podia
+          console.log("aca debo verificar q sea valida la carta del jugador: ", jugador1.name)
+        }
+      }
+    }
+    if (jugador2.tieneFlor && !jugador2.cantoFlor) {//me fijo del jugador1
+      if (jugador2.jugada.length == 3) {//antes que comparen valores me fijo que la ultima jugada de cada uno no sea la 3ra y haya negado flor
+        console.log("jugo las 3 cartas y habia negado flor el jugador: ", jugador2.name)
+      } else {
+        if (jugador2.jugada.length < 3) {//si la ultima jugada no es una carta que no podia
+          console.log("aca debo verificar q sea valida la carta del jugador: ", jugador2.name)
+        }
+      }
+    } */
+  return
+}
 
 //al terminar la partida sumo los tantos deacuerdo a lo cantado y al jugador q ganó
 const sumarTantosAPartida = async (salaX, jugador) => {
@@ -1239,18 +1350,17 @@ const compararValores = async (sala) => {
       //aca va si tienen el mismo valor pero no es la primera carta, puede ser la segunda o 3ra
       if (jugador2.jugada.length === 2) {//comparo con 1 solo ya que tienen la misma cantidad de jugadas
         if (sala.cantosenmano.pardaPrimera) {
-          sala.finish = true;
-          sala.save();
           if (users[0].mano) {
             await sumarTantosAPartida(sala, 0)
             //console.log('Gana ', users[0].name, 'por mano en parda en primera...')
-            return true
           }
           else {
             await sumarTantosAPartida(sala, 1)
             //console.log('Gana ', users[1].name, 'por mano en parda en primera')
-            return true
+
           }
+          await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
+          return true
         } else {
           if (users[0].ganoPrimera) {
             await sumarTantosAPartida(sala, 0)
@@ -1417,6 +1527,10 @@ const repartir = async (_sala) => {
   jugador2.jugada = [];
   jugador1.puntosMentira = 0;
   jugador2.puntosMentira = 0;
+  jugador1.aMostrar = [];
+  jugador2.aMostrar = [];
+  jugador1.noTirar = [];
+  jugador2.noTirar = [];
 
   jugador1.ganoPrimera = false;
   jugador2.ganoPrimera = false;
@@ -1462,6 +1576,8 @@ const repartir = async (_sala) => {
   jugador1.puedeMentir = true;
   jugador2.cantoFlor = false;
   jugador1.cantoFlor = false;
+  salaOn.cantosenmano.puntosDevolver = 0;
+  salaOn.cantosenmano.posGanMentira = 10;
   salaOn.cantosenmano.boolEnvido = false;
   salaOn.cantosenmano.boolReEnvido = false;
   salaOn.cantosenmano.boolRealEnvido = false;
