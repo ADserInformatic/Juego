@@ -339,6 +339,15 @@ export class SalaComponent implements OnInit {
     }
   }
 
+  alMazo(){
+    let data = {
+      sala: this.sala,
+      jugador: this.jugador
+    }
+    this.socket.emit('MeVoyAlMazo', data)
+    
+  }
+
   cancel() {
     this.salir = !this.salir
   }

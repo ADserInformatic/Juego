@@ -95,6 +95,7 @@
             <button *ngIf="!truco" [disabled]="!jugador.puedeCantar || !jugador.juega" (click)="canto('truco')">Truco</button>
             <button *ngIf="truco" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega" (click)="contestarCanto(cantoActual, false)">{{cantoActual}}</button>
             <button [disabled]="truco || !btnMentiras || !jugador.puedeFlor || flor || !jugador.juega" (click)="canto('flor')">Flor</button>
+            <button title="Irse al maso" (click)="alMazo()">Mazo</button>
         </div>
     </div>
 </div>
