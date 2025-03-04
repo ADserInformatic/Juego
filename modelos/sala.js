@@ -28,6 +28,7 @@ const sala = new Schema({
         jugador: { type: String, require: false },// jugador que falta contestar
         puntosDevolver: { type: Number, required: false },//puntos que se devuelven si tenia cantora y tiro todas o carta indebida
         posGanMentira: { type: Number, required: false },//posicion del jugador que gano la mentira
+        florNegada: { type: Boolean, default: false }
     },
 
     usuarios: [{
