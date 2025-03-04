@@ -9,6 +9,7 @@ const sala = new Schema({
     unaFalta: { type: Boolean, default: true },
     finish: { type: Boolean, default: true },
     partidaFinalizada: { type: Boolean, default: false },
+    rivalAlMazo: { type: Boolean, default: false },
     cantosenmano: {
         boolEnvido: { type: Boolean, default: false },
         boolReEnvido: { type: Boolean, default: false },

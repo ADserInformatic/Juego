@@ -1113,12 +1113,19 @@ io.on('connection', (socket) => {
   //esta función es para cuando uno se va al mazo, recibe un res con la sala y el jugador q abandono
   socket.on('meVoyAlMazo', async (res) => {
     const sala = await salaM.findOne({ name: res.sala })
+    sala.rivalAlMazo = true;
+    let idAlMazo;
+    if (typeof res.jugador.id.toHexString === 'function') {
+      idAlMazo = res.jugador.id.toHexString()
+    } else {
+      idAlMazo = res.jugador.id
+    }
     let posGanador, posAlMazo
     //capturo los usuarios que estan en esa sala
     const users = sala.usuarios
     users.forEach(async (element, index) => {
       //el usuario con el id distinto de quien abandona gana la apuesta
-      if (res.jugador.id != element.id.toHexString()) {
+      if (idAlMazo != element.id.toHexString()) {
         posGanador = index
       } else {
         posAlMazo = index
@@ -1127,10 +1134,34 @@ io.on('connection', (socket) => {
     if (users[posAlMazo].mano) {
       if (users[posAlMazo].puedeMentir && users[posGanador].jugada.length == 0) {//QUIERE DECIR Q EL Q ABANDONA ES MANO Y NO MINTIO  ni tiro cartas ASI Q SUMA 1 PUNTO AL GANADOR Y MIRO RABONES
         users[posGanador].tantos += 1
+        console.log("sumando 1 x tantos")
       }
     }
-    await sumarTantosAPartida(res.sala, users[ganador].id)
-    //muestro cartel y reparto
+    await sumarTantosAPartida(sala, posGanador)
+    let mostrar = await salaM.findOne({ name: res.sala })
+    io.to(sala.name).emit('muestra', mostrar)
+
+    let terminoJuego = await terminar(mostrar) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
+    //console.log("termino el juego? dentro de tirar: ", terminoJuego)
+    if (!terminoJuego) { //si el resultado de la funcion terminar es falso, se sigue el juego y se reparte, solo termino una mano
+      setTimeout(() => {
+        repartir(mostrar)
+      }, 3000); //reparte a los 5 segundos
+    } else {
+      //console.log("dentro de socket tirar, termino juego dsp de tirar cartas")
+      try {
+        let winner;
+        if (users[0].tantos > users[1].tantos) {
+          winner = users[0].id
+        } else {
+          winner = users[1].id
+        }
+        await juegoTerminado(salaOn, winner)
+      } catch (err) {
+        console.log("error en destruir sala, el error es : ", err)
+      }
+    }
+
   })
 
 });
@@ -1368,25 +1399,29 @@ const verificarCantora = async (salaName, userID) => {
 
 //al terminar la partida sumo los tantos deacuerdo a lo cantado y al jugador q ganó
 const sumarTantosAPartida = async (salaX, jugador) => {
-  let sala = await salaM.findById({ _id: salaX._id });
-  if (sala.cantosenmano.boolValeCuatro) {
-    //console.log("llegamos al valecuatro")
-    sala.usuarios[jugador].tantos += 4;
-  } else {
-    if (sala.cantosenmano.boolReTruco) {
-      //console.log("llegamos al retruco")
-      sala.usuarios[jugador].tantos += 3;
+  try {
+    console.log("dentro de sumar tantos")
+    console.log("jugador", jugador)
+    console.log(salaX)
+    let sala = await salaM.findById({ _id: salaX._id });
+    if (sala.cantosenmano.boolValeCuatro) {
+      //console.log("llegamos al valecuatro")
+      sala.usuarios[jugador].tantos += 4;
     } else {
-      if (sala.cantosenmano.boolTruco) {
-        //console.log("llegamos al truco")
-        sala.usuarios[jugador].tantos += 2;
+      if (sala.cantosenmano.boolReTruco) {
+        //console.log("llegamos al retruco")
+        sala.usuarios[jugador].tantos += 3;
       } else {
-        //console.log("no hubo rabon")
-        sala.usuarios[jugador].tantos += 1;
+        if (sala.cantosenmano.boolTruco) {
+          //console.log("llegamos al truco")
+          sala.usuarios[jugador].tantos += 2;
+        } else {
+          console.log("no hubo rabon")
+          sala.usuarios[jugador].tantos += 1;
+        }
       }
     }
-  }
-  try {
+
     await sala.save()
     return
   } catch (err) { console.log(err) }
