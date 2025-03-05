@@ -137,6 +137,9 @@ export class FormUserComponent implements OnInit {
     if(confirm('Desea cerrar sesión?')){
       this.servLogin.logout()
       this.cookie.delete('jugador')
+      if(this.cookie.get('isAMadafaka?')){
+        this.cookie.delete('isAMadafaka?')
+      }
       this.route.navigate(['/'])
     }
   }
