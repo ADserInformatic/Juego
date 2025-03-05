@@ -90,8 +90,20 @@ export class SalaComponent implements OnInit {
     })
     this.socket.on('muestra', (res: any) => {
       console.log(res)
-      if (res.finish) {
-        this.mensaje = 'Repartiendo...'
+      if (res.finish && res.rivalAlMazo) {
+        if (res.cantosenmano.florNegada) {
+          this.mensaje = 'Jugador al mazo, compensando puntos y repartiendo...'
+        } else {
+          this.mensaje = 'Jugador al mazo, repartiendo...'
+        }
+      } else {
+        if (res.finish && res.cantosenmano.florNegada) {
+          this.mensaje = 'Flor negada, compensando puntos y repartiendo...'
+        } else {
+          if (res.finish) {
+            this.mensaje = 'Repartiendo...'
+          }
+        }
       }
       this.resetSala(res)
     })
@@ -339,13 +351,13 @@ export class SalaComponent implements OnInit {
     }
   }
 
-  alMazo(){
+  alMazo() {
     let data = {
-      sala: this.sala,
+      sala: this.sala.name,
       jugador: this.jugador
     }
-    this.socket.emit('MeVoyAlMazo', data)
-    
+    this.socket.emit('meVoyAlMazo', data)
+
   }
 
   cancel() {
