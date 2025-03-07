@@ -1115,6 +1115,7 @@ io.on('connection', (socket) => {
     const sala = await salaM.findOne({ name: res.sala })
     sala.rivalAlMazo = true;
     let idAlMazo;
+    let seSuma = false
     if (typeof res.jugador.id.toHexString === 'function') {
       idAlMazo = res.jugador.id.toHexString()
     } else {
@@ -1132,13 +1133,18 @@ io.on('connection', (socket) => {
       }
     })
     if (users[posAlMazo].mano) {
-      if (users[posAlMazo].puedeMentir && users[posGanador].jugada.length == 0) {//QUIERE DECIR Q EL Q ABANDONA ES MANO Y NO MINTIO  ni tiro cartas ASI Q SUMA 1 PUNTO AL GANADOR Y MIRO RABONES
-        users[posGanador].tantos += 1
+      if (users[posAlMazo].puedeMentir && sala.cantosenmano.puntosDevolver == 0 && users[posGanador].jugada.length == 0) {//QUIERE DECIR Q EL Q ABANDONA ES MANO Y NO MINTIO  ni tiro cartas ASI Q SUMA 1 PUNTO AL GANADOR Y MIRO RABONES
+        seSuma = true
         console.log("sumando 1 x tantos")
       }
     }
     await sumarTantosAPartida(sala, posGanador)
+
     let mostrar = await salaM.findOne({ name: res.sala })
+    if (seSuma) {
+      mostrar.usuarios[posGanador].tantos += 1
+      mostrar.save()
+    }
     io.to(sala.name).emit('muestra', mostrar)
 
     let terminoJuego = await terminar(mostrar) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
