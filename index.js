@@ -654,7 +654,6 @@ io.on('connection', (socket) => {
             break;
           case 'noquiero':
             sala.cantosenmano.faltaRespuesta = false;
-            sala.save()
             users.forEach(us => {
               if (us.name != res.jugador.name) {
                 sala.cantosenmano.posGanMentira = users.indexOf(us)
@@ -663,29 +662,36 @@ io.on('connection', (socket) => {
                   if (sala.cantosenmano.boolReEnvido) {
                     if (sala.cantosenmano.boolEnvido) {
                       us.tantos += 7
+                      sala.cantosenmano.puntosDevolver = 7
                     } //se canto envido realenvido y dsp la falta
                     else {
                       us.tantos += 3
+                      sala.cantosenmano.puntosDevolver = 3
                     } //se canto solo real envido y dsp la falta
                   } //se cantó envido envido realenvido y dsp la falta
                   else {
                     if (sala.cantosenmano.boolEnvido) {
+                      sala.cantosenmano.puntosDevolver = 5
                       us.tantos += 5
                     } //se canto envido realenvido y dsp la falta
                     else {
+                      sala.cantosenmano.puntosDevolver = 3
                       us.tantos += 3
                     } //se canto solo real envido y dsp la falta
                   }
                 }
                 else {
                   if (sala.cantosenmano.boolReEnvido) {
+                    sala.cantosenmano.puntosDevolver = 4
                     us.tantos += 4
                   } //se canto envido reenvido y dsp la falta
                   else {
                     if (sala.cantosenmano.boolEnvido) {
+                      sala.cantosenmano.puntosDevolver = 2
                       us.tantos += 2
                     } //se canto envido y dsp la falta
                     else {
+                      sala.cantosenmano.puntosDevolver = 1
                       us.tantos += 1  //solo se canto la falta
                     }
                   }
@@ -693,6 +699,7 @@ io.on('connection', (socket) => {
               } else { mensaje = `${us.name} no quiere` }
               //solo se cantó real envido
             })
+            sala.save()
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
@@ -879,15 +886,14 @@ io.on('connection', (socket) => {
           case 'aceptar':
             mensaje = ""
             sala.cantosenmano.faltaRespuesta = false;
-            sala.save()
             users.forEach(element => {
               if (element.name != res.jugador.name) {
-
+                sala.cantosenmano.puntosDevolver = 3
                 element.tantos += 3;
                 winner = element.id
               }
             })
-
+            sala.save()
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
@@ -915,6 +921,7 @@ io.on('connection', (socket) => {
         switch (res.respuesta) {
           case 'quiero':
             sala.cantosenmano.faltaRespuesta = false;
+            sala.cantosenmano.puntosDevolver = 6
             sala.save()
             if (users[0].puntosMentira > users[1].puntosMentira) {
               users[0].tantos += 6
@@ -991,6 +998,7 @@ io.on('connection', (socket) => {
         switch (res.respuesta) {
           case 'aceptar':
             sala.cantosenmano.faltaRespuesta = false;
+            sala.cantosenmano.puntosDevolver = 4
             sala.save()
             users.forEach(us => {
               if (us.name != res.jugador.name) {
@@ -1113,7 +1121,6 @@ io.on('connection', (socket) => {
   //esta función es para cuando uno se va al mazo, recibe un res con la sala y el jugador q abandono
   socket.on('meVoyAlMazo', async (res) => {
     const sala = await salaM.findOne({ name: res.sala })
-    sala.rivalAlMazo = true;
     let idAlMazo;
     let seSuma = false
     if (typeof res.jugador.id.toHexString === 'function') {
@@ -1141,10 +1148,12 @@ io.on('connection', (socket) => {
     await sumarTantosAPartida(sala, posGanador)
 
     let mostrar = await salaM.findOne({ name: res.sala })
+    mostrar.rivalAlMazo = true;
+    mostrar.finish = true;
     if (seSuma) {
       mostrar.usuarios[posGanador].tantos += 1
-      mostrar.save()
     }
+    mostrar.save()
     io.to(sala.name).emit('muestra', mostrar)
 
     let terminoJuego = await terminar(mostrar) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
