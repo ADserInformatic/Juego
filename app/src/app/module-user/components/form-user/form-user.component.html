@@ -40,11 +40,34 @@
             <div class="form-block">
                 <h2 for="sala">Ingresar a una sala:</h2>
                 <div class="reload">
+                    <div class="buscador" [formGroup]="form">
+                        <div class="inpu">
+                          <input #inp type="text" formControlName="texto" placeholder="Buscar...">
+                          <span class="material-symbols-outlined">
+                            search
+                          </span>
+                        </div>
+                      </div>
+                    
                     <button title="Recargar salas" (click)="reload()">
                         <span class="material-symbols-outlined">
                             update
                         </span>
                     </button>
+                </div>
+                <br>
+                <div *ngIf="searchSalas.length > 0">
+                    <ng-container *ngFor="let item of searchSalas">
+                        <div class="salaItem">
+                            <button title="Ingresar a {{item.name}}" (click)="sala(item)">{{item.name}}</button>
+                            <p>{{item.apuesta | currency}}</p>
+                            <button *ngIf="isAdmin" title="Eliminar sala" (click)="deleteSala(item._id)">
+                                <span class="material-symbols-outlined">
+                                    delete
+                                </span>
+                            </button>
+                        </div>
+                    </ng-container>
                 </div>
                 <br>
                 <ng-container *ngFor="let item of salas">
