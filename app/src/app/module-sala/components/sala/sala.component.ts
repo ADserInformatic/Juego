@@ -61,7 +61,8 @@ export class SalaComponent implements OnInit {
   public tantosCont3: Array<number> = []
   public buenas: boolean = false;
   public buenasCont: boolean = false;
-  private url: string = environment.apiUrl
+  private url: string = environment.apiUrl;
+  public time!: any;
 
 
   private verCartas: BehaviorSubject<any> = new BehaviorSubject<any>(this.jugador.valores)
@@ -171,6 +172,10 @@ export class SalaComponent implements OnInit {
         this.cookies.set('abandono', res.jugador)
         this.router.navigate(['/appTruco'])
       }, 2000)
+    })
+
+    this.socket.on('time', (res:any)=>{
+      this.time = res
     })
 
     //desactivar el boton de envido

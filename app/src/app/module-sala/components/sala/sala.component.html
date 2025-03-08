@@ -6,6 +6,9 @@
     <button (click)="cancel()" class="set">Salir</button>
 </nav>
 <div class="body">
+    <div *ngIf="time" class="time">
+        <h4>Juga: {{time}}</h4>
+    </div>
     <div class="titulo">
         <div class="datos">
             <h4>SALA: {{nameSala | uppercase}}</h4>
@@ -95,7 +98,7 @@
             <button *ngIf="!truco" [disabled]="!jugador.puedeCantar || !jugador.juega" (click)="canto('truco')">Truco</button>
             <button *ngIf="truco" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega" (click)="contestarCanto(cantoActual, false)">{{cantoActual}}</button>
             <button [disabled]="truco || !btnMentiras || !jugador.puedeFlor || flor || !jugador.juega" (click)="canto('flor')">Flor</button>
-            <button title="Irse al maso" (click)="alMazo()">Mazo</button>
+            <button title="Irse al maso" [disabled]="!jugador.juega" (click)="alMazo()">Mazo</button>
         </div>
     </div>
 </div>
