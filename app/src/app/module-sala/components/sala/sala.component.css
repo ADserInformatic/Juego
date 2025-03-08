@@ -380,6 +380,25 @@ nav .set{
 }
 
 @media screen and (max-width: 600px) {
+    .titulo{
+        display: flex;
+        flex-direction: column;
+    }
+    .titulo .datos{
+        display: flex;
+        margin: auto;
+    }
+    .titulo .tantos, .titulo .nombre{
+        width: 70%;
+        margin: auto;
+    }
+    .tantos .puntos{
+        justify-content: start;
+    }
+    .tantos h4{
+        width: 50%;
+        text-align: left;
+    }
     .card{
         width: 25%;
     }

@@ -185,7 +185,7 @@ button:disabled:hover{
 }
 
 @media screen and (max-width: 980px) {
-     .salas{
+    .forms .user, .salas{
         width: 50%;
     }
 }
@@ -193,7 +193,7 @@ button:disabled:hover{
     .forms{
         margin-top: 20%;
     }
-    .salas{
+    .forms .user, .salas{
         width: 80%;
     }
 }
