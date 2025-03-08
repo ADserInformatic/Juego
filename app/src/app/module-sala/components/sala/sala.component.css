@@ -55,6 +55,13 @@ nav .set{
 .options .btns button:hover{
     background: rgba(26, 25, 23, 0.856);
 }
+.time{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    color: #fff;
+}
 .body{
     max-width: 1240px;
     margin: auto;
