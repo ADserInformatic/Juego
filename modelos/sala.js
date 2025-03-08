@@ -36,6 +36,7 @@ const sala = new Schema({
         name: { type: String },
         creditos: { type: Number },
         juega: { type: Boolean, default: false }, //Para saber a quien le toca tirar
+        timeJugada: { type: Number, required: false },
         valores: { type: Array }, //Estas son las cartas
         aMostrar: { type: Array }, //Estas son las cartas que se muestran al final x mentir o cantora
         noTirar: { type: Array }, //Esta es la carta que si niega y miente no debo mostrar

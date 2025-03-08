@@ -56,6 +56,10 @@ io.on('connection', (socket) => {
       io.to(sala.name).emit('sala', sala)
       if (sala.usuarios.length == 2) {
         if ((sala.usuarios[0].valores.length == 0 && sala.usuarios[1].valores.length == 0) || (!sala.usuarios[0].valores && !sala.usuarios[1].valores)) { await repartir(sala) }
+
+        // Establecer el intervalo y guardar el identificador en una variable
+        const intervalId = setInterval(mostrarContador(sala), 1000);
+
       }
     }
     catch (err) {
@@ -1224,7 +1228,24 @@ const corregirPuntos = async (idLLega, nameSala) => {
   }
 }
 
+const mostrarContador = async (salaX) => {
 
+  let sala = await sala.findOne({ name: salaX.name })
+  users = sala.users
+  users.forEach(async (element) => {
+    if (element.timeJugada <= 30) {
+      io.to(sala.name).emit('time', element.timeJugada)
+      element.timeJugada -= 1;
+      if (element.timeJugada === 0) {
+        clearInterval(intervalId);
+        console.log("Intervalo detenido");
+      }
+    }
+  })
+
+  // Detener el intervalo después de 5 segundos
+
+}
 //ESTA FUNCION ES PARA CUANDO UN USUARIO GANO por lo que sea y debo repartir premio 
 const juegoTerminado = async (salaX, idGanador) => { //
   try {
@@ -1385,39 +1406,12 @@ const verificarCantora = async (salaName, userID) => {
     console.log("error dentro de verificarCantora: ", err)
     return
   }
-  // let users = sala.usuarios;
-  // let jugador1 = users[0];
-  // let jugador2 = users[1];
-  // const jugada1 = jugador1.jugada[jugador1.jugada.length - 1]
-  // const jugada2 = jugador2.jugada[jugador2.jugada.length - 1]
-  /*   
-    if (jugador1.tieneFlor && !jugador1.cantoFlor) {//me fijo del jugador1
-      if (jugador1.jugada.length == 3) {//antes que comparen valores me fijo que la ultima jugada de cada uno no sea la 3ra y haya negado flor
-        console.log("jugo las 3 cartas y habia negado flor el jugador: ", jugador1.name)
-      } else {
-        if (jugador1.jugada.length < 3) {//si la ultima jugada no es una carta que no podia
-          console.log("aca debo verificar q sea valida la carta del jugador: ", jugador1.name)
-        }
-      }
-    }
-    if (jugador2.tieneFlor && !jugador2.cantoFlor) {//me fijo del jugador1
-      if (jugador2.jugada.length == 3) {//antes que comparen valores me fijo que la ultima jugada de cada uno no sea la 3ra y haya negado flor
-        console.log("jugo las 3 cartas y habia negado flor el jugador: ", jugador2.name)
-      } else {
-        if (jugador2.jugada.length < 3) {//si la ultima jugada no es una carta que no podia
-          console.log("aca debo verificar q sea valida la carta del jugador: ", jugador2.name)
-        }
-      }
-    } */
   return
 }
 
 //al terminar la partida sumo los tantos deacuerdo a lo cantado y al jugador q ganó
 const sumarTantosAPartida = async (salaX, jugador) => {
   try {
-    console.log("dentro de sumar tantos")
-    console.log("jugador", jugador)
-    console.log(salaX)
     let sala = await salaM.findById({ _id: salaX._id });
     if (sala.cantosenmano.boolValeCuatro) {
       //console.log("llegamos al valecuatro")
@@ -1641,6 +1635,8 @@ const repartir = async (_sala) => {
   //A esos usuarios los pasamos como argumento a la función repartir que es la que va a asignar 3 cartas a cada jugador
   let jugador1 = users[0];
   let jugador2 = users[1];
+  jugador1.timeJugada = 60;
+  jugador2.timeJugada = 60;
   jugador1.valores = [];
   jugador2.valores = [];
   jugador1.jugada = [];
@@ -1729,9 +1725,7 @@ const repartir = async (_sala) => {
   }
   salaOn.save();
 
-  //Una vez que se actualiza, se busca la sala (la acción anterior me devuelve la sala sin actualizar, por eso este paso adicional) y se devuelve a travez del emit 'repartir'
 
-  io.to(salaOn.name).emit('repartir', salaOn)
 
 }
 //La función tieneEnvido determina si hay "envido" en una mano de cartas, y calcula los puntos de envido para un jugador específico.
