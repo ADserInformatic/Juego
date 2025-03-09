@@ -129,10 +129,9 @@ io.on('connection', (socket) => {
     }
     //console.log("termino la Mano?: ", terminoMano)
     //Una vez actualizado el usuario se actualiza la sala
-    await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users, partida: salaOn.partida } })
-    let noUndefinid = await salaM.findOne({ _id: salaOn._id })
+    await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users } })
     //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
-    const salaCasiActualizada = await verificarCantora(noUndefinid.name, idUltimoTiro);
+    const salaCasiActualizada = await verificarCantora(salaOn.name, idUltimoTiro);
     let salaActualizada = await salaM.findOne({ _id: salaOn._id })
     if (salaCasiActualizada) {
       io.to(salaOn.name).emit('muestra', salaCasiActualizada) //muestra la ultima carta tirada, 
@@ -1274,7 +1273,7 @@ async function MostrarTiempo(nameSala) {
         idGanador = element.id
       }
     })
-    sala.save()
+    await sala.save()
     if (terminarTodo) {
       await juegoTerminado(sala, idGanador);
       return false
@@ -1359,37 +1358,35 @@ const corregirPuntos = async (idLLega, nameSala) => {
   try {
     const sala = await salaM.findOne({ name: nameSala });
     sala.cantosenmano.florNegada = true;
-    sala.save()
-    const users = sala.usuarios;
     let idJugador;
     if (typeof idLLega.toHexString === 'function') {
       idJugador = idLLega.toHexString()
     } else {
       idJugador = idLLega
     }
-
-    users.forEach(async (element) => {
+    sala.usuarios.forEach(element => {
       if (element.id.toHexString() === idJugador) {
         element.cantoFlor = false;
-        let todoMenor9 = true
+        let todoMenor = true
         let minimo = parseInt(element.valores[0].name)
         //let cartaNegada = element.valores[0]
-        element.valores.forEach(async (carta) => { //al terminar obtengo en todoMenor si debo restar el minimo y corrijo puntaje
-          if (parseInt(carta.name) > 9) {
-            todoMenor9 = false;
+        element.valores.forEach(carta => { //al terminar obtengo en todoMenor si debo restar el minimo y corrijo puntaje
+          let num = parseInt(carta.name)
+          if (num > 7) {
+            todoMenor = false;
           }
-          if (parseInt(carta.name) < minimo) {
+          if (num < minimo) {
             //cartaNegada = carta
-            minimo = parseInt(carta.name)
+            minimo = num
           }
         })
         //element.noTirar.push(cartaNegada)
-        if (todoMenor9) {
+        if (todoMenor) {
           element.puntosMentira -= minimo;
         }
       }
     })
-    await salaM.findOneAndUpdate({ name: nameSala }, { $set: { usuarios: users } })
+    await sala.save()
     return
   } catch (err) {
     console.log("error dentro de corregir puntos y el error es: ", err)
@@ -1518,7 +1515,7 @@ const verificarCantora = async (salaName, userID) => {
       idJugador = userID
     }
     users.forEach(async (element) => {
-      if (element.id.toHexString() === idJugador) {
+      if (element.id.toHexString() == idJugador) {
         ultimaJugada = element.jugada[element.jugada.length - 1]
         if (!ultimaJugada) {
           console.log("la ultima jugada del usuario es undefinid")
