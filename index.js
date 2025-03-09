@@ -1577,7 +1577,6 @@ const sumarTantosAPartida = async (salaX, jugador) => {
           //console.log("llegamos al truco")
           sala.usuarios[jugador].tantos += 2;
         } else {
-          console.log("no hubo rabon")
           sala.usuarios[jugador].tantos += 1;
         }
       }
@@ -1585,7 +1584,7 @@ const sumarTantosAPartida = async (salaX, jugador) => {
 
     await sala.save()
     return
-  } catch (err) { console.log(err) }
+  } catch (err) { console.log("error dentro de sumar tantos de partida", err) }
 
   return
 }

@@ -90,7 +90,6 @@ export class SalaComponent implements OnInit {
       this.resetSala(res)
     })
     this.socket.on('muestra', (res: any) => {
-      console.log(res)
       if (res.finish && res.rivalAlMazo) {
         if (res.cantosenmano.florNegada) {
           this.mensaje = 'Jugador al mazo, compensando puntos y repartiendo...'
@@ -101,8 +100,12 @@ export class SalaComponent implements OnInit {
         if (res.finish && res.cantosenmano.florNegada) {
           this.mensaje = 'Flor negada, compensando puntos y repartiendo...'
         } else {
-          if (res.finish) {
-            this.mensaje = 'Repartiendo...'
+          if (res.finish && res.rivalAusente) {
+            this.mensaje = 'Tiempo Agotado...Repartiendo...'
+          } else {
+            if (res.finish) {
+              this.mensaje = 'Repartiendo...'
+            }
           }
         }
       }
@@ -174,7 +177,7 @@ export class SalaComponent implements OnInit {
       }, 2000)
     })
 
-    this.socket.on('time', (res:any)=>{
+    this.socket.on('time', (res: any) => {
       this.time = res
     })
 
