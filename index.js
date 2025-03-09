@@ -50,6 +50,7 @@ io.on('connection', (socket) => {
   socket.on('sala', async (id) => {
     const sala = await salaM.findOne({ _id: id })
     try {
+
       socket.join(sala.name)
       //Lo que está entre parentesis limita los usuarios a los que emito. En este los usuarios que esten en la sala con el mismo nombre.
       //La diferencia entre io.to y socket.to es que, en el primer caso se emite para todos los usuarios que están dentro de la sala. En el siguiente caso se obvia a quien hizo la petición al back
