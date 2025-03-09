@@ -107,12 +107,21 @@ const addUser = async (req, res) => {
         const actual = await sala.findOne({ _id: id })
         //Si en la sala ya hay 2 jugadores y el que está intentando ingresar es distinto al primer jugador retorna un error
         if (actual.usuarios.length > 1 && actual.usuarios[0].id.toHexString() !== buscar._id.toHexString()) {
-            return res.json({
-                error: false,
-                data: actual,
-                mensaje: 'No puede haber más de 2 jugadores en la sala. Para ingresa, uno de los jugadores actuales deberá retirarse',
-                denegado: true
-            })
+            if (actual.usuarios[1]) {
+                if (actual.usuarios[1].id.toHexString() === buscar._id.toHexString()) {
+                    return res.json({
+                        error: false,
+                        data: actual
+                    });
+                }
+            } else {
+                return res.json({
+                    error: false,
+                    data: actual,
+                    mensaje: 'No puede haber más de 2 jugadores en la sala. Para ingresa, uno de los jugadores actuales deberá retirarse',
+                    denegado: true
+                })
+            }
         }
         //Si el usuario ya está en la sala lo deja ingresar
         if (actual.usuarios[0].id.toHexString() === buscar._id.toHexString()) {
@@ -121,7 +130,6 @@ const addUser = async (req, res) => {
                 data: actual
             });
         }
-
         //Corroboro que le alcance el credito
         if (buscar.credito < actual.apuesta) {
             res.json({

@@ -62,8 +62,7 @@ io.on('connection', (socket) => {
       }
     }
     catch (err) {
-      //console.log("no existe la sala")
-      console.log("error: ", err)
+      console.log("error al tratar de unirse, el error es: ", err)
     }
   })
 
