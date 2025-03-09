@@ -10,6 +10,7 @@ const sala = new Schema({
     finish: { type: Boolean, default: true },
     partidaFinalizada: { type: Boolean, default: false },
     rivalAlMazo: { type: Boolean, default: false },
+    rivalAusente: { type: Boolean, default: false },
     cantosenmano: {
         boolEnvido: { type: Boolean, default: false },
         boolReEnvido: { type: Boolean, default: false },
@@ -36,7 +37,10 @@ const sala = new Schema({
         name: { type: String },
         creditos: { type: Number },
         juega: { type: Boolean, default: false }, //Para saber a quien le toca tirar
-        timeJugada: { type: Number, required: false },
+        timeJugada: { type: Number, default: 60 }, //tiempo que tiene entre jugada y jugada
+        realizoCanto: { type: Boolean, default: false },
+        debeResponder: { type: Boolean, default: false },//si le cantaron algo y debe responder
+        tiempoAgotado: { type: Number, default: 0 }, //Para saber si el tiempo se agoto o no, si se agoto es 1, si no es 0
         valores: { type: Array }, //Estas son las cartas
         aMostrar: { type: Array }, //Estas son las cartas que se muestran al final x mentir o cantora
         noTirar: { type: Array }, //Esta es la carta que si niega y miente no debo mostrar

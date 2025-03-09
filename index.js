@@ -55,11 +55,10 @@ io.on('connection', (socket) => {
       //La diferencia entre io.to y socket.to es que, en el primer caso se emite para todos los usuarios que están dentro de la sala. En el siguiente caso se obvia a quien hizo la petición al back
       io.to(sala.name).emit('sala', sala)
       if (sala.usuarios.length == 2) {
-        if ((sala.usuarios[0].valores.length == 0 && sala.usuarios[1].valores.length == 0) || (!sala.usuarios[0].valores && !sala.usuarios[1].valores)) { await repartir(sala) }
-
-        // Establecer el intervalo y guardar el identificador en una variable
-        const intervalId = setInterval(mostrarContador(sala), 1000);
-
+        if ((sala.usuarios[0].valores.length == 0 && sala.usuarios[1].valores.length == 0) || (!sala.usuarios[0].valores && !sala.usuarios[1].valores)) {
+          await repartir(sala) // Inicializar el tiempo de cada jugador
+          iniciarMostrarTiempo(sala.name, 1000)
+        }
       }
     }
     catch (err) {
@@ -67,6 +66,8 @@ io.on('connection', (socket) => {
       console.log("error: ", err)
     }
   })
+
+
 
   //Con socket.io se utiliza emit para emitir una acción y on para escuchar esa acción, lo que debe coinsidir es el nombre que va entre comillas
   //Se escucha la acción 'repartir' y se ejecuta la siguiente función
@@ -87,10 +88,19 @@ io.on('connection', (socket) => {
     const salaOn = await salaM.findOne({ name: jugada.sala })
     //Se guarda los usuarios que están jugando en esa sala en un array
     let users = salaOn.usuarios
+    users[0].timeJugada = 60;
+    users[1].timeJugada = 60;
+    users[0].debeResponder = false;
+    users[1].debeResponder = false;
+    users[0].realizoCanto = false;
+    users[1].realizoCanto = false;
+
+
     let idUltimoTiro;
     users.forEach(async (element) => {
       //Recorro los usuarios en esa sala y al que coincide con el id del que hizo la jugada se le actualizan los datos
       if (jugada.idUser === element.id.toHexString()) {
+        element.tiempoAgotado = 0;
         idUltimoTiro = element.id.toHexString();
         //Esto lo que hace es filtrar todas la cartas que no coinciden con la que tiró, ya que son las que le quedan
         element.valores = element.valores.filter(e => e.name != jugada.carta)
@@ -166,8 +176,22 @@ io.on('connection', (socket) => {
     let ores = await booleanos(res);
     const sala = await salaM.findOne({ name: res.sala });
     const users = sala.usuarios;
+    sala.usuarios[0].timeJugada = 60;
+    sala.usuarios[1].timeJugada = 60;
+    sala.usuarios.forEach(element => {
+      if (element.id.toHexString() === res.jugador.id) {
+        element.tiempoAgotado = 0
+        element.realizoCanto = true
+        element.debeResponder = false
+      } else {
+        element.realizoCanto = false
+        element.debeResponder = true
+      }
+    })
+    await sala.save()
     let corregir = false;
     let idAcorregir;
+    console.log("canto: ", res.canto)
     if (res.canto == 'envido' || res.canto == 'reenvido' || res.canto == 'realEnvido' || res.canto == 'faltaEnvido' || res.canto == 'flor') {
       if (sala.cantosenmano.boolTruco) {
         sala.cantosenmano.boolTruco = false;
@@ -223,6 +247,27 @@ io.on('connection', (socket) => {
   socket.on('respuestaCanto', async (res) => {
     let sala = await salaM.findOne({ name: res.sala })
     let users = sala.usuarios
+    sala.usuarios[0].timeJugada = 60;
+    sala.usuarios[1].timeJugada = 60;
+    sala.usuarios.forEach(element => {
+      if (element.id.toHexString() === res.jugador.id) {
+        element.tiempoAgotado = 0
+        element.debeResponder = false
+        if (res.respuesta == "quiero" || res.respuesta == "noquiero" || res.respuesta == "aceptar") {
+          element.realizoCanto = false
+        } else { element.realizoCanto = true }
+
+      } else {
+        if (res.respuesta == "quiero" || res.respuesta == "noquiero" || res.respuesta == "aceptar") {
+          element.debeResponder = false
+          element.realizoCanto = false
+        } else {
+          element.debeResponder = true
+          element.realizoCanto = false
+        }
+      }
+    })
+    await sala.save()
     let datos, terminado, winner
     let mensaje;
     let canto = res.canto
@@ -1135,6 +1180,8 @@ io.on('connection', (socket) => {
     let posGanador, posAlMazo
     //capturo los usuarios que estan en esa sala
     const users = sala.usuarios
+    users[0].timeJugada = 60;
+    users[1].timeJugada = 60;
     users.forEach(async (element, index) => {
       //el usuario con el id distinto de quien abandona gana la apuesta
       if (idAlMazo != element.id.toHexString()) {
@@ -1183,7 +1230,129 @@ io.on('connection', (socket) => {
 
   })
 
+
 });
+
+function iniciarMostrarTiempo(nameSala, intervalo) {
+  try {
+    const ejecutarMostrarTiempo = async () => {
+      let loop = await MostrarTiempo(nameSala);
+      if (loop) { setTimeout(ejecutarMostrarTiempo, intervalo) }
+    }
+    ejecutarMostrarTiempo();
+  } catch (err) { console.log("error dentro de iniciarMostrarTiempo y el error es: ", err) }
+}
+
+async function MostrarTiempo(nameSala) {
+  try {
+    const sala = await salaM.findOne({ name: nameSala })
+    if (!sala) { return false }
+    let idGanador, idAusente
+    let terminarTodo = false;
+    let terminarMano = false
+    sala.usuarios.forEach((element) => {
+      if ((element.juega && !element.realizoCanto && !element.debeResponder) || (element.debeResponder)) {
+        idAusente = element.id
+        element.timeJugada -= 1;
+        if (element.timeJugada <= 30 && element.timeJugada > 0) {
+          io.to(sala.name).emit('time', element.timeJugada)
+        } else {
+          if (element.timeJugada == 0) {
+            if (element.tiempoAgotado == 0) {
+              element.tiempoAgotado = 1;
+              terminarMano = true;
+
+            } else {
+              if (element.tiempoAgotado == 1) {
+                terminarTodo = true;
+                //el jugador perdio por abandono de sala
+              }
+            }
+          }
+        }
+      } else {
+        idGanador = element.id
+      }
+    })
+    sala.save()
+    if (terminarTodo) {
+      await juegoTerminado(sala, idGanador);
+      return false
+    } else {
+      if (terminarMano) {
+        try {
+          let idAlMazo;
+          let seSuma = false
+          if (typeof idAusente.toHexString === 'function') {
+            idAlMazo = idAusente.toHexString()
+          } else {
+            idAlMazo = idAusente
+          }
+          let posGanador, posAlMazo
+          //capturo los usuarios que estan en esa sala
+          sala.usuarios.forEach(async (element, index) => {
+            //el usuario con el id distinto de quien abandona gana la apuesta
+            if (idAlMazo != element.id.toHexString()) {
+              posGanador = index
+            } else {
+              posAlMazo = index
+            }
+          })
+          if (sala.usuarios[posAlMazo].mano) {
+            if (sala.usuarios[posAlMazo].puedeMentir && sala.cantosenmano.puntosDevolver == 0 && sala.usuarios[posGanador].jugada.length == 0) {//QUIERE DECIR Q EL Q ABANDONA ES MANO Y NO MINTIO  ni tiro cartas ASI Q SUMA 1 PUNTO AL GANADOR Y MIRO RABONES
+              seSuma = true
+            }
+          }
+
+          await sumarTantosAPartida(sala, posGanador)
+
+          let mostrar = await salaM.findOne({ name: nameSala })
+          mostrar.usuarios.timeJugada = 60;
+          mostrar.usuarios.timeJugada = 60;
+          mostrar.rivalAusente = true
+          mostrar.finish = true;
+          if (seSuma) {
+            mostrar.usuarios[posGanador].tantos += 1
+          }
+          await mostrar.save()
+          io.to(sala.name).emit('muestra', mostrar)
+
+          let terminoJuego = await terminar(mostrar) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
+          //console.log("termino el juego? dentro de tirar: ", terminoJuego)
+          if (!terminoJuego) { //si el resultado de la funcion terminar es falso, se sigue el juego y se reparte, solo termino una mano
+            setTimeout(() => {
+              repartir(mostrar)
+            }, 3000); //reparte a los 5 segundos
+          } else {
+            //console.log("dentro de socket tirar, termino juego dsp de tirar cartas")
+            try {
+              let winner;
+              if (mostrar.usuarios[0].tantos > mostrar.usuarios[1].tantos) {
+                winner = mostrar.usuarios[0].id
+              } else {
+                winner = mostrar.usuarios[1].id
+              }
+              await juegoTerminado(salaOn, winner)
+              return false
+            } catch (err) {
+              console.log("error en destruir sala, el error es : ", err)
+              return false
+            }
+          }
+          return true
+        } catch (err) {
+          console.log("error dentro de terminar mano y el error es: ", err)
+          return false
+        }
+      }
+    }
+    return true
+  } catch (err) {
+
+    console.log("error dentro de mostrar tiempo y el error es: ", err)
+    return false
+  }
+}
 
 //corrijo puntos si tenia flor y no la canto para mentir o aceptar mentira
 const corregirPuntos = async (idLLega, nameSala) => {
@@ -1228,24 +1397,10 @@ const corregirPuntos = async (idLLega, nameSala) => {
   }
 }
 
-const mostrarContador = async (salaX) => {
 
-  let sala = await sala.findOne({ name: salaX.name })
-  users = sala.users
-  users.forEach(async (element) => {
-    if (element.timeJugada <= 30) {
-      io.to(sala.name).emit('time', element.timeJugada)
-      element.timeJugada -= 1;
-      if (element.timeJugada === 0) {
-        clearInterval(intervalId);
-        console.log("Intervalo detenido");
-      }
-    }
-  })
 
-  // Detener el intervalo después de 5 segundos
+// Detener el intervalo después de 5 segundos
 
-}
 //ESTA FUNCION ES PARA CUANDO UN USUARIO GANO por lo que sea y debo repartir premio 
 const juegoTerminado = async (salaX, idGanador) => { //
   try {
@@ -1637,6 +1792,10 @@ const repartir = async (_sala) => {
   let jugador2 = users[1];
   jugador1.timeJugada = 60;
   jugador2.timeJugada = 60;
+  jugador1.debeResponder = false;
+  jugador2.debeResponder = false;
+  jugador1.realizoCanto = false;
+  jugador2.realizoCanto = false;
   jugador1.valores = [];
   jugador2.valores = [];
   jugador1.jugada = [];
@@ -1692,6 +1851,7 @@ const repartir = async (_sala) => {
   jugador1.puedeMentir = true;
   jugador2.cantoFlor = false;
   jugador1.cantoFlor = false;
+  salaOn.rivalAusente = false
   salaOn.cantosenmano.florNegada = false;
   salaOn.cantosenmano.puntosDevolver = 0;
   salaOn.cantosenmano.posGanMentira = 10;
@@ -1724,7 +1884,7 @@ const repartir = async (_sala) => {
 
   }
   salaOn.save();
-
+  io.to(salaOn.name).emit('repartir', salaOn)
 
 
 }
