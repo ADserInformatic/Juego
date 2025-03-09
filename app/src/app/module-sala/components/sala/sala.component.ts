@@ -89,7 +89,9 @@ export class SalaComponent implements OnInit {
     this.socket.on('sala', (res: any) => {
       this.resetSala(res)
     })
+    
     this.socket.on('muestra', (res: any) => {
+      console.log(res)
       if (res.finish && res.rivalAlMazo) {
         if (res.cantosenmano.florNegada) {
           this.mensaje = 'Jugador al mazo, compensando puntos y repartiendo...'
@@ -103,12 +105,12 @@ export class SalaComponent implements OnInit {
           if (res.finish && res.rivalAusente) {
             this.mensaje = 'Tiempo Agotado...Repartiendo...'
           } else {
-            if (res.finish) {
-              this.mensaje = 'Repartiendo...'
-            }
+          if (res.finish) {
+            this.mensaje = 'Repartiendo...'
           }
         }
       }
+    }
       this.resetSala(res)
     })
 
@@ -177,8 +179,13 @@ export class SalaComponent implements OnInit {
       }, 2000)
     })
 
-    this.socket.on('time', (res: any) => {
+    this.socket.on('time', (res:any)=>{
       this.time = res
+      if(this.time === 1){
+        setTimeout(() => {
+          this.time = 0
+        }, 1000);
+      }
     })
 
     //desactivar el boton de envido
@@ -190,6 +197,7 @@ export class SalaComponent implements OnInit {
 
   resetSala(res: any) {
     // if(this.nameSala !== res.name){return}
+    if(this.time > 1) {this.time = 0};
     this.sala = res;
     this.envido = res.cantosenmano.boolEnvido
     this.reEnvido = res.cantosenmano.boolReEnvido
