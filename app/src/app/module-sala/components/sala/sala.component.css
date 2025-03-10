@@ -177,7 +177,7 @@ nav .set{
     transform: rotate(50deg);
 }
 .pintarPuntos .punto{
-    color: var(--bordeBajo);
+    color: rgb(71, 247, 2);
     font-size: 14px;
     margin: auto;
     top: 0;
@@ -416,8 +416,11 @@ nav .set{
     .jugador{
         width: 70%;
     }
-    .standBy .texto h1{
+    .standBy .texto h1, .contCanto .texto h1{
         font-size: 16px;
+    }
+    .cantos{
+        width: 100%;
     }
 }
 @media(max-width: 380px) {

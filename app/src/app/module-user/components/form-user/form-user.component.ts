@@ -70,6 +70,10 @@ export class FormUserComponent implements OnInit {
   }
 
   createSala(){
+    if(this.formSala.invalid){
+      alert('No puede haber campos incompletos')
+      return
+    }
     if(this.formSala.value.apuesta > this.user.credito){
       alert('La apuesta no puede superar el credito disponible')
       return

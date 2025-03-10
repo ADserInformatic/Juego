@@ -23,12 +23,12 @@
             <h1>Crear sala</h1>
             <div class="form-block" [formGroup]="formSala">
                 <label for="sala">Nombre de la sala</label>
-                <input formControlName="name" type="text" id="name">
+                <input (keydown.enter)="createSala()" formControlName="name" type="text" id="name">
                 <div class="error">
                     <i *ngIf="formSala.get('name')?.invalid && formSala.get('name')?.touched">Nombre es requerido.</i>
                 </div>
                 <label for="apuesta">Apuesta:</label>
-                <input formControlName="apuesta" type="number">
+                <input (keydown.enter)="createSala()" formControlName="apuesta" type="number">
                 <div class="error">
                     <p *ngIf="formSala.get('apuesta')?.value > 499">Cada jugador apuesta {{formSala.get('apuesta')?.value | currency}}. El ganador recibe {{(formSala.get('apuesta')?.value * 2) * 0.85 | currency}}</p>
                 </div>

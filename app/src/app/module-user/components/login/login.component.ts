@@ -28,6 +28,10 @@ export class LoginComponent implements OnInit {
   }
 
   userSend(){
+    if(this.formUser.invalid){
+      alert('Revisa los campos')
+      return
+    }
     this.servLogin.login(this.formUser.value).subscribe(res=>{
       console.log(res)
       if(res.mensaje){
