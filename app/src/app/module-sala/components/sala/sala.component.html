@@ -69,7 +69,7 @@
                 <img *ngFor="let valor of jugadorCont?.valores" src="../../../../assets/trasera.jpg" alt="">
             </div>
         </div>
-        <h2>Tantos: {{jugador.tantos}}</h2>
+        <!-- <h2>Tantos: {{jugador.tantos}}</h2> -->
 
         <div [ngClass]="{'invertir': invertCards}">
 
@@ -92,7 +92,7 @@
             <img src="../../../../assets/{{valor.name}}.jpg" alt="">
         </button>
     </div>
-    <button (click)="repartir()">Repartir</button>
+    <!-- <button (click)="repartir()">Repartir</button> -->
     <div class="botonesCanto">
         <div class="cantos">
             <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor"
