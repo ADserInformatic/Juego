@@ -36,7 +36,10 @@ const socketIo = require('socket.io');
 const admin = require('./modelos/admin');
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:4200', 'http://localhost:8100']
+    origin: ['http://localhost:4200', 'http://localhost:8100', 'https://invierteygana.com.ar'],
+    // methods: ['GET', 'POST', 'PUT', 'DELETE',],
+    // allowedHeaders: ['my-custom-header'],
+    // credentials: true
   }
 });
 
