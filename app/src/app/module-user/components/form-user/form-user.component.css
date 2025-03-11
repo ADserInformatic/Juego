@@ -167,6 +167,10 @@ nav .set{
     border: solid .7px #fff;
     align-items: center;
 }
+.salaItem span.llena{
+    color: #f8f404;
+    font-size: 12px;
+}
 .form-block button.crear:hover, .form-user button:hover{
     background: var(--bordeBajo);
 }
@@ -217,7 +221,7 @@ button:disabled:hover{
 }
 
 @media screen and (max-width: 980px) {
-    .forms .user, .salas{
+    .forms .user, .salas, .cambiarPass .form-user{
         width: 50%;
     }
 }
@@ -227,6 +231,9 @@ button:disabled:hover{
     }
     .forms .user, .salas{
         width: 80%;
+    }
+    .cambiarPass .form-user{
+        width: 90%;
     }
 }
 @media screen and (max-width: 320px) {

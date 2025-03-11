@@ -65,6 +65,7 @@ export class FormUserComponent implements OnInit {
   }
   traeSalas(){
     this.servCons.getSalas().subscribe(res=>{
+      console.log(res)
       this.salas = res.data
     })
   }
