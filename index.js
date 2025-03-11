@@ -130,7 +130,6 @@ io.on('connection', (socket) => {
     for (i = 0; i < usersUpdate.length; i++) {
       users[i].tantos = usersUpdate[i].tantos
     }
-    //console.log("termino la Mano?: ", terminoMano)
     //Una vez actualizado el usuario se actualiza la sala
     await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users } })
     //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
@@ -146,17 +145,13 @@ io.on('connection', (socket) => {
 
     //La función terminar determina si una partida entre dos jugadores ha terminado basándose en el número de jugadas realizadas y declara al ganador
     if (terminoMano) { //si terminó la mano
-      /*       salaOn.finish = true; //ya deberia estar igual en true xq lo hace dentro de comparar valores o al no querer los rabones
-            salaOn.save() */
       //SI TERMINO LA MANO PREGUNTO SI TERMINO EL JUEGO
       let terminoJuego = await terminar(salaOn) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
-      //console.log("termino el juego? dentro de tirar: ", terminoJuego)
       if (!terminoJuego) { //si el resultado de la funcion terminar es falso, se sigue el juego y se reparte, solo termino una mano
         setTimeout(() => {
           repartir(salaActualizada)
         }, 3000); //reparte a los 5 segundos
       } else {
-        //console.log("dentro de socket tirar, termino juego dsp de tirar cartas")
         try {
           let winner;
           if (users[0].tantos > users[1].tantos) {
@@ -193,7 +188,6 @@ io.on('connection', (socket) => {
     await sala.save()
     let corregir = false;
     let idAcorregir;
-    console.log("canto: ", res.canto)
     if (res.canto == 'envido' || res.canto == 'reenvido' || res.canto == 'realEnvido' || res.canto == 'faltaEnvido' || res.canto == 'flor') {
       if (sala.cantosenmano.boolTruco) {
         sala.cantosenmano.boolTruco = false;
@@ -237,9 +231,7 @@ io.on('connection', (socket) => {
     }
     if (corregir) {
       await corregirPuntos(idAcorregir, res.sala)
-      console.log("puntos corregidos")
-      console.log("nuevosPuntajes Jugador1: ", sala.usuarios[0].puntosMentira)
-      console.log("nuevosPuntajes Jugador2: ", sala.usuarios[1].puntosMentira)
+
     }
     sala.save()
     socket.to(res.sala).emit('cantando', ores)
@@ -329,7 +321,6 @@ io.on('connection', (socket) => {
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
               terminado = await terminar(sala)
               if (terminado) {
-                //console.log("dentro del envido y quiero, terminar arrojo true y le paso a juegoTerminado")
                 await juegoTerminado(sala, winner)
 
               } else {
@@ -359,7 +350,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del envido y no quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -374,7 +364,6 @@ io.on('connection', (socket) => {
 
             res.canto = res.respuesta;
             res = await booleanos(res);
-            // console.log(res)
             socket.to(res.sala).emit('cantando', res)
             break;
         }
@@ -414,7 +403,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del re envido y quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -445,7 +433,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del re Envido y no quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -468,7 +455,6 @@ io.on('connection', (socket) => {
           case 'quiero':
             sala.cantosenmano.faltaRespuesta = false;
             if (users[0].puntosMentira > users[1].puntosMentira) {
-              // console.log(sala.cantosenmano)
               if (sala.cantosenmano.boolReEnvido) {
                 sala.cantosenmano.puntosDevolver = 7;
                 users[0].tantos += 7
@@ -550,7 +536,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del real Envido y quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -590,7 +575,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del real Envido y no quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -692,7 +676,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro de la falta y quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -754,7 +737,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro de la falta y quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -795,7 +777,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users, finish: true } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del truco y no quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -805,12 +786,10 @@ io.on('connection', (socket) => {
                 sala
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
-              //console.log("dentro del no quiero y finish es: ", sala.finish)
               if (sala.finish) {
                 await terminar(sala)
                 setTimeout(() => {
                   repartir(sala)
-                  //console.log("repartido")
                 }, 4000); //reparte a los 5 segundos
               }
             }
@@ -819,7 +798,6 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            // console.log(res)
             socket.to(res.sala).emit('cantando', res)
             break;
         }
@@ -847,7 +825,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del retruco y no quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -857,12 +834,10 @@ io.on('connection', (socket) => {
                 sala
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
-              //console.log("dentro del no quiero y finish es: ", sala.finish)
               if (sala.finish) {
                 await terminar(sala)
                 setTimeout(() => {
                   repartir(sala)
-                  //console.log("repartido")
                 }, 5000); //reparte a los 5 segundos
               }
             }
@@ -875,7 +850,6 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            // console.log(res)
             socket.to(res.sala).emit('cantando', res)
             break;
         }
@@ -908,7 +882,6 @@ io.on('connection', (socket) => {
 
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del vale cuatro y no quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -920,12 +893,10 @@ io.on('connection', (socket) => {
               }
               io.to(res.sala).emit('resultadoDeCanto', datos)
 
-              //console.log("dentro vale cuatro -- no quiero y finish es: ", sala.finish)
               if (sala.finish) {
                 await terminar(sala)
                 setTimeout(() => {
                   repartir(sala)
-                  //console.log("repartido")
                 }, 5000); //reparte a los 5 segundos
               }
             }
@@ -948,7 +919,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del aceptar de la flor, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -962,7 +932,6 @@ io.on('connection', (socket) => {
           default:
             res.canto = res.respuesta;
             res = await booleanos(res);
-            // console.log(res)
             io.to(res.sala).emit('cantando', res)
             break;
         }
@@ -998,7 +967,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del envido y no quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -1024,7 +992,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del flor flor y no quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
             } else {
               datos = {
@@ -1038,7 +1005,6 @@ io.on('connection', (socket) => {
 
             res.canto = res.respuesta;
             res = await booleanos(res);
-            // console.log(res)
             socket.to(res.sala).emit('cantando', res)
             break;
 
@@ -1062,7 +1028,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del envido y no quiero, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -1102,7 +1067,6 @@ io.on('connection', (socket) => {
               }
             }
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
-            //console.log("dentro del contraflor y quiero, DIRECTO a juegoTerminado")
             await juegoTerminado(sala, winner)
             break;
           case 'no quiero':
@@ -1120,7 +1084,6 @@ io.on('connection', (socket) => {
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
             terminado = await terminar(sala)
             if (terminado) {
-              //console.log("dentro del contraflor y no quiero, son 4, terminar arrojo true y le paso a juegoTerminado")
               await juegoTerminado(sala, winner)
 
             } else {
@@ -1143,10 +1106,8 @@ io.on('connection', (socket) => {
   socket.on('abandonarSala', async (res) => {
     try {
       const sala = await salaM.findOne({ name: res.sala })
-      //capturo los usuarios que estan en esa sala
-      let usuarioAbandono;
+      let usuarioAbandono; //lo guardo por las dudas pero no lo utilizo al final
       if (!sala) {
-        //console.log("ya estaba eliminada la sala")
         return
       }
 
@@ -1195,7 +1156,6 @@ io.on('connection', (socket) => {
     if (users[posAlMazo].mano) {
       if (users[posAlMazo].puedeMentir && sala.cantosenmano.puntosDevolver == 0 && users[posGanador].jugada.length == 0) {//QUIERE DECIR Q EL Q ABANDONA ES MANO Y NO MINTIO  ni tiro cartas ASI Q SUMA 1 PUNTO AL GANADOR Y MIRO RABONES
         seSuma = true
-        console.log("sumando 1 x tantos")
       }
     }
     await sumarTantosAPartida(sala, posGanador)
@@ -1210,13 +1170,11 @@ io.on('connection', (socket) => {
     io.to(sala.name).emit('muestra', mostrar)
 
     let terminoJuego = await terminar(mostrar) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
-    //console.log("termino el juego? dentro de tirar: ", terminoJuego)
     if (!terminoJuego) { //si el resultado de la funcion terminar es falso, se sigue el juego y se reparte, solo termino una mano
       setTimeout(() => {
         repartir(mostrar)
       }, 3000); //reparte a los 5 segundos
     } else {
-      //console.log("dentro de socket tirar, termino juego dsp de tirar cartas")
       try {
         let winner;
         if (users[0].tantos > users[1].tantos) {
@@ -1320,13 +1278,11 @@ async function MostrarTiempo(nameSala) {
           io.to(sala.name).emit('muestra', mostrar)
 
           let terminoJuego = await terminar(mostrar) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
-          //console.log("termino el juego? dentro de tirar: ", terminoJuego)
           if (!terminoJuego) { //si el resultado de la funcion terminar es falso, se sigue el juego y se reparte, solo termino una mano
             setTimeout(() => {
               repartir(mostrar)
             }, 3000); //reparte a los 5 segundos
           } else {
-            //console.log("dentro de socket tirar, termino juego dsp de tirar cartas")
             try {
               let winner;
               if (mostrar.usuarios[0].tantos > mostrar.usuarios[1].tantos) {
@@ -1411,7 +1367,6 @@ const juegoTerminado = async (salaX, idGanador) => { //
     users.forEach(async (element) => {
       //entrego premio y guardo ganancia
       if (idGanador.toHexString() === element.id.toHexString()) {
-        //console.log("ganancias repartidas")
         element.creditos += 2 * sala.apuesta * porcentajePremio
         admin.earning += 2 * sala.apuesta * (1 - porcentajePremio)
         nombreGanador = element.name
@@ -1429,7 +1384,6 @@ const juegoTerminado = async (salaX, idGanador) => { //
     }
     io.to(sala.name).emit('salaAbandonada', data)
     await salaM.findOneAndDelete({ name: salaX.name })
-    //console.log("sala eliminada")
     return
   } catch (err) {
     console.log("error en destruir sala, el error es : ", err)
@@ -1521,7 +1475,7 @@ const verificarCantora = async (salaName, userID) => {
       if (element.id.toHexString() == idJugador) {
         ultimaJugada = element.jugada[element.jugada.length - 1]
         if (!ultimaJugada) {
-          console.log("la ultima jugada del usuario es undefinid")
+          //console.log("la ultima jugada del usuario es undefinid")
         }
         posicion = users.indexOf(element);
       }
@@ -1569,15 +1523,12 @@ const sumarTantosAPartida = async (salaX, jugador) => {
   try {
     let sala = await salaM.findById({ _id: salaX._id });
     if (sala.cantosenmano.boolValeCuatro) {
-      //console.log("llegamos al valecuatro")
       sala.usuarios[jugador].tantos += 4;
     } else {
       if (sala.cantosenmano.boolReTruco) {
-        //console.log("llegamos al retruco")
         sala.usuarios[jugador].tantos += 3;
       } else {
         if (sala.cantosenmano.boolTruco) {
-          //console.log("llegamos al truco")
           sala.usuarios[jugador].tantos += 2;
         } else {
           sala.usuarios[jugador].tantos += 1;
@@ -1612,7 +1563,6 @@ const compararValores = async (sala) => {
         jugador1.juega = !jugador1.juega;
         sala.save();
         await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { cantosenmano: sala.cantosenmano } });
-        //console.log('empate parda en primera') //ya devuelve avisando que es primera y parda
         return false
       }
       //aca va si tienen el mismo valor pero no es la primera carta, puede ser la segunda o 3ra
@@ -1620,11 +1570,9 @@ const compararValores = async (sala) => {
         if (sala.cantosenmano.pardaPrimera) {
           if (users[0].mano) {
             await sumarTantosAPartida(sala, 0)
-            //console.log('Gana ', users[0].name, 'por mano en parda en primera...')
           }
           else {
             await sumarTantosAPartida(sala, 1)
-            //console.log('Gana ', users[1].name, 'por mano en parda en primera')
 
           }
           await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
@@ -1633,13 +1581,11 @@ const compararValores = async (sala) => {
           if (users[0].ganoPrimera) {
             await sumarTantosAPartida(sala, 0)
             await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
-            //console.log('Gana ', users[0].name, 'habia ganado en primera')
             return true
           }
           else {
             await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
             await sumarTantosAPartida(sala, 1)
-            //console.log('Gana ', users[1].name, 'habia ganado en primera')
             return true
           }
 
@@ -1652,13 +1598,11 @@ const compararValores = async (sala) => {
         if (users[0].ganoPrimera) {
           await sumarTantosAPartida(sala, 0)
           await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
-          //console.log('Gana ', users[0].name, ' parda ultima carta y habia ganado en primera')
           return true
         }
         else {
           await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
           await sumarTantosAPartida(sala, 1)
-          //console.log('Gana ', users[1].name, ' parda ultima carta y habia ganado en primera ')
           return true
         }
       }
@@ -1668,49 +1612,40 @@ const compararValores = async (sala) => {
       jugador2.juega = false;
       if (jugador2.jugada.length === 1) {
         jugador1.ganoPrimera = true; //si es la primera jugada solo anoto que gano la primera y le vuelve a tocar jugar
-        //console.log('Gana ', users[0].name, ' primera jugada ')
         return false
       }
       if (jugador1.jugada.length === 2) { //si es la 2da jugada y ya gano primera termina la ronda y le sumo los puntos de lo cantado
         if (users[0].ganoPrimera || sala.cantosenmano.pardaPrimera) {
           await sumarTantosAPartida(sala, 0)
           await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
-          //console.log('Gana ', users[0].name, ' segunda jugada  y ya tenia primera')
           return true
         }
 
-        //console.log('Gana ', users[0].name, ' segunda jugada ')
         return false
       }
       if (jugador1.jugada.length === 3) {//si gana en la 3ra le sumo los puntos de lo cantado
         await sumarTantosAPartida(sala, 0)
         await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
-        //console.log('Gana ', users[0].name, ' tercera jugada')
         return true
       }
 
     }
     if (jugada2.valor > jugada1.valor) {
       //Si el valor de la última jugada del jugador 2 es mayor, se incrementa el puntaje del jugador 2 
-      //console.log("dentro de comparar valores, jugada 2 mayor q 1")
       jugador1.juega = false;
       jugador2.juega = true;
       if (jugador2.jugada.length === 1) {
         jugador2.ganoPrimera = true;
-        //console.log('Gana ', users[1].name, ' primera jugada ')
         return false
       }
       if (jugador2.jugada.length === 2) {
 
         if (users[1].ganoPrimera || sala.cantosenmano.pardaPrimera) {
-          //console.log("dentro de comparar valores, 2da jugada y hubo parda o gano en primera el 2do jugador")
 
           await sumarTantosAPartida(sala, 1)
           await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
-          //console.log('Gana ', users[1].name, ' ronda xq habia ganado en primera tambien ')
           return true
         } else {
-          //console.log("dentro de comparar valores, 2da jugada y  no hubo parda o ni gano en primera el 2do jugador")
 
           return false
         }
@@ -1718,7 +1653,6 @@ const compararValores = async (sala) => {
       if (jugador2.jugada.length === 3) {
         await sumarTantosAPartida(sala, 1)
         await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { finish: true } });
-        //console.log('Gana ', users[1].name, ' ronda en tercera jugada ')
         return true
       }
 
@@ -1735,7 +1669,6 @@ const terminar = async (salaX) => {
   let sala = await salaM.findOne({ name: salaX.name })
   if (sala.finish) {
     sala.partida += 1
-    //console.log("partida terminada")
   }
   let terminoTodo = await juegoFinalizado(sala)
   if (terminoTodo) {
@@ -1745,7 +1678,6 @@ const terminar = async (salaX) => {
     return true
 
   } else {
-    //console.log('Aun no termina el juego, siga')
     return false
   }
 
@@ -1763,7 +1695,6 @@ const juegoFinalizado = async (salaX) => {
     if (sala.juegoFinalizado) {
       return true;
     } else {
-      "todavia no termina el juego, se sigue nomas"
       return false
     }
   } catch (err) {
