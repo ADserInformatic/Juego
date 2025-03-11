@@ -6,8 +6,6 @@
     <button (click)="cancel()" class="set">Salir</button>
 </nav>
 <div class="body">
-    <!-- <div *ngIf="time" class="time"> -->
-    <!-- <h4>Juga: {{time}}</h4> -->
     <div class="time" *ngIf="time > 0">
         <h4>Esperando...: {{time}}</h4>
     </div>
@@ -17,7 +15,7 @@
             <h4>PREMIO: {{sala?.apuesta * 2 * 0.85 | currency}}</h4>
         </div>
         <div class="tantos">
-            <h4>TANTOS</h4>
+            <h4 class="h4">TANTOS</h4>
             <hr>
             <div class="puntos">
                 <h4>{{jugador.name}}:</h4>
@@ -69,8 +67,6 @@
                 <img *ngFor="let valor of jugadorCont?.valores" src="../../../../assets/trasera.jpg" alt="">
             </div>
         </div>
-        <!-- <h2>Tantos: {{jugador.tantos}}</h2> -->
-
         <div [ngClass]="{'invertir': invertCards}">
 
             <div *ngFor="let item of sala?.usuarios" class="jugador">
@@ -87,7 +83,6 @@
 
     </div>
     <div class="cards">
-        <!-- <h3>Cartas de: {{jugador.name}}</h3> -->
         <button [disabled]="!jugador.juega" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
             <img src="../../../../assets/{{valor.name}}.jpg" alt="">
         </button>

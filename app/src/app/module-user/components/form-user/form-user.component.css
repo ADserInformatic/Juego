@@ -217,7 +217,7 @@ button:disabled:hover{
 }
 
 @media screen and (max-width: 980px) {
-    .forms .user, .salas{
+    .forms .user, .salas, .cambiarPass .form-user{
         width: 50%;
     }
 }
@@ -227,6 +227,9 @@ button:disabled:hover{
     }
     .forms .user, .salas{
         width: 80%;
+    }
+    .cambiarPass .form-user{
+        width: 90%;
     }
 }
 @media screen and (max-width: 320px) {

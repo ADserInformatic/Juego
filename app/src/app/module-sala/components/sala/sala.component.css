@@ -99,6 +99,10 @@ nav .set{
     border: solid .3px #fff;
     text-align: center;
 }
+.tantos .h4{
+    width: 100%;
+    text-align: center;
+}
 .cards{
     margin-top: -120px;
 }
@@ -168,7 +172,6 @@ nav .set{
     height: 100%;
 }
 .pintarPuntos .punto4, .pintarPuntos .punto9, .pintarPuntos .punto14{
-    /* position: absolute; */
     background: #fff;
     width: 1px;
     top: 0;
@@ -266,7 +269,6 @@ nav .set{
     color: #000;
     background: #fff;
     padding: 5px;
-    /* width: 25%; */
     border: solid .8px #000000;
     border-radius: 3px;
     outline: none;
@@ -317,7 +319,6 @@ nav .set{
     border-radius: 4px;
     outline: none;
     text-transform: uppercase;
-    /* width: 30%; */
     cursor: pointer;
 }
 .canto .contCanto .btns button.quiero{
@@ -328,7 +329,6 @@ nav .set{
     font-weight: bold;
 }
 .canto .contCanto .flor button:nth-child(1){
-    /* width: 80%; */
     background: #000;
 }
 .standBy{

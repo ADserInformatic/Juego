@@ -85,11 +85,9 @@ export class SalaComponent implements OnInit {
       this.nameSala = res.sala;
       this.socket.emit('sala', res.idSala)
     })
-
     this.socket.on('sala', (res: any) => {
       this.resetSala(res)
     })
-    
     this.socket.on('muestra', (res: any) => {
       console.log(res)
       if (res.finish && res.rivalAlMazo) {
@@ -113,12 +111,10 @@ export class SalaComponent implements OnInit {
     }
       this.resetSala(res)
     })
-
     this.socket.on('repartir', (res: any) => {
       this.mensaje = ''
       this.resetSala(res)
     })
-
     this.socket.on('cantando', (res: any) => {
       this.cantoI = res.canto
       res.jugador = this.jugadorCont
@@ -138,25 +134,19 @@ export class SalaComponent implements OnInit {
       this.truco = res.cantosenmano.boolTruco;
       this.reTruco = res.cantosenmano.boolReTruco;
       this.valeCuatro = res.cantosenmano.boolValeCuatro;
-
       if (this.envido || this.realEnvido || this.faltaEnvido) {
         this.btnMentiras = false
       }
       if (res.respuesta === 'quiero' || res.respuesta === 'noquiero') {
-        console.log(`El jugador ${this.jugadorCont.name} dice: ${res.respuesta} ${res.canto}`)
         return
-      } else {
-        console.log('bueeee',)
-      }
+      } 
       this.cantoI = res.cantosenmano.canto
       this.cantoConf = res.cantosenmano.faltaRespuesta
       this.cantora = `El jugador ${res.jugador.name} dice: ${this.cantoI}`
     })
-
     this.socket.on('respuestaCanto', (res: any) => {
       confirm(`Tu oponente dice ${res}`)
     })
-
     this.socket.on('resultadoDeCanto', (res: any) => {
       console.log(res)
       this.mensaje = res.mensaje
@@ -165,11 +155,8 @@ export class SalaComponent implements OnInit {
       }, 2000)
 
       this.resetSala(res.sala)
-      // this.envido = false
       this.cantoConf = false
     })
-
-
     this.socket.on('salaAbandonada', (res: any) => {
       this.mensaje = res.mensaje
       setTimeout(() => {
@@ -178,7 +165,6 @@ export class SalaComponent implements OnInit {
         this.router.navigate(['/appTruco'])
       }, 2000)
     })
-
     this.socket.on('time', (res:any)=>{
       this.time = res
       if(this.time === 1){
@@ -187,16 +173,13 @@ export class SalaComponent implements OnInit {
         }, 1000);
       }
     })
-
     //desactivar el boton de envido
     this.verCartas.subscribe(res => {
       this.mentira = this.envido || this.realEnvido || this.faltaEnvido
       this.btnMentiras = this.jugador.valores.length > 2 && !this.mentira
     })
   }
-
   resetSala(res: any) {
-    // if(this.nameSala !== res.name){return}
     if(this.time > 1) {this.time = 0};
     this.sala = res;
     this.envido = res.cantosenmano.boolEnvido
@@ -216,8 +199,6 @@ export class SalaComponent implements OnInit {
     } else {
       this.cantoConf = res.cantosenmano.faltaRespuesta
     }
-
-
     this.sala.usuarios.forEach((element: any) => {
       if (element.id == this.cookies.get('jugador')) {
         this.jugador = element
@@ -225,9 +206,7 @@ export class SalaComponent implements OnInit {
         this.jugadorCont = element
       }
     });
-
     this.cantora = `El jugador ${this.jugadorCont.name} dice: ${this.cantoI}`
-
     if (this.truco) {
       this.cantoActual = "reTruco"
     }
@@ -235,7 +214,6 @@ export class SalaComponent implements OnInit {
       this.cantoActual = "valeCuatro"
     }
     this.invertCards = this.jugador.name == this.sala.usuarios[0].name
-    //reveer --------------------------
     this.tantos1 = []
     this.tantosCont1 = []
     this.tantos2 = []
@@ -282,14 +260,10 @@ export class SalaComponent implements OnInit {
       this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont2, 20, 23)
       this.pintarPuntos(this.jugadorCont.tantos, this.tantosCont3, 25, 28)
     }
-
-
     this.verCartas.next(this.jugador.valores)
     this.verGuard.observarGuard.next(res.partidaFinalizada)
-
   }
-
-  //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
+//Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
     const data: Jugada = {
       sala: this.nameSala,
@@ -299,12 +273,11 @@ export class SalaComponent implements OnInit {
     }
     this.socket.emit('tirar', data)
   }
-
   repartir() {
     this.socket.emit('repartir', this.sala)
   }
-
   canto(canto: string) {
+    if(this.time > 1) {this.time = 0};
     if (this.truco && canto === 'envido') {
     }
     if (canto === 'envido' || canto === 'realEnvido' || canto === 'faltaEnvido') {
@@ -324,8 +297,8 @@ export class SalaComponent implements OnInit {
       this.cantoConf = false
     }
   }
-
   contestarCanto(resp: string, bool?: boolean) {
+    if(this.time > 1) {this.time = 0};
     if (this.truco && resp === 'primEnvido') {
       if (this.selected.nativeElement.value === 'El envido va primero') {
         return
@@ -355,7 +328,6 @@ export class SalaComponent implements OnInit {
       this.cantoConf = bool
     }
   }
-
   pintarPuntos(jugador: number, puntos: Array<any>, min: number, max: number) {
     if (jugador > min) {
       for (let i = min; i < jugador; i++) {
@@ -366,20 +338,16 @@ export class SalaComponent implements OnInit {
       }
     }
   }
-
   alMazo() {
     let data = {
       sala: this.sala.name,
       jugador: this.jugador
     }
     this.socket.emit('meVoyAlMazo', data)
-
   }
-
   cancel() {
     this.salir = !this.salir
   }
-
   closed() {
     if (confirm('Desea cerrar sesión?')) {
       this.servLogin.logout()
@@ -387,7 +355,6 @@ export class SalaComponent implements OnInit {
       this.router.navigate(['/'])
     }
   }
-
   abandonar() {
     if (confirm('Al abandonar la sala pierde el credito en juego. Desea abandonar de todos modos?')) {
       this.socket.emit('abandonarSala', { sala: this.sala.name, idUser: this.jugador.id })
@@ -395,6 +362,4 @@ export class SalaComponent implements OnInit {
       this.router.navigate(['/appTruco'])
     }
   }
-
-
 }
