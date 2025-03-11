@@ -73,6 +73,9 @@
                 <ng-container *ngFor="let item of salas">
                     <div class="salaItem">
                         <button title="Ingresar a {{item.name}}" (click)="sala(item)">{{item.name}}</button>
+                        <span *ngIf="item.usuarios.length > 1"><span class="material-symbols-outlined llena">
+                            block
+                            </span></span>
                         <p>{{item.apuesta | currency}}</p>
                         <button *ngIf="isAdmin" title="Eliminar sala" (click)="deleteSala(item._id)">
                             <span class="material-symbols-outlined">

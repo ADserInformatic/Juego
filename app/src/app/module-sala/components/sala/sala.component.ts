@@ -116,6 +116,7 @@ export class SalaComponent implements OnInit {
       this.resetSala(res)
     })
     this.socket.on('cantando', (res: any) => {
+      if(this.time > 1) {this.time = 0};
       this.cantoI = res.canto
       res.jugador = this.jugadorCont
       this.respuesta = {
