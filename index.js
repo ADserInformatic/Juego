@@ -214,8 +214,6 @@ io.on('connection', (socket) => {
         // si el que tiene flor es el mismo q miente bloquea flor y corrige puntos
         // si miente quien no tiene flor y no es mano, el otro ya no canto flor y debo corregir puntos
         // si quien miente es mano debo dejarle habilitada la flor por si la canta pero si revira debo corregir.
-
-
       }
       if (res.canto == 'flor') {
         users.forEach(element => {
@@ -229,6 +227,7 @@ io.on('connection', (socket) => {
         })
       }
     }
+
     if (corregir) {
       await corregirPuntos(idAcorregir, res.sala)
 
@@ -249,7 +248,9 @@ io.on('connection', (socket) => {
         element.debeResponder = false
         if (res.respuesta == "quiero" || res.respuesta == "noquiero" || res.respuesta == "aceptar") {
           element.realizoCanto = false
-        } else { element.realizoCanto = true }
+        } else {
+          element.realizoCanto = true
+        }
 
       } else {
         if (res.respuesta == "quiero" || res.respuesta == "noquiero" || res.respuesta == "aceptar") {
@@ -265,6 +266,7 @@ io.on('connection', (socket) => {
     let datos, terminado, winner
     let mensaje;
     let canto = res.canto
+    console.log(res)
     res = await booleanos(res);
     if (res.canto == 'envido' || res.canto == 'reenvido' || res.canto == 'realEnvido' || res.canto == 'faltaEnvido') {
       if (res.respuesta == "quiero") {
@@ -748,14 +750,12 @@ io.on('connection', (socket) => {
             }
             break;
         }
-        //socket.to(res.sala).emit('cantando', res)
-
         break;
       case 'truco':
         switch (res.respuesta) {
           case 'quiero':
             sala.cantosenmano.faltaRespuesta = false;
-            sala.save()
+            await sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
 
@@ -763,8 +763,8 @@ io.on('connection', (socket) => {
             io.to(res.sala).emit('resultadoDeCanto', datos)
             break;  //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
-            sala.cantosenmano.faltaRespuesta.bool = false;
-            mensaje = `${res.jugador.name} dice: ${res.respuesta}`
+            sala.cantosenmano.faltaRespuesta = false;
+            mensaje = `${res.jugador.name} dice: ${res.respuesta}...Repartiendo`
             users.forEach(element => {
               if (element.id != res.jugador.id) {
                 element.tantos += 1;
@@ -806,7 +806,7 @@ io.on('connection', (socket) => {
         switch (res.respuesta) {
           case 'quiero':
             sala.cantosenmano.faltaRespuesta = false;
-            sala.save()
+            await sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
             await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users } })
@@ -814,6 +814,7 @@ io.on('connection', (socket) => {
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
             sala.cantosenmano.faltaRespuesta.bool = false;
+            mensaje = `${res.jugador.name} dice: ${res.respuesta}...Repartiendo`
             users.forEach(element => {
               if (element.id != res.jugador.id) {
                 element.tantos += 2;
@@ -859,7 +860,7 @@ io.on('connection', (socket) => {
         switch (res.respuesta) {
           case 'quiero':
             sala.cantosenmano.faltaRespuesta = false;
-            sala.save()
+            await sala.save()
             mensaje = `${res.jugador.name} dice: ${res.respuesta}`
             datos = { mensaje, jugador: res.jugador, sala }
 
@@ -869,7 +870,7 @@ io.on('connection', (socket) => {
             break; //CONTINUAR TIRANDO CARTAS Y COMPARAR PARA ASIGNAR EL VALOR
           case 'noquiero':
             sala.cantosenmano.faltaRespuesta = false;
-            mensaje = `${res.jugador.name} dice: ${res.respuesta}`
+            mensaje = `${res.jugador.name} dice: ${res.respuesta}...Repartiendo`
             users.forEach(element => {
               if (element.id != res.jugador.id) {
                 element.tantos += 3;
@@ -1392,7 +1393,6 @@ const juegoTerminado = async (salaX, idGanador) => { //
 
 const booleanos = async (res) => {
   const sala = await salaM.findOne({ name: res.sala });
-  const users = sala.usuarios;
   switch (res.canto) {
     case 'envido':
       sala.cantosenmano.boolEnvido = true;
@@ -1429,7 +1429,7 @@ const booleanos = async (res) => {
       break;
     case 'truco':
       sala.cantosenmano.boolTruco = true;
-      users.forEach(element => {
+      sala.usuarios.forEach(element => {
         if (element.id == res.jugador.id) {
           element.puedeCantar = false
         } else {
@@ -1439,7 +1439,7 @@ const booleanos = async (res) => {
       break;
     case 'reTruco':
       sala.cantosenmano.boolReTruco = true;
-      users.forEach(element => {
+      sala.usuarios.forEach(element => {
         if (element.id == res.jugador.id) {
           element.puedeCantar = false
         } else {
@@ -1449,13 +1449,16 @@ const booleanos = async (res) => {
       break;
     case 'valeCuatro':
       sala.cantosenmano.boolValeCuatro = true;
+      sala.usuarios.forEach(element => {
+        element.puedeCantar = false
+      })
       break;
   }
   sala.cantosenmano.faltaRespuesta = true;
   sala.cantosenmano.canto = res.canto;
   sala.cantosenmano.jugador = res.jugador.id
   res.cantosenmano = sala.cantosenmano;
-  sala.save();
+  await sala.save();
   return (res)
 }
 
