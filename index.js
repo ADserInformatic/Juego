@@ -1644,7 +1644,7 @@ const compararValores = async (sala) => {
         sala.cantosenmano.pardaPrimera = true;
         jugador2.juega = !jugador2.juega;
         jugador1.juega = !jugador1.juega;
-        sala.save();
+        await sala.save();
         await salaM.findOneAndUpdate({ _id: sala._id }, { $set: { cantosenmano: sala.cantosenmano } });
         return false
       }
@@ -1885,6 +1885,7 @@ const repartir = async (_sala) => {
   salaOn.cantosenmano.boolReTruco = false;
   salaOn.cantosenmano.boolValeCuatro = false;
   salaOn.cantosenmano.faltaRespuesta = false;
+  salaOn.rivalAlMazo = false;
 
   salaOn.finish = false;
   salaOn.cantosenmano.pardaPrimera = false;
@@ -1901,7 +1902,7 @@ const repartir = async (_sala) => {
     users[1].juega = false;
 
   }
-  salaOn.save();
+  await salaOn.save();
   io.to(salaOn.name).emit('repartir', salaOn)
 
 
