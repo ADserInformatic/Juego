@@ -30,7 +30,9 @@ const sala = new Schema({
         jugador: { type: String, require: false },// jugador que falta contestar
         puntosDevolver: { type: Number, required: false },//puntos que se devuelven si tenia cantora y tiro todas o carta indebida
         posGanMentira: { type: Number, required: false },//posicion del jugador que gano la mentira
-        florNegada: { type: Boolean, default: false }
+        florNegada: { type: Boolean, default: false },
+        mostrarPuntos: { type: Boolean, default: false }//si es que debo mostrar puntos al finalizar la mano
+
     },
 
     usuarios: [{
@@ -42,7 +44,8 @@ const sala = new Schema({
         debeResponder: { type: Boolean, default: false },//si le cantaron algo y debe responder
         tiempoAgotado: { type: Number, default: 0 }, //Para saber si el tiempo se agoto o no, si se agoto es 1, si no es 0
         valores: { type: Array }, //Estas son las cartas
-        aMostrar: { type: Array }, //Estas son las cartas que se muestran al final x mentir o cantora
+        cartasAMostrar: { type: Array }, //Estas son las cartas que se muestran al final x mentir o cantora
+        boolCartasAMostrar: { type: Boolean, default: false },//es true si es que debo mostrar las cartas de los puntos
         noTirar: { type: Array }, //Esta es la carta que si niega y miente no debo mostrar
         jugada: { type: Array }, //Esas son cada una de las jugadas (cada carta tirada)
         puntosMentira: { type: Number, default: 0 },//puntos de la mentira de cada partida
