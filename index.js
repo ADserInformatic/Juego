@@ -134,7 +134,7 @@ io.on('connection', (socket) => {
     await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users } })
     //Una vez actualizada la sala se vuelve a buscar para devolverla al front (el update no devuelve el objeto actualizado, por eso este paso extra)
     const salaCasiActualizada = await verificarCantora(salaOn.name, idUltimoTiro);
-
+    io.to(salaOn.name).emit('muestra', salaCasiActualizada) //muestra la ultima carta tirada, 
 
     //Una vez hecho todo esto se emite hacia el front la sala con los nuevos datos
 
@@ -160,7 +160,9 @@ io.on('connection', (socket) => {
           })
           await mostrarPuntos.save()
         }
-        io.to(salaOn.name).emit('muestra', mostrarPuntos)
+        setTimeout(() => {
+          io.to(salaOn.name).emit('muestra', mostrarPuntos)
+        }, 2000); //reparte a los 5 segundos
         setTimeout(() => {
           repartir(mostrarPuntos)
         }, 5000); //reparte a los 5 segundos
