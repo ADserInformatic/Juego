@@ -1236,6 +1236,41 @@ io.on('connection', (socket) => {
 
   })
 
+  //para cuando el jugador quiere mostrarle al otro cuales eran las cartas que le quedaban por jugar, 
+  // recibe req={name: nombre de sala, idJugador: id del jugador que quiere mostrar}
+  socket.on('mostrarQueMeQuedaba', async (req) => {
+    try {
+      const sala = await salaM.findOne({ name: res.name })
+      let idQuiereMostrar
+      if (typeof res.idJugador.toHexString === 'function') {
+        idQuiereMostrar = res.idJugador.toHexString()
+      } else {
+        idQuiereMostrar = res.idJugador
+      }
+      sala.usuarios.forEach(async (element) => {
+        //el usuario con el id distinto de quien abandona gana la apuesta
+        if (idQuiereMostrar == element.id.toHexString()) {
+          element.cartasAMostrar.forEach(carta => {
+            let tirada = element.jugada.find(e => e.carta === carta.name)
+            if (!tirada) {
+              let cartaParaAgregar = {
+                sala: sala.name,
+                valor: carta.valor,
+                carta: carta.name,
+                idUser: element.id.toHexString()
+              }
+              element.jugada.push(cartaParaAgregar)
+            }
+          })
+        }
+      })
+      await sala.save()
+      return
+    } catch (err) {
+      console.log("error dentro de mostrarQueMeQuedaba y el error es: ", err)
+    }
+
+  })
 
 });
 
