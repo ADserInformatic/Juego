@@ -13,35 +13,35 @@ export class ApiAdminService {
     private http: HttpClient
   ) { }
 
-  getRender(): Observable<any>{
+  getRender(): Observable<any> {
     return this.http.get(`${this.apiUrl}/getRener`)
   }
 
-  getAdmin(id: string): Observable<any>{
-    return this.http.get( `${this.apiUrl}/dataAdmin/${id}`)
+  getAdmin(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/dataAdmin/${id}`)
   }
 
-  addUser(data:any): Observable<any>{
+  addUser(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/addUser`, data)
   }
 
-  addCredit(data: any, id: string): Observable<any>{
+  addCredit(data: any, id: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/addCredit/${id}`, data)
   }
 
-  removeCredit(data: any, id: string): Observable<any>{
+  removeCredit(data: any, id: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/removeCredit/${id}`, data)
   }
 
-  deleteUser(id: string): Observable<any>{
-    return this.http.delete(`${this.apiUrl}/delete/${id}`)
+  deleteUser(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/deleteUser/${id}`)
   }
 
-  resetPass(id: string): Observable<any>{
-    return this.http.put(`${this.apiUrl}/resetPass/${id}`, id)
+  resetPass(data: any, id: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/resetPass/${id}`, data)
   }
 
-  sendMonto(id: string, datos: any): Observable<any>{
-    return this.http.put( `${this.apiUrl}/clearEarning/${id}`, datos)
+  sendMonto(id: string, datos: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/clearEarning/${id}`, datos)
   }
 }

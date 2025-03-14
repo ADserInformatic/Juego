@@ -3,13 +3,18 @@ const user = require('../modelos/user')
 
 
 const getSalas = async (req, res) => {
-    const salas = await sala.find({})
+
     try {
-        res.json({
-            error: false,
-            data: salas,
-            mensaje: 'La solicitud se resolvió de forma exitosa'
-        })
+        const salas = await sala.find({})
+        if (salas) {
+            res.json({
+                error: false,
+                data: salas,
+                mensaje: 'La solicitud se resolvió de forma exitosa'
+            })
+        } else {
+            console.log("salas esta vacio: ", salas)
+        }
     } catch (e) {
         res.json({
             error: true,

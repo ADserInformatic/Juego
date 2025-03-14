@@ -21,7 +21,7 @@ export class HomeAdminComponent implements OnInit {
   private id!: string;
   public admin: any;
 
-  constructor( 
+  constructor(
     private apiServ: ApiAdminService,
     private apiCons: ConsultasService,
     private fb: FormBuilder,
@@ -34,90 +34,90 @@ export class HomeAdminComponent implements OnInit {
     this.traeUsers()
     this.id = this.cookie.get('jugador')
 
-this.apiServ.getAdmin(this.id).subscribe(res=>{
-  console.log(res)
-  this.admin = res.data
-})
+    this.apiServ.getAdmin(this.id).subscribe(res => {
+      this.admin = res.data
+      console.log(res)
+    })
 
     this.formPay = this.fb.group({
       monto: ['', Validators.required],
       comentario: ['', Validators.required],
-      password: ['', Validators.required ]
+      password: ['', Validators.required]
     })
 
     this.formPass = this.fb.group({
       passOld: ['', [Validators.required, Validators.minLength(3)]],
-      passNew: ['' , [Validators.required, Validators.minLength(3)]],
-      passConf: ['' , [Validators.required, Validators.minLength(3)]]
+      passNew: ['', [Validators.required, Validators.minLength(3)]],
+      passConf: ['', [Validators.required, Validators.minLength(3)]]
     })
   }
 
-  traeUsers(){
-    this.apiCons.getUsers().subscribe(res=>{
-      console.log(res.data)
+  traeUsers() {
+    this.apiCons.getUsers().subscribe(res => {
+
       this.usuarios = res.data
       this.usersFilter = res.data
     })
   }
 
-  actualizar(datos: any){
-    console.log(datos)
+  actualizar(datos: any) {
+
     if (datos.length > 0) {
       this.usersFilter = datos
-    }else{
+    } else {
       this.usersFilter = this.usuarios
     }
   }
 
-  closed(){
-    if(confirm('De veras desea cerrar sesión?')){
+  closed() {
+    if (confirm('De veras desea cerrar sesión?')) {
       this.authLog.logout()
-      this.cookie.delete('isAMadafaka?')
+      this.cookie.delete('isAMadafaka?')//JAJA ALTA PREGUNTA
       this.router.navigate(['/'])
     }
   }
 
-  reset(item:any){
-    if(confirm(`Desea resetear la contraseña de ${item.name}?`)){
-      console.log(item._id)
-      this.apiServ.resetPass(item.id).subscribe(res=>{
+  reset(item: any) {
+    if (confirm(`Desea resetear la contraseña de ${item.name}?`)) {
+      this.apiServ.resetPass(item, this.id).subscribe(res => {
         alert(res.mensaje)
       })
     }
   }
 
-  deleteUs(item: any){
+  deleteUs(item: any) {
     if (confirm(`Seguro que desea eliminar el siguiente usuario: ${item.name}`)) {
-      this.apiServ.deleteUser(item._id).subscribe(res=>{
-        alert(res)
+      this.apiServ.deleteUser(item._id).subscribe(res => {
+        alert(res.mensaje)
+        this.traeUsers()
       })
     }
   }
 
-  formPayOn(){
+  formPayOn() {
     this.pagar = !this.pagar
   }
 
-  pay(){
-    this.apiServ.sendMonto(this.id, this.formPay.value).subscribe(res=>{
+  pay() {
+    this.apiServ.sendMonto(this.id, this.formPay.value).subscribe(res => {
       alert(res.mensaje)
     })
   }
 
-  cambiar(){
+  cambiar() {
     this.cambiarPass = !this.cambiarPass
   }
 
-  sendPass(){
-    if(this.formPass.value.passNew !== this.formPass.value.passConf){
+  sendPass() {
+    if (this.formPass.value.passNew !== this.formPass.value.passConf) {
       alert('La contraseña debe ser igual en los dos campos')
       return
     }
     console.log(this.formPass.value)
     const id = this.cookie.get('jugador')
-    this.apiCons.newPass(id, this.formPass.value).subscribe(res=>{
+    this.apiCons.newPass(id, this.formPass.value).subscribe(res => {
       alert(res.mensaje)
-      if(res.error){
+      if (res.error) {
         return
       }
       this.authLog.logout()

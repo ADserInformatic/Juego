@@ -1,6 +1,7 @@
 const carta = require('../modelos/carta')
-
-const getCards = async (req, res)=>{
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = 'ADserTruco';
+const getCards = async (req, res) => {
     const cards = await carta.find({})
     try {
         res.json({
@@ -16,9 +17,9 @@ const getCards = async (req, res)=>{
     }
 }
 
-const saveCard = async (req, res)=>{
-    const {name, valor} = req.body
-    const guardar = await carta.create({name, valor})
+const saveCard = async (req, res) => {
+    const { name, valor } = req.body
+    const guardar = await carta.create({ name, valor })
     try {
         res.json({
             error: false,
@@ -32,5 +33,26 @@ const saveCard = async (req, res)=>{
         })
     }
 }
+function authenticateToken(req, res, next) {
+    const token = req.headers['authorization']?.split(' ')[1];
 
-module.exports = {saveCard, getCards}
+    if (!token) {
+        return res.json({
+            error: true,
+            mensaje: "No enviaron token"
+        });
+    }
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err) {
+            return res.json({
+                error: true,
+                mensaje: "invalid token"
+            });
+        }
+
+        req.user = user;
+        next();
+    });
+}
+module.exports = { saveCard, getCards }

@@ -1,9 +1,12 @@
 const { Schema, model } = require('mongoose')
 
 const actividadSchema = new Schema({
-               monto: { type: String, required: true },
-               fecha: { type: Date, required: true },
-               comentario: { type: String, required: true },
+               montoBefore: { type: Number, required: false },
+               montoCurrently: { type: Number, required: false },
+               montoCobrado: { type: Number, required: false },
+               fecha: { type: String, required: false },
+               comentario: { type: String, required: false },
+
 });
 const admin = new Schema({
                name: { type: String, required: true },

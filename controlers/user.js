@@ -3,7 +3,7 @@ const admin = require('../modelos/admin')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const SECRET_KEY = 'ADserTruco';
-/* // Generar el token
+const moment = require('moment-timezone');/* // Generar el token
 const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
 res.json({ token }); */
 // Encabezado: Authorization: Bearer &lt;tu_token_jwt>
@@ -99,6 +99,7 @@ const addUser = async (req, res) => {
     let CreditBefore = 0;
     let CreditAfter = credito;
     let password;
+    let passChanged = false;
     try {
         password = await bcrypt.hash('123456Aa', 10);// Hasheo la contraseña
     } catch (error) {
@@ -123,7 +124,7 @@ const addUser = async (req, res) => {
             });
         }
 
-        const save = await user.create({ name, credito, password, loadHistory });
+        const save = await user.create({ name, credito, password, loadHistory, passChanged });
         res.json({
             error: false,
             data: save,
@@ -279,7 +280,7 @@ const login = async (req, res) => {
 };
 const changePass = async (req, res) => {
     const { passOld, passNew } = req.body;
-
+    console.log("me llega a cambiar pass", req.body);
     // Validar que los campos no estén vacíos
     if (!passOld || !passNew) {
         return res.json({
@@ -311,7 +312,8 @@ const changePass = async (req, res) => {
         if (result) {
             passHashed = await bcrypt.hash(passNew, 10);// Hasheo la contraseña
             usuario.password = passHashed;
-            usuario.save();
+            usuario.passChanged = true;
+            await usuario.save();
             res.json({
                 error: false,
                 data: usuario,
@@ -336,61 +338,74 @@ const changePass = async (req, res) => {
     }
 
 }
+function validarNumero(valor) {
+    const numero = Number(valor);
+    return !isNaN(numero) && typeof numero === 'number';
+}
 const clearEarnings = async (req, res) => {
-    const { id } = req.params;
-    const { monto, comentario, password } = req.body;
-    //validar password
-    const adminTruth = await bcrypt.hash('ADserTruco', 10);
-    const truth = await bcrypt.compare(password, adminTruth);
-    if (!truth) {
-        return res.json({
-            error: true,
-            mensaje: 'Contraseña incorrecta'
-        });
-    }
-    // Validar monto
-    if (!monto) {
-        return res.json({
-            error: true,
-            mensaje: 'No hay monto agregado' // no puso monto
-        });
-    }
-
     try {
-        // Buscar administrador
-        const admin = await admin.findOne({ _id: id });
-        if (!admin) {
+        const id = req.params.id;
+        const { monto, comentario, password } = req.body;
+        const adminTruth = await bcrypt.hash(SECRET_KEY, 10);
+        const truth = await bcrypt.compare(password, adminTruth);
+        if (!truth) {
             return res.json({
                 error: true,
-                mensaje: 'Faltan datos requeridos.' // no encuentra el id del administrador
+                mensaje: 'Contraseña incorrecta'
+            });
+        }
+        // Validar monto
+        if (!monto || !validarNumero(monto)) {
+            return res.json({
+                error: true,
+                mensaje: 'No hay monto agregado' // no puso monto
+            });
+        }
+        // Buscar administrador
+        const administrador = await admin.findOne({ _id: id });
+        if (!administrador) {
+            return res.json({
+                error: true,
+                mensaje: 'USTED NO ES ADMINISTRADOR' // no encuentra el id del administrador
             });
         }
 
         // Validar que el monto no exceda las ganancias
-        if (monto > admin.earning) {
+        if (monto > administrador.earning || monto <= 0) {
             return res.json({
                 error: true,
-                mensaje: 'Monto agregado mayor a ganancias.' // el monto agregado es mayor a las ganancias 
+                mensaje: 'Monto agregado no valido para retirar de ganancias.' // el monto agregado es mayor a las ganancias 
             });
         }
+        let montoBefore = await administrador.earning;
+
+        let montoCurrently = await administrador.earning - monto
 
         // Actualizar ganancias
-        admin.earning -= monto;
-        await admin.save();
+
+        administrador.earning -= monto;
+
+
+        const fecha = moment.tz('America/Sao_Paulo').format("YYYY-MM-DDTHH:mm:ssZ");
 
         // Crear registro
         const registro = {
-            monto,
-            fecha: new Date().toLocaleString("es-ES", { timeZone: "America/Sao_Paulo" }),
-            comentario
+            montoBefore: montoBefore,
+            montoCurrently: montoCurrently,
+            montoCobrado: monto,
+            fecha: fecha,
+            comentario: comentario
         };
 
+        administrador.earningsHistory.push(registro)
+        await administrador.save();
         return res.json({
             error: false,
             data: admin.earning,
             mensaje: "Solicitud procesada con éxito"
         });
     } catch (error) {
+        console.log("error dentro de cobrar ganancias y el error es: ", error)
         return res.json({
             error: true,
             mensaje: 'Error al procesar la solicitud.'
@@ -441,6 +456,94 @@ const getChargeHistory = async (req, res) => {
         })
     }
 }
+const resetPass = async (req, res) => {
+    const idUser = req.body._id;
+    // Validar que los campos no estén vacíos
+    if (!idUser) {
+        return res.json({
+            error: true,
+            data: "",
+            mensaje: 'DEBE ENVIAR UN ID DE USUARIO VALIDO'
+        });
+    }
+    try {
+        const id = req.params.id;
+        let administrador = await admin.findOne({ _id: id });
+        if (!administrador) {
+            return res.json({
+                error: true,
+                data: "",
+                mensaje: 'USTED NO ES ADMINISTRADOR'
+            });
+        }
+        let usuario = await user.findOne({ _id: idUser });
+        if (!usuario) {
+            return res.json({
+                error: true,
+                data: "",
+                mensaje: 'ID DE USUARIO NO ENCONTRADO'
+            });
+        }
+
+        let passHashed = await bcrypt.hash("123456Aa", 10);// Hasheo la contraseña
+        usuario.password = passHashed;
+        usuario.passChanged = true;
+        await usuario.save();
+        return res.json({
+            error: false,
+            data: usuario,
+            adm: false,
+            mensaje: 'CONTRASEÑA CAMBIADA EXITOSAMENTE'
+        });
+
+    } catch (err) {
+        console.log("error dentro de la funcion resetear contraseña y el error es: ", err)
+        return res.json({
+            error: true,
+            data: "",
+            mensaje: `Error al procesar la solicitud: ${err.message}`
+        });
+    }
+
+}
+const deleteUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        let administrador = await admin.findOne({ _id: id });
+        if (administrador) {
+            return res.json({
+                error: true,
+                data: "",
+                mensaje: 'NO SE PUEDE ELIMINAR EL ADMINISTRADOR'
+            });
+        }
+        let usuario = await user.findOneAndDelete({ _id: id });
+        if (!usuario) {
+            return res.json({
+                error: true,
+                data: "",
+                mensaje: 'ID DE USUARIO NO ENCONTRADO'
+            });
+        }
+        return res.json({
+            error: false,
+            data: "",
+            mensaje: 'USUARIO ELIMINADO EXITOSAMENTE'
+        });
+
+    } catch (err) {
+        console.log("error dentro de la funcion borrar usuario y el error es: ", err.message)
+        return res.json({
+            error: true,
+            data: "",
+            mensaje: `Error al procesar la solicitud: ${err.message}`
+        });
+    }
+
+    return
+}
+
+
 const funtions = {
     getUsers, //devuelve todos los apostadores
     getUser,//devuelve un apostador en particular con un id
@@ -453,6 +556,7 @@ const funtions = {
     getAdmin, //devuelve los datos del administrador
     getEarningHistory, //devuelve el historial de ganancias de administrador
     getChargeHistory, //devuelve el historial de cargas de un usuario
-
+    resetPass,//para resetear la contraseña de un apostador
+    deleteUser,//para borrar un usuario
 }
 module.exports = funtions

@@ -4,7 +4,9 @@ const user = require('./user')
 
 const sala = new Schema({
     name: { type: String, required: true },
+    type: { type: Number, default: 0 },//0 tradicional-1 tuerto-2 ciego - 3 el dia q haya poker
     apuesta: { type: Number, required: true },
+    password: { type: String, required: false },
     partida: { type: Number, default: 1 }, //Toda la partida arranca jugando el mismo
     unaFalta: { type: Boolean, default: true },
     finish: { type: Boolean, default: true },
