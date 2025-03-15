@@ -297,6 +297,7 @@ io.on('connection', (socket) => {
     try {
       let sala = await salaM.findOne({ name: res.sala })
       let users = sala.usuarios
+      sala.cantosenmano.faltaRespuesta = false;
       sala.usuarios[0].timeJugada = 60;
       sala.usuarios[1].timeJugada = 60;
       sala.usuarios.forEach(element => {
@@ -1478,6 +1479,9 @@ async function MostrarTiempo(nameSala) {
 const corregirPuntos = async (idLLega, nameSala) => {
   try {
     const sala = await salaM.findOne({ name: nameSala });
+    if (sala.cantosenmano.boolFlorFlor || sala.cantosenmano.boolContraFlor || sala.cantosenmano.boolFlorMeAchico) {
+      return
+    }
     sala.cantosenmano.florNegada = true;
     let idJugador;
     if (typeof idLLega.toHexString === 'function') {
