@@ -36,7 +36,6 @@ export class HomeAdminComponent implements OnInit {
 
     this.apiServ.getAdmin(this.id).subscribe(res => {
       this.admin = res.data
-      console.log(res)
     })
 
     this.formPay = this.fb.group({
@@ -113,7 +112,6 @@ export class HomeAdminComponent implements OnInit {
       alert('La contraseña debe ser igual en los dos campos')
       return
     }
-    console.log(this.formPass.value)
     const id = this.cookie.get('jugador')
     this.apiCons.newPass(id, this.formPass.value).subscribe(res => {
       alert(res.mensaje)

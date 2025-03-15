@@ -22,42 +22,41 @@ export class AddCreditComponent implements OnInit {
   ngOnInit(): void {
     this.formGrup = this.fb.group({
       name: '',
-      credit: [0 ,  [Validators.required, Validators.minLength(2)]],
+      credit: [0, [Validators.required, Validators.minLength(2)]],
       _id: '',
       // password: ['', [Validators.required, Validators.minLength(3)]]
     })
   }
 
-  obtenerDato(e: any){
-    console.log(e)
+  obtenerDato(e: any) {
     this.name = e.name;
     this.id = e._id;
   }
 
-  addC(){
+  addC() {
     this.formGrup.value.name = this.name
     this.formGrup.value._id = this.id
-    if(confirm(`Asegurese de que los datos son correctos:
+    if (confirm(`Asegurese de que los datos son correctos:
       Nombre: ${this.formGrup.value.name},
-      Créditos: ${this.formGrup.value.credit}`)){
-        this.servApi.addCredit(this.formGrup.value, this.formGrup.value._id).subscribe(res=>{
-          alert(res.mensaje)
-          this.actualizarData.emit()
-        })
-      }
+      Créditos: ${this.formGrup.value.credit}`)) {
+      this.servApi.addCredit(this.formGrup.value, this.formGrup.value._id).subscribe(res => {
+        alert(res.mensaje)
+        this.actualizarData.emit()
+      })
+    }
   }
 
-  remC(){
+  remC() {
     this.formGrup.value.name = this.name
     this.formGrup.value._id = this.id
-    if(confirm(`Asegurese de que los datos son correctos:
+    if (confirm(`Asegurese de que los datos son correctos:
       Nombre: ${this.formGrup.value.name},
-      Créditos: ${this.formGrup.value.credit}`)){
-        this.servApi.removeCredit(this.formGrup.value, this.formGrup.value._id).subscribe(res=>{
-          alert(res.mensaje)
-          this.actualizarData.emit()
-        })
-      }
+      Créditos: ${this.formGrup.value.credit}`)) {
+      this.servApi.removeCredit(this.formGrup.value, this.formGrup.value._id).subscribe(res => {
+        alert(res.mensaje)
+        this.actualizarData.emit()
+      })
+    }
   }
 
 }

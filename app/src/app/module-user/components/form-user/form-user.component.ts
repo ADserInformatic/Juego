@@ -14,11 +14,12 @@ export class FormUserComponent implements OnInit {
   public formSala!: FormGroup;
   public formPass!: FormGroup;
   form!: FormGroup;
-  public salas: Array<any>= [];
-  public searchSalas: Array<any>= [];
-  public user: any = {id: '', name: '', credito: 0};
+  public salas: Array<any> = [];
+  public searchSalas: Array<any> = [];
+  public user: any = { id: '', name: '', credito: 0 };
   public cambiarPass: boolean = false;
   public isAdmin: any;
+  public passChanged: any;
 
 
   constructor(
@@ -34,9 +35,10 @@ export class FormUserComponent implements OnInit {
 
     this.user.id = this.cookie.get('jugador')
 
-    this.servCons.getUser(this.user.id).subscribe(res=>{
+    this.servCons.getUser(this.user.id).subscribe(res => {
       this.user.name = res.data.name
       this.user.credito = res.data.credito
+      this.passChanged = res.data.passChanged
     })
 
     this.formSala = this.fb.group({
@@ -46,40 +48,41 @@ export class FormUserComponent implements OnInit {
 
     this.formPass = this.fb.group({
       passOld: ['', [Validators.required, Validators.minLength(3)]],
-      passNew: ['' , [Validators.required, Validators.minLength(3)]],
-      passConf: ['' , [Validators.required, Validators.minLength(3)]]
+      passNew: ['', [Validators.required, Validators.minLength(3)]],
+      passConf: ['', [Validators.required, Validators.minLength(3)]]
     })
 
     this.form = this.fb.group({
       texto: ''
     })
-    this.form.valueChanges.subscribe(res=>{
+    this.form.valueChanges.subscribe(res => {
       this.searchSalas = this.salas.filter(e => e.name.toUpperCase().includes(res.texto.toUpperCase()))
-      if(res.texto === ''){
+      if (res.texto === '') {
         this.searchSalas = []
       }
     })
-    
     this.traeSalas()
-
+    if (!this.passChanged) {
+      this.cambiarPass = true
+    }
   }
-  traeSalas(){
-    this.servCons.getSalas().subscribe(res=>{
+  traeSalas() {
+    this.servCons.getSalas().subscribe(res => {
       console.log(res)
       this.salas = res.data
     })
   }
 
-  createSala(){
-    if(this.formSala.invalid){
+  createSala() {
+    if (this.formSala.invalid) {
       alert('No puede haber campos incompletos')
       return
     }
-    if(this.formSala.value.apuesta > this.user.credito){
+    if (this.formSala.value.apuesta > this.user.credito) {
       alert('La apuesta no puede superar el credito disponible')
       return
     }
-    if(this.formSala.value.apuesta < 500){
+    if (this.formSala.value.apuesta < 500) {
       alert('La apuesta mínima es de $500')
       return
     }
@@ -89,25 +92,27 @@ export class FormUserComponent implements OnInit {
       usuarios: [{
         id: this.cookie.get('jugador'),
         valores: [],
-        name: 'Jugador 1'}]
+        name: 'Jugador 1'
+      }]
     }
-    this.servCons.createSala(datos).subscribe(res=>{
+    this.servCons.createSala(datos).subscribe(res => {
       this.datosSala(res)
     })
 
   }
 
-  sala(e: any){
+  sala(e: any) {
     console.log(e)
-    if(e.apuesta > this.user.credito){
+    if (e.apuesta > this.user.credito) {
       alert('La apuesta no puede superar el credito disponible')
       return
     }
     const dato = {
       id: this.cookie.get('jugador'),
       valores: [],
-      name: 'Jugador 2'}
-    this.servCons.addUserToSala(e._id, dato).subscribe(res=>{
+      name: 'Jugador 2'
+    }
+    this.servCons.addUserToSala(e._id, dato).subscribe(res => {
       this.datosSala(res)
     })
     // this.servCons.getOneSala(e._id).subscribe(res=>{
@@ -115,56 +120,60 @@ export class FormUserComponent implements OnInit {
     // })
   }
 
-  reload(){
+  reload() {
     this.traeSalas()
   }
 
-  datosSala(res: any){
-    if(res.mensaje){
+  datosSala(res: any) {
+    if (res.mensaje) {
       alert(res.mensaje)
     }
-      const datos = {
-        sala: res.data.name,
-        idSala: res.data._id,
-        user: this.user}
-    if(res.denegado){return}
+    const datos = {
+      sala: res.data.name,
+      idSala: res.data._id,
+      user: this.user
+    }
+    if (res.denegado) { return }
     this.route.navigate(['/sala', datos])
   }
 
-  deleteSala(id: any){
-    this.servCons.deleteSala(id).subscribe(res=>{
+  deleteSala(id: any) {
+    this.servCons.deleteSala(id).subscribe(res => {
       alert(res.mensaje)
       this.traeSalas()
     })
   }
 
-  closed(){
-    if(confirm('Desea cerrar sesión?')){
+  closed() {
+    if (confirm('Desea cerrar sesión?')) {
       this.servLogin.logout()
       this.cookie.delete('jugador')
-      if(this.cookie.get('isAMadafaka?')){
+      if (this.cookie.get('isAMadafaka?')) {
         this.cookie.delete('isAMadafaka?')
       }
       this.route.navigate(['/'])
     }
   }
 
-  cambiar(){
+  cambiar() {
     this.cambiarPass = true
   }
-  cerrar(){
-    this.cambiarPass = false
+  cerrar() {
+    if (this.passChanged) {
+      this.cambiarPass = false
+    }
+
   }
 
-  sendPass(){
-    if(this.formPass.value.passNew !== this.formPass.value.passConf){
+  sendPass() {
+    if (this.formPass.value.passNew !== this.formPass.value.passConf) {
       alert('La contraseña debe ser igual en los dos campos')
       return
     }
     const id = this.cookie.get('jugador')
-    this.servCons.newPass(id, this.formPass.value).subscribe(res=>{
+    this.servCons.newPass(id, this.formPass.value).subscribe(res => {
       alert(res.mensaje)
-      if(res.error){
+      if (res.error) {
         return
       }
       this.servLogin.logout()

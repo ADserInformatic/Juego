@@ -280,7 +280,6 @@ const login = async (req, res) => {
 };
 const changePass = async (req, res) => {
     const { passOld, passNew } = req.body;
-    console.log("me llega a cambiar pass", req.body);
     // Validar que los campos no estén vacíos
     if (!passOld || !passNew) {
         return res.json({
@@ -487,7 +486,7 @@ const resetPass = async (req, res) => {
 
         let passHashed = await bcrypt.hash("123456Aa", 10);// Hasheo la contraseña
         usuario.password = passHashed;
-        usuario.passChanged = true;
+        usuario.passChanged = false;
         await usuario.save();
         return res.json({
             error: false,
