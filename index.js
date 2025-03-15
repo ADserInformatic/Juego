@@ -1197,7 +1197,11 @@ io.on('connection', (socket) => {
       const sala = await salaM.findOne({ name: res.sala })
       let usuarioAbandono; //lo guardo por las dudas pero no lo utilizo al final
       if (!sala) {
-        return
+        return res.json({
+          error: true,
+          data: "",
+          mensaje: "no se encuentra la sala"
+        });
       }
 
 
@@ -1602,7 +1606,7 @@ const booleanos = async (res) => {
         sala.cantosenmano.boolFlorFlor = true;
         sala.cantosenmano.boolTruco = false;
         break;
-      case 'florMeachico':
+      case 'florMeAchico':
         sala.cantosenmano.boolFlorMeAchico = true;
         sala.cantosenmano.boolTruco = false;
         break;

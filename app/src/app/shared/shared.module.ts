@@ -6,7 +6,7 @@ import { BuscadorComponent } from './buscador/buscador.component';
 
 @NgModule({
   declarations: [
-   BuscadorComponent
+    BuscadorComponent
   ],
   imports: [
     ReactiveFormsModule,
