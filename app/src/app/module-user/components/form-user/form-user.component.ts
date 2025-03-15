@@ -39,6 +39,9 @@ export class FormUserComponent implements OnInit {
       this.user.name = res.data.name
       this.user.credito = res.data.credito
       this.passChanged = res.data.passChanged
+      if (!this.passChanged) {
+        this.cambiarPass = true
+      }
     })
 
     this.formSala = this.fb.group({
@@ -62,13 +65,10 @@ export class FormUserComponent implements OnInit {
       }
     })
     this.traeSalas()
-    if (!this.passChanged) {
-      this.cambiarPass = true
-    }
+
   }
   traeSalas() {
     this.servCons.getSalas().subscribe(res => {
-      console.log(res)
       this.salas = res.data
     })
   }
@@ -102,7 +102,6 @@ export class FormUserComponent implements OnInit {
   }
 
   sala(e: any) {
-    console.log(e)
     if (e.apuesta > this.user.credito) {
       alert('La apuesta no puede superar el credito disponible')
       return

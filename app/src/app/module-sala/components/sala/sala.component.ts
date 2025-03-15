@@ -141,7 +141,11 @@ export class SalaComponent implements OnInit {
         return
       }
       this.cantoI = res.cantosenmano.canto
-      this.cantoConf = res.cantosenmano.faltaRespuesta
+      if (res.cantosenmano.jugador == this.cookies.get('jugador')) {
+        this.cantoConf = false
+      } else {
+        this.cantoConf = res.cantosenmano.faltaRespuesta
+      }
       this.cantora = `El jugador ${res.jugador.name} dice: ${this.cantoI}`
     })
     this.socket.on('respuestaCanto', (res: any) => {

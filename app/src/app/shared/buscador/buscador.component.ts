@@ -16,29 +16,28 @@ export class BuscadorComponent implements OnInit {
   form!: FormGroup;
   @Input() textoInput: string = 'Buscar...'
 
-  constructor(private fb: FormBuilder){}
-  
+  constructor(private fb: FormBuilder) { }
+
   ngOnInit(): void {
-    console.log(this.elementos)
     this.form = this.fb.group({
       texto: ''
     })
 
-    this.form.valueChanges.subscribe(res=>{
+    this.form.valueChanges.subscribe(res => {
       this.nuevoArray = this.elementos.filter(e => e.name.toUpperCase().includes(res.texto.toUpperCase()))
-      if(res === ''){
+      if (res === '') {
         this.nuevoArray = []
       }
       this.data.emit(this.nuevoArray)
     })
-    
+
   }
 
-  verId(e:any){
+  verId(e: any) {
     this.id.emit(e)
     this.input.nativeElement.value = e.name
     this.nuevoArray = []
   }
-    
+
 
 }
