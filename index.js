@@ -52,13 +52,14 @@ app.use('/carta', carta)
 io.on('connection', (socket) => {
   socket.on('sala', async (id) => {
     try {
+      if (!id) {
+        console.log("no llega id al socket on sala")
+        return
+      }
       const sala = await salaM.findOne({ _id: id })
       if (!sala) {
-        return res.json({
-          error: true,
-          data: "",
-          mensaje: `Error no encuentra sala`
-        });
+        console.log("no encontro sala con ese id en socket on sala")
+        return
       }
       socket.join(sala.name)
       //Lo que está entre parentesis limita los usuarios a los que emito. En este los usuarios que esten en la sala con el mismo nombre.
@@ -73,11 +74,7 @@ io.on('connection', (socket) => {
     }
     catch (err) {
       console.log("error dentro de la sockenOn sala, error al crear sala o unirse y el mensaje de error es: ", err.message)
-      return res.json({
-        error: true,
-        data: "",
-        mensaje: `Error al procesar la solicitud: ${err.message}`
-      });
+      return
 
     }
   })
@@ -297,7 +294,7 @@ io.on('connection', (socket) => {
     try {
       let sala = await salaM.findOne({ name: res.sala })
       let users = sala.usuarios
-      sala.cantosenmano.faltaRespuesta = false;
+      sala.cantosenmano.faltaRespuesta = true;
       sala.usuarios[0].timeJugada = 60;
       sala.usuarios[1].timeJugada = 60;
       sala.usuarios.forEach(element => {
@@ -1984,6 +1981,8 @@ const repartir = async (_sala) => {
       }
       jugador2.valores.push(allCartas[values[i]])
     }
+    jugador1.valores = [{ name: "2c", valor: 9 }, { name: "6c", valor: 3 }, { name: "11c", valor: 6 }];
+    jugador2.valores = [{ name: "2b", valor: 9 }, { name: "6b", valor: 3 }, { name: "11b", valor: 6 }];
     let temp1 = tieneEnvido(jugador1.valores, 1);
     let temp2 = tieneEnvido(jugador2.valores, 2);
     jugador1.puntosMentira = temp1.puntos;
