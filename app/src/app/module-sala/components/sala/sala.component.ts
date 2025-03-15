@@ -102,12 +102,12 @@ export class SalaComponent implements OnInit {
           if (res.finish && res.rivalAusente) {
             this.mensaje = 'Tiempo Agotado...Repartiendo...'
           } else {
-          if (res.finish) {
-            this.mensaje = 'Repartiendo...'
+            if (res.finish) {
+              this.mensaje = 'Repartiendo...'
+            }
           }
         }
       }
-    }
       this.resetSala(res)
     })
     this.socket.on('repartir', (res: any) => {
@@ -115,7 +115,7 @@ export class SalaComponent implements OnInit {
       this.mensaje = ''
     })
     this.socket.on('cantando', (res: any) => {
-      if(this.time > 1) {this.time = 0};
+      if (this.time > 1) { this.time = 0 };
       this.cantoI = res.canto
       res.jugador = this.jugadorCont
       this.respuesta = {
@@ -139,7 +139,7 @@ export class SalaComponent implements OnInit {
       }
       if (res.respuesta === 'quiero' || res.respuesta === 'noquiero') {
         return
-      } 
+      }
       this.cantoI = res.cantosenmano.canto
       this.cantoConf = res.cantosenmano.faltaRespuesta
       this.cantora = `El jugador ${res.jugador.name} dice: ${this.cantoI}`
@@ -148,7 +148,6 @@ export class SalaComponent implements OnInit {
       confirm(`Tu oponente dice ${res}`)
     })
     this.socket.on('resultadoDeCanto', (res: any) => {
-      console.log(res)
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
@@ -165,9 +164,9 @@ export class SalaComponent implements OnInit {
         this.router.navigate(['/appTruco'])
       }, 2000)
     })
-    this.socket.on('time', (res:any)=>{
+    this.socket.on('time', (res: any) => {
       this.time = res
-      if(this.time === 1){
+      if (this.time === 1) {
         setTimeout(() => {
           this.time = 0
         }, 1000);
@@ -180,7 +179,7 @@ export class SalaComponent implements OnInit {
     })
   }
   resetSala(res: any) {
-    if(this.time > 1) {this.time = 0};
+    if (this.time > 1) { this.time = 0 };
     this.sala = res;
     this.envido = res.cantosenmano.boolEnvido
     this.reEnvido = res.cantosenmano.boolReEnvido
@@ -263,7 +262,7 @@ export class SalaComponent implements OnInit {
     this.verCartas.next(this.jugador.valores)
     this.verGuard.observarGuard.next(res.partidaFinalizada)
   }
-//Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
+  //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
     const data: Jugada = {
       sala: this.nameSala,
@@ -277,7 +276,7 @@ export class SalaComponent implements OnInit {
     this.socket.emit('repartir', this.sala)
   }
   canto(canto: string) {
-    if(this.time > 1) {this.time = 0};
+    if (this.time > 1) { this.time = 0 };
     if (this.truco && canto === 'envido') {
     }
     if (canto === 'envido' || canto === 'realEnvido' || canto === 'faltaEnvido') {
@@ -298,7 +297,7 @@ export class SalaComponent implements OnInit {
     }
   }
   contestarCanto(resp: string, bool?: boolean) {
-    if(this.time > 1) {this.time = 0};
+    if (this.time > 1) { this.time = 0 };
     if (this.truco && resp === 'primEnvido') {
       if (this.selected.nativeElement.value === 'El envido va primero') {
         return
