@@ -1480,6 +1480,7 @@ const corregirPuntos = async (idLLega, nameSala) => {
   try {
     const sala = await salaM.findOne({ name: nameSala });
     if (sala.cantosenmano.boolFlorFlor || sala.cantosenmano.boolContraFlor || sala.cantosenmano.boolFlorMeAchico) {
+      sala.cantosenmano.florNegada = false;
       return
     }
     sala.cantosenmano.florNegada = true;
