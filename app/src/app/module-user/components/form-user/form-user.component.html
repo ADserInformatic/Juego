@@ -14,7 +14,7 @@
     <div class="forms">
         <div *ngIf="!isAdmin" class="user">
             <h3>Usuario: {{user.name}}</h3>
-            <h3>Credito: {{user.credito | currency}}</h3>
+            <h3>Credito: {{user.credito}}</h3>
         </div>
         <div *ngIf="isAdmin" class="user">
             <h3>Usuario: Administrador</h3>

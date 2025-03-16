@@ -1981,8 +1981,6 @@ const repartir = async (_sala) => {
       }
       jugador2.valores.push(allCartas[values[i]])
     }
-    jugador1.valores = [{ name: "2c", valor: 9 }, { name: "6c", valor: 3 }, { name: "11c", valor: 6 }];
-    jugador2.valores = [{ name: "2b", valor: 9 }, { name: "6b", valor: 3 }, { name: "11b", valor: 6 }];
     let temp1 = tieneEnvido(jugador1.valores, 1);
     let temp2 = tieneEnvido(jugador2.valores, 2);
     jugador1.puntosMentira = temp1.puntos;
