@@ -50,16 +50,24 @@ app.use('/carta', carta)
 //Wwbsocket
 //En qué momento se hace la conexión lo manejo desde el front
 io.on('connection', (socket) => {
-  socket.on('sala', async (id) => {
+  socket.on('sala', async (id, res) => {
     try {
       if (!id) {
         console.log("no llega id al socket on sala")
-        return
+        res.json({
+          error: true,
+          data: "",
+          mensaje: `Error al procesar la solicitud: ${err.message}`
+        });
       }
       const sala = await salaM.findOne({ _id: id })
       if (!sala) {
         console.log("no encontro sala con ese id en socket on sala")
-        return
+        res.json({
+          error: true,
+          data: "",
+          mensaje: `Error al procesar la solicitud: ${err.message}`
+        });
       }
       socket.join(sala.name)
       //Lo que está entre parentesis limita los usuarios a los que emito. En este los usuarios que esten en la sala con el mismo nombre.
@@ -74,14 +82,18 @@ io.on('connection', (socket) => {
     }
     catch (err) {
       console.log("error dentro de la sockenOn sala, error al crear sala o unirse y el mensaje de error es: ", err.message)
-      return
+      return res.json({
+        error: true,
+        data: "",
+        mensaje: `Error al procesar la solicitud: ${err.message}`
+      });
 
     }
   })
 
   //Con socket.io se utiliza emit para emitir una acción y on para escuchar esa acción, lo que debe coinsidir es el nombre que va entre comillas
   //Se escucha la acción 'repartir' y se ejecuta la siguiente función
-  socket.on('repartir', async (_sala) => {
+  socket.on('repartir', async (_sala, res) => {
     try {
       //Se recibe la sala para la que hay que repartir y se busca en la base de datos
       const salaOn = await salaM.findOne({ _id: _sala._id })
@@ -101,7 +113,7 @@ io.on('connection', (socket) => {
   })
 
   //Cada vez que un usuario tira (presiona) una carta, se ejecuta esta acción
-  socket.on('tirar', async (jugada) => {
+  socket.on('tirar', async (jugada, res) => {
     try {
       //LLega un objeto con los datos de la jugada (sala, id del usuario y valor jugado)
       //Se busca la sala en la que se está jugando a partir del nombre
@@ -1310,7 +1322,7 @@ io.on('connection', (socket) => {
 
   //para cuando el jugador quiere mostrarle al otro cuales eran las cartas que le quedaban por jugar, 
   // recibe req={name: nombre de sala, idJugador: id del jugador que quiere mostrar}
-  socket.on('mostrarQueMeQuedaba', async (req) => {
+  socket.on('mostrarQueMeQuedaba', async (req, res) => {
     try {
       const sala = await salaM.findOne({ name: res.name })
       let idQuiereMostrar
@@ -1373,12 +1385,12 @@ async function MostrarTiempo(nameSala) {
     let terminarMano = false
     sala.usuarios.forEach((element) => {
       if ((element.juega && !element.realizoCanto && !element.debeResponder) || (element.debeResponder)) {
-        idAusente = element.id
+        idAusente = element.id.toHexString()
         element.timeJugada -= 1;
         if (element.timeJugada <= 30 && element.timeJugada > 0) {
           io.to(sala.name).emit('time', element.timeJugada)
         } else {
-          if (element.timeJugada == 0) {
+          if (element.timeJugada <= 0) {
             if (element.tiempoAgotado == 0) {
               element.tiempoAgotado = 1;
               terminarMano = true;
@@ -1392,7 +1404,7 @@ async function MostrarTiempo(nameSala) {
           }
         }
       } else {
-        idGanador = element.id
+        idGanador = element.id.toHexString()
       }
     })
     await sala.save()
@@ -1468,6 +1480,7 @@ async function MostrarTiempo(nameSala) {
     return true
   } catch (err) {
     console.log("error dentro de funcion MostrarTiempo y el mensaje de error es: ", err.message)
+    console.log("error dentro de funcion MostrarTiempo y el  error entero es: ", err)
     return false
   }
 }
@@ -1981,8 +1994,7 @@ const repartir = async (_sala) => {
       }
       jugador2.valores.push(allCartas[values[i]])
     }
-    jugador1.valores = [{ name: "2c", valor: 9 }, { name: "6c", valor: 3 }, { name: "11c", valor: 6 }];
-    jugador2.valores = [{ name: "2b", valor: 9 }, { name: "6b", valor: 3 }, { name: "11b", valor: 6 }];
+
     let temp1 = tieneEnvido(jugador1.valores, 1);
     let temp2 = tieneEnvido(jugador2.valores, 2);
     jugador1.puntosMentira = temp1.puntos;
