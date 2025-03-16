@@ -119,8 +119,8 @@
         </div>
         <div class="btns flor"
             *ngIf="cantoI === 'flor' || cantoI === 'florFlor' || cantoI === 'contraFlor' || cantoI === 'florMeAchico'">
-            <button *ngIf="flor && contraFlor" class="quiero" (click)="contestarCanto('quiero')">Quiero</button>
-            <button *ngIf="!contraFlor" (click)="contestarCanto('aceptar')">Aceptar</button>
+            <button *ngIf="flor && contraFlor || florFlor && !florMeachico" class="quiero" (click)="contestarCanto('quiero')">Quiero</button>
+            <button *ngIf="!contraFlor || !florFlor" (click)="contestarCanto('aceptar')">Aceptar</button>
             <button *ngIf="jugador.puedeFlor && !contraFlor && !florMeachico" (click)="contestarCanto('contraFlor')">Contra flor</button>
             <button *ngIf="jugador.puedeFlor && !florMeachico && florFlor && !contraFlor"
                 (click)="contestarCanto('florMeAchico')">Con flor me achico</button>
