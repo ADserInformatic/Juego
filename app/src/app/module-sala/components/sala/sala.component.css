@@ -305,11 +305,8 @@ nav .set{
     margin: 15px auto;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     flex-wrap: wrap;
-}
-.canto .contCanto .flor{
-    justify-content: center;
 }
 .canto .contCanto .btns button{
     background: #3f3a3ab6;

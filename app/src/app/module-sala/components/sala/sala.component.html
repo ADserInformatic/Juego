@@ -12,7 +12,7 @@
     <div class="titulo">
         <div class="datos">
             <h4>SALA: {{nameSala | uppercase}}</h4>
-            <h4>PREMIO: {{sala?.apuesta * 2 * 0.85 | currency}}</h4>
+            <h4>PREMIO: {{sala?.apuesta * 2 * 0.85}}</h4>
         </div>
         <div class="tantos">
             <h4 class="h4">TANTOS</h4>
@@ -58,7 +58,7 @@
         </div>
         <div class="nombre">
             <h5>USUARIO: {{jugador.name}}</h5>
-            <h5>CREDITOS: {{jugador.creditos | currency}}</h5>
+            <h5>CREDITOS: {{jugador.creditos}}</h5>
         </div>
     </div>
     <div *ngIf="sala?.usuarios" class="jugadores">
@@ -83,26 +83,26 @@
 
     </div>
     <div class="cards">
-        <button [disabled]="!jugador.juega" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
+        <button [disabled]="!jugador.juega || faltaResp" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
             <img src="../../../../assets/{{valor.name}}.jpg" alt="">
         </button>
     </div>
     <!-- <button (click)="repartir()">Repartir</button> -->
     <div class="botonesCanto">
         <div class="cantos">
-            <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor"
+            <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
                 [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('envido')">Envido</button>
-            <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor"
+            <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
                 [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
-            <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor"
+            <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
                 [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
-            <button *ngIf="!truco" [disabled]="!jugador.puedeCantar || !jugador.juega"
+            <button *ngIf="!truco" [disabled]="!jugador.puedeCantar || !jugador.juega || faltaResp"
                 (click)="canto('truco')">Truco</button>
-            <button *ngIf="truco" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega"
+            <button *ngIf="truco" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp"
                 (click)="contestarCanto(cantoActual, false)">{{cantoActual}}</button>
-            <button [disabled]="truco || !btnMentiras || !jugador.puedeFlor || flor || !jugador.juega"
+            <button [disabled]="truco || !btnMentiras || !jugador.puedeFlor || flor || !jugador.juega || faltaResp"
                 (click)="canto('flor')">Flor</button>
-            <button title="Irse al maso" [disabled]="!jugador.juega" (click)="alMazo()">Mazo</button>
+            <button title="Irse al maso" [disabled]="!jugador.juega || faltaResp" (click)="alMazo()">Mazo</button>
         </div>
     </div>
 </div>
@@ -119,8 +119,8 @@
         </div>
         <div class="btns flor"
             *ngIf="cantoI === 'flor' || cantoI === 'florFlor' || cantoI === 'contraFlor' || cantoI === 'florMeAchico'">
-            <button *ngIf="flor && contraFlor" class="quiero" (click)="contestarCanto('quiero')">Quiero</button>
-            <button *ngIf="!contraFlor" (click)="contestarCanto('aceptar')">Aceptar</button>
+            <button *ngIf="flor && contraFlor || florFlor && !florMeachico" class="quiero" (click)="contestarCanto('quiero')">Quiero</button>
+            <button *ngIf="!contraFlor || !florFlor" (click)="contestarCanto('aceptar')">Aceptar</button>
             <button *ngIf="jugador.puedeFlor && !contraFlor && !florMeachico" (click)="contestarCanto('contraFlor')">Contra flor</button>
             <button *ngIf="jugador.puedeFlor && !florMeachico && florFlor && !contraFlor"
                 (click)="contestarCanto('florMeAchico')">Con flor me achico</button>

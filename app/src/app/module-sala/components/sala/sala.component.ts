@@ -63,6 +63,7 @@ export class SalaComponent implements OnInit {
   public buenasCont: boolean = false;
   private url: string = environment.apiUrl;
   public time!: any;
+  public faltaResp: boolean = false;
 
 
   private verCartas: BehaviorSubject<any> = new BehaviorSubject<any>(this.jugador.valores)
@@ -146,6 +147,7 @@ export class SalaComponent implements OnInit {
       } else {
         this.cantoConf = res.cantosenmano.faltaRespuesta
       }
+      this.faltaResp = res.cantosenmano.faltaRespuesta
       this.cantora = `El jugador ${res.jugador.name} dice: ${this.cantoI}`
     })
     this.socket.on('respuestaCanto', (res: any) => {
@@ -203,6 +205,7 @@ export class SalaComponent implements OnInit {
     } else {
       this.cantoConf = res.cantosenmano.faltaRespuesta
     }
+    this.faltaResp = res.cantosenmano.faltaRespuesta
     this.sala.usuarios.forEach((element: any) => {
       if (element.id == this.cookies.get('jugador')) {
         this.jugador = element
@@ -281,6 +284,7 @@ export class SalaComponent implements OnInit {
     this.socket.emit('repartir', this.sala)
   }
   canto(canto: string) {
+    this.faltaResp = true
     if (this.time > 1) { this.time = 0 };
     if (this.truco && canto === 'envido') {
     }

@@ -1994,7 +1994,6 @@ const repartir = async (_sala) => {
       }
       jugador2.valores.push(allCartas[values[i]])
     }
-
     let temp1 = tieneEnvido(jugador1.valores, 1);
     let temp2 = tieneEnvido(jugador2.valores, 2);
     jugador1.puntosMentira = temp1.puntos;
