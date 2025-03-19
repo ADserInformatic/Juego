@@ -406,6 +406,9 @@ nav .set{
     .tantos h4{
         width: 50%;
         text-align: left;
+        white-space: nowrap;            /* Evita que el texto se divida en varias líneas */
+        overflow: hidden;               /* Oculta el texto que se desborda */
+        text-overflow: ellipsis;
     }
     .card{
         width: 25%;
@@ -413,7 +416,7 @@ nav .set{
     .jugador{
         width: 70%;
     }
-    .standBy .texto h1, .contCanto .texto h1{
+    .standBy .texto h1, .contCanto .texto h1, .mensaje h1{
         font-size: 16px;
     }
     .cantos{

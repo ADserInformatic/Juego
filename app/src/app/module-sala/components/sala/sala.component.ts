@@ -168,7 +168,7 @@ export class SalaComponent implements OnInit {
         this.mensaje = ''
         this.cookies.set('abandono', res.jugador)
         this.router.navigate(['/appTruco'])
-      }, 2000)
+      }, 3000)
     })
     this.socket.on('time', (res: any) => {
       this.time = res
@@ -367,7 +367,12 @@ export class SalaComponent implements OnInit {
     if (confirm('Al abandonar la sala pierde el credito en juego. Desea abandonar de todos modos?')) {
       this.socket.emit('abandonarSala', { sala: this.sala.name, idUser: this.jugador.id })
       this.cookies.set('abandono', 'sí')
-      this.router.navigate(['/appTruco'])
+      this.salir = false
+      this.mensaje = "Saliendo..."
+      setTimeout(()=>{
+        this.router.navigate(['/appTruco'])
+        this.mensaje = ""
+      }, 3000)
     }
   }
 }
