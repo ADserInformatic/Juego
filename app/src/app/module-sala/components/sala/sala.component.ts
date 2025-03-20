@@ -199,7 +199,6 @@ export class SalaComponent implements OnInit {
     this.reTruco = res.cantosenmano.boolReTruco;
     this.valeCuatro = res.cantosenmano.boolValeCuatro;
     this.cantoI = res.cantosenmano.canto
-    console.log(res.cantosenmano)
     if (res.cantosenmano.jugador == this.cookies.get('jugador')) {
       this.cantoConf = false
     } else {
@@ -369,7 +368,7 @@ export class SalaComponent implements OnInit {
       this.cookies.set('abandono', 'sí')
       this.salir = false
       this.mensaje = "Saliendo..."
-      setTimeout(()=>{
+      setTimeout(() => {
         this.router.navigate(['/appTruco'])
         this.mensaje = ""
       }, 3000)

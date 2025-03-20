@@ -115,7 +115,8 @@ const addUser = async (req, res) => {
     ];
 
     try {
-        const yaExiste = await user.findOne({ name: name });
+        let nomMinuscula = name.toLowerCase()
+        const yaExiste = await user.findOne({ name: nomMinuscula });
         if (yaExiste) {
             return res.json({
                 error: true,
@@ -124,7 +125,7 @@ const addUser = async (req, res) => {
             });
         }
 
-        const save = await user.create({ name, credito, password, loadHistory, passChanged });
+        const save = await user.create({ name: nomMinuscula, credito, password, loadHistory, passChanged });
         res.json({
             error: false,
             data: save,
@@ -232,10 +233,11 @@ const login = async (req, res) => {
     try {
         // Buscar el usuario en la base de datos
         //primero busco si no es administrador
+        let nomMinuscula = name.toLowerCase()
         let usuario, administrador;
-        usuario = await admin.findOne({ name: name });
+        usuario = await admin.findOne({ name: nomMinuscula });
         if (!usuario) {
-            usuario = await user.findOne({ name: name });
+            usuario = await user.findOne({ name: nomMinuscula });
             if (!usuario) {
                 return res.json({
                     error: true,
@@ -280,8 +282,9 @@ const login = async (req, res) => {
 };
 const changePass = async (req, res) => {
     const { passOld, passNew } = req.body;
+    const id = req.params.id;
     // Validar que los campos no estén vacíos
-    if (!passOld || !passNew) {
+    if (!passOld || !passNew || !id) {
         return res.json({
             error: true,
             data: "",
@@ -289,7 +292,7 @@ const changePass = async (req, res) => {
         });
     }
     try {
-        const id = req.params.id;
+
         let usuario, administrador, passHashed;
         usuario = await admin.findOne({ _id: id });
         if (!usuario) {

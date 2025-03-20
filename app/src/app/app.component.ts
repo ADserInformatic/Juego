@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
+import { environment } from '../environments/environment';
 import { io } from "socket.io-client";
 
 @Component({
@@ -17,7 +18,10 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.socket = io('http://localhost:3006')
+    this.socket = io(environment.apiUrl, {
+      transports: ['websocket'],
+      withCredentials: true
+    });
     this.socket.on('jugadores', (data: any) => {
       this.users = data
       this.users.forEach(e => {

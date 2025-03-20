@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const http = require('http');
 dotenv.config();
 const app = express();
 const bodyParser = require('body-parser');
@@ -26,27 +27,69 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.raw());
+const server = http.createServer(app);
 
-const server = app.listen(process.env.PORT || 3006, () => {
-  console.log('Server is running on port 3006');
-});
 
 //Conexión con socketIo, cambiar el localhos por el dominio del front.
 const socketIo = require('socket.io');
 const admin = require('./modelos/admin');
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:4200', 'http://localhost:8100', 'https://invierteygana.com.ar'],
-    // methods: ['GET', 'POST', 'PUT', 'DELETE',],
+    origin: ['http://localhost:4200', 'http://localhost:8100', 'https://invierteygana.com.ar', 'https://back.invierteygana.com.ar'
+      , 'http://back.invierteygana.com.ar', 'http://localhost:3006'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     // allowedHeaders: ['my-custom-header'],
-    // credentials: true
+    credentials: true
   }
+  , transports: ['websocket'] // Esto fuerza el uso de WebSocket en el servidor
 });
 
+server.listen(process.env.PORT || 3006, () => {
+  console.log('Server is running on port 3006');
+});
 //Rutas
 app.use('/', user)
 app.use('/sala', sala)
 app.use('/carta', carta)
+
+// Maneja todas las rutas no definidas y redirige a index.html
+const path = require('path');
+
+
+// Sirve los archivos estáticos de la aplicación Angular
+
+app.use(express.static(path.join(__dirname, '../public_html')));
+
+
+// Maneja todas las rutas no definidas y redirige a index.html
+
+app.get('*', (req, res) => {
+
+  res.sendFile(path.join(__dirname, '../public_html/index.html'));
+
+});
+
+/* 
+app.get('/', (req, res) => {
+  const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Página de Ejemplo</title>
+      </head>
+      <body>
+          <h1>Hola, bienvenido a mi API!</h1>
+          <p>Este es un ejemplo de cómo mostrar HTML desde una API de Node.js.</p>
+      </body>
+      </html>
+  `;
+  res.send(htmlContent); // Enviar el contenido HTML como respuesta
+}); */
+
+
 //Wwbsocket
 //En qué momento se hace la conexión lo manejo desde el front
 io.on('connection', (socket) => {
@@ -1382,7 +1425,6 @@ async function MostrarTiempo(nameSala) {
   try {
     const sala = await salaM.findOne({ name: nameSala })
     if (!sala) {
-      console.log("no se encontro sala, dentro de mostrar tiempo")
       return false
     }
     let idGanador, idAusente
@@ -1456,7 +1498,6 @@ async function MostrarTiempo(nameSala) {
           io.to(sala.name).emit('muestra', mostrar)
 
           let terminoJuego = await terminar(mostrar) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
-          console.log("terminoJuego: ", terminoJuego)
           if (!terminoJuego) { //si el resultado de la funcion terminar es falso, se sigue el juego y se reparte, solo termino una mano
             setTimeout(() => {
               repartir(mostrar)
