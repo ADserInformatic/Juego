@@ -90,8 +90,10 @@
     <!-- <button (click)="repartir()">Repartir</button> -->
     <div class="botonesCanto">
         <div class="cantos">
-            <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
+            <button *ngIf="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
                 [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('envido')">Envido</button>
+                <button *ngIf="btnMentiras || !truco || jugador.juega || !flor || !jugador.puedeFlor || !faltaResp"
+                [ngClass]="{'noPuede': !btnMentiras}">Envido</button>
             <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
                 [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
             <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
