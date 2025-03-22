@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const http = require('http');
 dotenv.config();
 const app = express();
 const bodyParser = require('body-parser');
@@ -26,27 +27,69 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.raw());
+const server = http.createServer(app);
 
-const server = app.listen(process.env.PORT || 3006, () => {
-  console.log('Server is running on port 3006');
-});
 
 //Conexión con socketIo, cambiar el localhos por el dominio del front.
 const socketIo = require('socket.io');
 const admin = require('./modelos/admin');
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:4200', 'http://localhost:8100', 'https://invierteygana.com.ar'],
-    // methods: ['GET', 'POST', 'PUT', 'DELETE',],
+    origin: ['http://localhost:4200', 'http://localhost:8100', 'https://invierteygana.com.ar', 'https://back.invierteygana.com.ar'
+      , 'http://back.invierteygana.com.ar', 'http://localhost:3006'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     // allowedHeaders: ['my-custom-header'],
-    // credentials: true
+    credentials: true
   }
+  , transports: ['websocket'] // Esto fuerza el uso de WebSocket en el servidor
 });
 
+server.listen(process.env.PORT || 3006, () => {
+  console.log('Server is running on port 3006');
+});
 //Rutas
 app.use('/', user)
 app.use('/sala', sala)
 app.use('/carta', carta)
+
+// Maneja todas las rutas no definidas y redirige a index.html
+const path = require('path');
+
+
+// Sirve los archivos estáticos de la aplicación Angular
+
+app.use(express.static(path.join(__dirname, '../public_html')));
+
+
+// Maneja todas las rutas no definidas y redirige a index.html
+
+app.get('*', (req, res) => {
+
+  res.sendFile(path.join(__dirname, '../public_html/index.html'));
+
+});
+
+/* 
+app.get('/', (req, res) => {
+  const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Página de Ejemplo</title>
+      </head>
+      <body>
+          <h1>Hola, bienvenido a mi API!</h1>
+          <p>Este es un ejemplo de cómo mostrar HTML desde una API de Node.js.</p>
+      </body>
+      </html>
+  `;
+  res.send(htmlContent); // Enviar el contenido HTML como respuesta
+}); */
+
+
 //Wwbsocket
 //En qué momento se hace la conexión lo manejo desde el front
 io.on('connection', (socket) => {
@@ -54,12 +97,20 @@ io.on('connection', (socket) => {
     try {
       if (!id) {
         console.log("no llega id al socket on sala")
-        return
+        return {
+          error: true,
+          data: "",
+          mensaje: `Error al procesar la solicitud`
+        };
       }
       const sala = await salaM.findOne({ _id: id })
       if (!sala) {
         console.log("no encontro sala con ese id en socket on sala")
-        return
+        return {
+          error: true,
+          data: "",
+          mensaje: `Error al procesar la solicitud`
+        };
       }
       socket.join(sala.name)
       //Lo que está entre parentesis limita los usuarios a los que emito. En este los usuarios que esten en la sala con el mismo nombre.
@@ -74,7 +125,11 @@ io.on('connection', (socket) => {
     }
     catch (err) {
       console.log("error dentro de la sockenOn sala, error al crear sala o unirse y el mensaje de error es: ", err.message)
-      return
+      return {
+        error: true,
+        data: "",
+        mensaje: `Error al procesar la solicitud: ${err.message}`
+      }
 
     }
   })
@@ -92,11 +147,11 @@ io.on('connection', (socket) => {
       io.to(salaOn.name).emit('repartir', salaActualizada)
     } catch (err) {
       console.log("error dentro de sockenOn repartir y el mensaje de error es: ", err.message)
-      return res.json({
+      return {
         error: true,
         data: "",
         mensaje: `Error al procesar la solicitud: ${err.message}`
-      });
+      }
     }
   })
 
@@ -203,11 +258,11 @@ io.on('connection', (socket) => {
       }
     } catch (err) {
       console.log("error dentro de sockenOn tirar y el mensaje de error es: ", err.message)
-      return res.json({
+      return {
         error: true,
         data: "",
         mensaje: `Error al procesar la solicitud: ${err.message}`
-      });
+      }
     }
   }
   )
@@ -281,11 +336,11 @@ io.on('connection', (socket) => {
       socket.to(res.sala).emit('cantando', ores)
     } catch (err) {
       console.log("error dentro de socketOn canto y el mensaje de error es: ", err.message)
-      return res.json({
+      return {
         error: true,
         data: "",
         mensaje: `Error al procesar la solicitud: ${err.message}`
-      });
+      }
     }
   })
 
@@ -1180,11 +1235,11 @@ io.on('connection', (socket) => {
       }
     } catch (err) {
       console.log("error dentro de sockenOn respuestaCanto y el mensaje de error es: ", err.message)
-      return res.json({
+      return {
         error: true,
         data: "",
         mensaje: `Error al procesar la solicitud: ${err.message}`
-      });
+      }
     }
   }
   )
@@ -1195,11 +1250,11 @@ io.on('connection', (socket) => {
       const sala = await salaM.findOne({ name: res.sala })
       let usuarioAbandono; //lo guardo por las dudas pero no lo utilizo al final
       if (!sala) {
-        return res.json({
+        return {
           error: true,
           data: "",
           mensaje: "no se encuentra la sala"
-        });
+        }
       }
 
 
@@ -1218,11 +1273,11 @@ io.on('connection', (socket) => {
 
     } catch (err) {
       console.log("error dentro de sockenOn abandonarSala y el mensaje de error es: ", err.message)
-      return res.json({
+      return {
         error: true,
         data: "",
         mensaje: `Error al procesar la solicitud: ${err.message}`
-      });
+      }
     }
   })
 
@@ -1300,17 +1355,17 @@ io.on('connection', (socket) => {
       }
     } catch (err) {
       console.log("error dentro de sockenOn meVoyAlMazo y el mensaje de error es: ", err.message)
-      return res.json({
+      return {
         error: true,
         data: "",
         mensaje: `Error al procesar la solicitud: ${err.message}`
-      });
+      }
     }
   })
 
   //para cuando el jugador quiere mostrarle al otro cuales eran las cartas que le quedaban por jugar, 
   // recibe req={name: nombre de sala, idJugador: id del jugador que quiere mostrar}
-  socket.on('mostrarQueMeQuedaba', async (req) => {
+  socket.on('mostrarQueMeQuedaba', async (req, res) => {
     try {
       const sala = await salaM.findOne({ name: res.name })
       let idQuiereMostrar
@@ -1340,11 +1395,11 @@ io.on('connection', (socket) => {
       return
     } catch (err) {
       console.log("error dentro de sockenOn mostrarQueMeQuedaba y el mensaje de error es: ", err.message)
-      return res.json({
+      return {
         error: true,
         data: "",
         mensaje: `Error al procesar la solicitud: ${err.message}`
-      });
+      }
     }
 
   })
@@ -1355,7 +1410,9 @@ function iniciarMostrarTiempo(nameSala, intervalo) {
   try {
     const ejecutarMostrarTiempo = async () => {
       let loop = await MostrarTiempo(nameSala);
-      if (loop) { setTimeout(ejecutarMostrarTiempo, intervalo) }
+      if (loop) {
+        setTimeout(ejecutarMostrarTiempo, intervalo)
+      }
     }
     ejecutarMostrarTiempo();
   } catch (err) {
@@ -1367,7 +1424,9 @@ function iniciarMostrarTiempo(nameSala, intervalo) {
 async function MostrarTiempo(nameSala) {
   try {
     const sala = await salaM.findOne({ name: nameSala })
-    if (!sala) { return false }
+    if (!sala) {
+      return false
+    }
     let idGanador, idAusente
     let terminarTodo = false;
     let terminarMano = false
@@ -1443,6 +1502,7 @@ async function MostrarTiempo(nameSala) {
             setTimeout(() => {
               repartir(mostrar)
             }, 3000); //reparte a los 5 segundos
+            return true
           } else {
             try {
               let winner;
@@ -1451,6 +1511,7 @@ async function MostrarTiempo(nameSala) {
               } else {
                 winner = mostrar.usuarios[1].id
               }
+
               await juegoTerminado(salaOn, winner)
               return false
             } catch (err) {
@@ -1458,16 +1519,16 @@ async function MostrarTiempo(nameSala) {
               return false
             }
           }
-          return true
         } catch (err) {
           console.log("error dentro de terminar mano y el error es: ", err)
           return false
         }
       }
+      return true
     }
-    return true
   } catch (err) {
     console.log("error dentro de funcion MostrarTiempo y el mensaje de error es: ", err.message)
+    iniciarMostrarTiempo(nameSala, 1000)
     return false
   }
 }
@@ -1922,10 +1983,11 @@ function getRandomInt(min, max) {
 }
 
 //Función que reparte tres cartas diferentes a cada jugador.
-const repartir = async (_sala) => {
+const repartir = async (salaX) => {
   try {
+
     //Se recibe la sala para la que hay que repartir y se busca en la base de datos
-    const salaOn = await salaM.findOne({ _id: _sala._id })
+    const salaOn = await salaM.findOne({ name: salaX.name })
     //Obtenemos los usuarios de la sala encontrada 
     const users = salaOn.usuarios
     salaOn.finish = false;
