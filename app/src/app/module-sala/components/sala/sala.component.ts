@@ -116,6 +116,7 @@ export class SalaComponent implements OnInit {
       this.mensaje = ''
     })
     this.socket.on('cantando', (res: any) => {
+      console.log(res)
       if (this.time > 1) { this.time = 0 };
       this.cantoI = res.canto
       res.jugador = this.jugadorCont
@@ -155,6 +156,7 @@ export class SalaComponent implements OnInit {
       confirm(`Tu oponente dice ${res}`)
     })
     this.socket.on('resultadoDeCanto', (res: any) => {
+      console.log(res)
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
@@ -195,7 +197,7 @@ export class SalaComponent implements OnInit {
     this.florFlor = res.cantosenmano.boolFlorFlor;
     this.contraFlor = res.cantosenmano.boolContraFlor;
     this.florMeachico = res.cantosenmano.boolFlorMeAchico;
-    this.truco = res.cantosenmano.boolTruco;
+    this.truco = res.cantosenmano.boolTruco    ;
     this.reTruco = res.cantosenmano.boolReTruco;
     this.valeCuatro = res.cantosenmano.boolValeCuatro;
     this.cantoI = res.cantosenmano.canto
@@ -308,6 +310,7 @@ export class SalaComponent implements OnInit {
     if (this.time > 1) { this.time = 0 };
     if (this.truco && resp === 'primEnvido') {
       if (this.selected.nativeElement.value === 'El envido va primero') {
+        console.log('El envido va primero')
         return
       }
       let data = {
