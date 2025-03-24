@@ -17,11 +17,13 @@ export class AppComponent implements OnInit {
   public cartas: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   constructor(private http: HttpClient) { }
 
-  ngOnInit(): void {
-    this.socket = io(environment.apiUrl, {
-      transports: ['websocket'],
-      withCredentials: true
-    });
+  ngOnInit(): void {/* 
+    this.socket = io(environment.apiUrl
+             , {
+            transports: ['websocket'],
+            withCredentials: true
+          } 
+    );
     this.socket.on('jugadores', (data: any) => {
       this.users = data
       this.users.forEach(e => {
@@ -50,5 +52,6 @@ export class AppComponent implements OnInit {
 
   ejecutar() {
     this.socket.emit('dato', { dato: this.opcion.nativeElement.value, id: this.socket.id, valores: [] })
+    */
   }
 }

@@ -151,6 +151,7 @@ export class SalaComponent implements OnInit {
       this.cantora = `El jugador ${res.jugador.name} dice: ${this.cantoI}`
     })
     this.socket.on('respuestaCanto', (res: any) => {
+      this.resetSala(res.sala)
       confirm(`Tu oponente dice ${res}`)
     })
     this.socket.on('resultadoDeCanto', (res: any) => {
@@ -158,7 +159,6 @@ export class SalaComponent implements OnInit {
       setTimeout(() => {
         this.mensaje = ''
       }, 5000)
-
       this.resetSala(res.sala)
       this.cantoConf = false
     })
