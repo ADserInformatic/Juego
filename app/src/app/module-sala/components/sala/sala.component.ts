@@ -87,7 +87,8 @@ export class SalaComponent implements OnInit {
       this.socket.emit('sala', res.idSala)
     })
     this.socket.on('sala', (res: any) => {
-      this.resetSala(res)
+      if (res.error) { this.router.navigate(['/appTruco']) }
+      this.resetSala(res.sala)
     })
     this.socket.on('muestra', (res: any) => {
       if (res.finish && res.rivalAlMazo) {
@@ -197,7 +198,7 @@ export class SalaComponent implements OnInit {
     this.florFlor = res.cantosenmano.boolFlorFlor;
     this.contraFlor = res.cantosenmano.boolContraFlor;
     this.florMeachico = res.cantosenmano.boolFlorMeAchico;
-    this.truco = res.cantosenmano.boolTruco    ;
+    this.truco = res.cantosenmano.boolTruco;
     this.reTruco = res.cantosenmano.boolReTruco;
     this.valeCuatro = res.cantosenmano.boolValeCuatro;
     this.cantoI = res.cantosenmano.canto

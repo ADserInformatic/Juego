@@ -95,27 +95,37 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   socket.on('sala', async (id) => {
     try {
+      let datos
+
       if (!id) {
-        console.log("no llega id al socket on sala")
-        return {
+
+        datos = {
           error: true,
-          data: "",
+          sala: "",
           mensaje: `Error al procesar la solicitud`
         };
+        socket.emit('sala', datos);
+        return
       }
       const sala = await salaM.findOne({ _id: id })
       if (!sala) {
-        console.log("no encontro sala con ese id en socket on sala")
-        return {
+        datos = {
           error: true,
-          data: "",
+          sala: "",
           mensaje: `Error al procesar la solicitud`
         };
+        socket.emit('sala', datos);
+        return
       }
       socket.join(sala.name)
       //Lo que está entre parentesis limita los usuarios a los que emito. En este los usuarios que esten en la sala con el mismo nombre.
       //La diferencia entre io.to y socket.to es que, en el primer caso se emite para todos los usuarios que están dentro de la sala. En el siguiente caso se obvia a quien hizo la petición al back
-      io.to(sala.name).emit('sala', sala)
+      datos = {
+        error: false,
+        sala: sala,
+        mensaje: `Solicitud procesada con exito`
+      };
+      io.to(sala.name).emit('sala', datos)
       if (sala.usuarios.length == 2) {
         if ((sala.usuarios[0].valores.length == 0 && sala.usuarios[1].valores.length == 0) || (!sala.usuarios[0].valores && !sala.usuarios[1].valores)) {
           await repartir(sala) // Inicializar el tiempo de cada jugador
@@ -125,11 +135,13 @@ io.on('connection', (socket) => {
     }
     catch (err) {
       console.log("error dentro de la sockenOn sala, error al crear sala o unirse y el mensaje de error es: ", err.message)
-      return {
+      datos = {
         error: true,
-        data: "",
-        mensaje: `Error al procesar la solicitud: ${err.message}`
-      }
+        sala: "",
+        mensaje: `Error al procesar la solicitud`
+      };
+      socket.emit('sala', datos);
+      return
 
     }
   })
