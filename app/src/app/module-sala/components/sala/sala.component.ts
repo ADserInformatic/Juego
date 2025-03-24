@@ -87,6 +87,7 @@ export class SalaComponent implements OnInit {
       this.socket.emit('sala', res.idSala)
     })
     this.socket.on('sala', (res: any) => {
+      console.log(res)
       this.resetSala(res)
     })
     this.socket.on('muestra', (res: any) => {

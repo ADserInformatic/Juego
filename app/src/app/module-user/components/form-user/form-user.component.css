@@ -67,6 +67,7 @@ nav .set{
     border: solid .3px #fff;
     background: #000000d5;
     color: #fff;
+    text-transform: capitalize;
 }
 .form-block{
     margin-top: 15px;
