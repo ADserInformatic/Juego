@@ -317,6 +317,7 @@ io.on('connection', (socket) => {
           sala.usuarios.forEach(element => {
             if (element.id === res.jugador.id) {
               if (element.tieneFlor) {
+                console.log("canto flor ")
                 element.puedeFlor = false;
                 element.cantoFlor = true;
               }
@@ -326,7 +327,7 @@ io.on('connection', (socket) => {
         }
       }
       await sala.save()
-      await salaM.findOneAndUpdate({ name: res.sala })
+
       if (corregir) {
         await corregirPuntos(idAcorregir, res.sala)
       }
@@ -1421,7 +1422,7 @@ function iniciarMostrarTiempo(nameSala, intervalo) {
     }
     ejecutarMostrarTiempo();
   } catch (err) {
-    console.log("error dentro de funcion iniciarMostrarTiempo y el mensaje de error es: ", err.message)
+    ejecutarMostrarTiempo();
     return
   }
 }
@@ -1542,7 +1543,7 @@ async function MostrarTiempo(nameSala) {
 const corregirPuntos = async (idLLega, nameSala) => {
   try {
     const sala = await salaM.findOne({ name: nameSala });
-    if (sala.cantosenmano.boolFlorFlor || sala.cantosenmano.boolContraFlor || sala.cantosenmano.boolFlorMeAchico) {
+    if (sala.cantosenmano.boolFlor || sala.cantosenmano.boolFlorFlor || sala.cantosenmano.boolContraFlor || sala.cantosenmano.boolFlorMeAchico) {
       sala.cantosenmano.florNegada = false;
       return
     }
@@ -1664,6 +1665,11 @@ const booleanos = async (res) => {
         break;
       case 'flor':
         sala.cantosenmano.boolFlor = true;
+        sala.usuarios.forEach(element => {
+          if (element.id == res.jugador.id) {
+            element.cantoFlor = true
+          }
+        })
         break;
       case 'florFlor':
         sala.cantosenmano.boolFlorFlor = true;
