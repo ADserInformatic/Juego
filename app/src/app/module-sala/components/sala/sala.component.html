@@ -107,7 +107,7 @@
                 <!---->
             <button *ngIf="!truco && jugador.puedeCantar && jugador.juega && !faltaResp" [disabled]="!jugador.puedeCantar || !jugador.juega || faltaResp"
                 (click)="canto('truco')">Truco</button>
-                <button *ngIf="!truco && !jugador.puedeCantar || !jugador.juega || faltaResp" [disabled]="!jugador.puedeCantar || !jugador.juega || faltaResp"
+                <button *ngIf="!truco && (!jugador.puedeCantar || !jugador.juega || faltaResp)" [disabled]="!jugador.puedeCantar || !jugador.juega || faltaResp"
                 >Truco</button>
 
             <button *ngIf="truco && jugador.puedeCantar && !valeCuatro && jugador.juega && !faltaResp" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp"

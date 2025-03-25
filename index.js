@@ -38,11 +38,11 @@ const io = socketIo(server, {
     origin: ['http://localhost:4200', 'http://localhost:8100', 'https://invierteygana.com.ar', 'https://back.invierteygana.com.ar'
       , 'http://back.invierteygana.com.ar', 'http://localhost:3006'
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    // allowedHeaders: ['my-custom-header'],
-    credentials: true
+    /* methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['my-custom-header'],
+    credentials: true */
   }
-  , transports: ['websocket'] // Esto fuerza el uso de WebSocket en el servidor
+  // // , transports: ['websocket'] // Esto fuerza el uso de WebSocket en el servidor
 });
 
 server.listen(process.env.PORT || 3006, () => {
@@ -95,27 +95,37 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   socket.on('sala', async (id) => {
     try {
+      let datos
+
       if (!id) {
-        console.log("no llega id al socket on sala")
-        return {
+
+        datos = {
           error: true,
-          data: "",
+          sala: "",
           mensaje: `Error al procesar la solicitud`
         };
+        socket.emit('sala', datos);
+        return
       }
       const sala = await salaM.findOne({ _id: id })
       if (!sala) {
-        console.log("no encontro sala con ese id en socket on sala")
-        return {
+        datos = {
           error: true,
-          data: "",
+          sala: "",
           mensaje: `Error al procesar la solicitud`
         };
+        socket.emit('sala', datos);
+        return
       }
       socket.join(sala.name)
       //Lo que está entre parentesis limita los usuarios a los que emito. En este los usuarios que esten en la sala con el mismo nombre.
       //La diferencia entre io.to y socket.to es que, en el primer caso se emite para todos los usuarios que están dentro de la sala. En el siguiente caso se obvia a quien hizo la petición al back
-      io.to(sala.name).emit('sala', sala)
+      datos = {
+        error: false,
+        sala: sala,
+        mensaje: `Solicitud procesada con exito`
+      };
+      io.to(sala.name).emit('sala', datos)
       if (sala.usuarios.length == 2) {
         if ((sala.usuarios[0].valores.length == 0 && sala.usuarios[1].valores.length == 0) || (!sala.usuarios[0].valores && !sala.usuarios[1].valores)) {
           await repartir(sala) // Inicializar el tiempo de cada jugador
@@ -125,11 +135,13 @@ io.on('connection', (socket) => {
     }
     catch (err) {
       console.log("error dentro de la sockenOn sala, error al crear sala o unirse y el mensaje de error es: ", err.message)
-      return {
+      datos = {
         error: true,
-        data: "",
-        mensaje: `Error al procesar la solicitud: ${err.message}`
-      }
+        sala: "",
+        mensaje: `Error al procesar la solicitud`
+      };
+      socket.emit('sala', datos);
+      return
 
     }
   })
@@ -270,35 +282,33 @@ io.on('connection', (socket) => {
   //Cuando un jugador canta (envido, flor o truco), se emite al otro jugador el canto y, en caso de requerirse, se espera una respuesta.
   socket.on('canto', async (res) => {
     try {
+
       let ores = await booleanos(res);
       const sala = await salaM.findOne({ name: res.sala });
-      const users = sala.usuarios;
-      sala.usuarios[0].timeJugada = 60;
-      sala.usuarios[1].timeJugada = 60;
+      sala.usuarios[0].timeJugada = 60;//ambos usuarios inician con 60 seg por movimiento o respuesta
+      sala.usuarios[1].timeJugada = 60;//ambos usuarios inician con 60 seg por movimiento o respuesta
       sala.usuarios.forEach(element => {
         if (element.id.toHexString() === res.jugador.id) {
-          element.tiempoAgotado = 0
-          element.realizoCanto = true
-          element.debeResponder = false
+          element.tiempoAgotado = 0 //vuelvo a cero contador de tiempo agotado xq no tuvo 2 seguidos
+          element.realizoCanto = true//coloco que es el usuario quien realiza el canto
+          element.debeResponder = false//y pogo que si debia responder ya lo hizo
         } else {
-          element.realizoCanto = false
-          element.debeResponder = true
+          element.realizoCanto = false//si no es el usuario que canto, pongo q realizo canto en false
+          element.debeResponder = true//si no es el usuario que canto, pongo q debe respondere en true
         }
       })
-      await sala.save()
+
       let corregir = false;
       let idAcorregir;
       if (res.canto == 'envido' || res.canto == 'reenvido' || res.canto == 'realEnvido' || res.canto == 'faltaEnvido' || res.canto == 'flor') {
-        if (sala.cantosenmano.boolTruco) {
-          sala.cantosenmano.boolTruco = false;
-          ores.cantosenmano.boolTruco = false;
-          users.forEach(element => {
+        if (sala.cantosenmano.boolTruco) { // si estaba cantado el truco ejecuta el if
+          sala.cantosenmano.boolTruco = false; // vuelvo a poner booltruco en false
+          sala.usuarios.forEach(element => {
             element.puedeCantar = true
-            ores.jugador.puedeCantar = true
           })
         }
         if (res.canto == 'envido' || res.canto == 'reenvido' || res.canto == 'realEnvido' || res.canto == 'faltaEnvido') { //si el q canta es quien tiene cantora, aun no lo permite el front
-          users.forEach(element => {
+          sala.usuarios.forEach(element => {
             if (element.id === res.jugador.id) {
               if (element.tieneFlor) {
                 element.puedeFlor = false;
@@ -316,9 +326,10 @@ io.on('connection', (socket) => {
           // si quien miente es mano debo dejarle habilitada la flor por si la canta pero si revira debo corregir.
         }
         if (res.canto == 'flor') {
-          users.forEach(element => {
+          sala.usuarios.forEach(element => {
             if (element.id === res.jugador.id) {
               if (element.tieneFlor) {
+                console.log("canto flor ")
                 element.puedeFlor = false;
                 element.cantoFlor = true;
               }
@@ -327,12 +338,18 @@ io.on('connection', (socket) => {
           })
         }
       }
+      await sala.save()
 
       if (corregir) {
         await corregirPuntos(idAcorregir, res.sala)
-
       }
-      await sala.save()
+      let actualizar = await salaM.findOne({ name: res.sala })
+      ores.cantosenmano = actualizar.cantosenmano;
+      actualizar.usuarios.forEach(element => {
+        if (ores.jugador.name == element.name) {
+          ores.jugador == element
+        }
+      })
       socket.to(res.sala).emit('cantando', ores)
     } catch (err) {
       console.log("error dentro de socketOn canto y el mensaje de error es: ", err.message)
@@ -384,6 +401,7 @@ io.on('connection', (socket) => {
               await corregirPuntos(res.jugador.id, res.sala)
               sala = await salaM.findOne({ name: res.sala })
               users = sala.usuarios
+
             }
           }
 
@@ -1416,7 +1434,7 @@ function iniciarMostrarTiempo(nameSala, intervalo) {
     }
     ejecutarMostrarTiempo();
   } catch (err) {
-    console.log("error dentro de funcion iniciarMostrarTiempo y el mensaje de error es: ", err.message)
+    ejecutarMostrarTiempo();
     return
   }
 }
@@ -1537,7 +1555,7 @@ async function MostrarTiempo(nameSala) {
 const corregirPuntos = async (idLLega, nameSala) => {
   try {
     const sala = await salaM.findOne({ name: nameSala });
-    if (sala.cantosenmano.boolFlorFlor || sala.cantosenmano.boolContraFlor || sala.cantosenmano.boolFlorMeAchico) {
+    if (sala.cantosenmano.boolFlor || sala.cantosenmano.boolFlorFlor || sala.cantosenmano.boolContraFlor || sala.cantosenmano.boolFlorMeAchico) {
       sala.cantosenmano.florNegada = false;
       return
     }
@@ -1646,36 +1664,33 @@ const booleanos = async (res) => {
     switch (res.canto) {
       case 'envido':
         sala.cantosenmano.boolEnvido = true;
-        sala.cantosenmano.boolTruco = false;
 
         break;
       case 'reEnvido':
         sala.cantosenmano.boolReEnvido = true;
-        sala.cantosenmano.boolTruco = false;
         break;
       case 'realEnvido':
         sala.cantosenmano.boolRealEnvido = true;
-        sala.cantosenmano.boolTruco = false;
         break;
       case 'faltaEnvido':
         sala.cantosenmano.boolFaltaEnvido = true;
-        sala.cantosenmano.boolTruco = false;
         break;
       case 'flor':
         sala.cantosenmano.boolFlor = true;
-        sala.cantosenmano.boolTruco = false
+        sala.usuarios.forEach(element => {
+          if (element.id == res.jugador.id) {
+            element.cantoFlor = true
+          }
+        })
         break;
       case 'florFlor':
         sala.cantosenmano.boolFlorFlor = true;
-        sala.cantosenmano.boolTruco = false;
         break;
       case 'florMeAchico':
         sala.cantosenmano.boolFlorMeAchico = true;
-        sala.cantosenmano.boolTruco = false;
         break;
       case 'contraFlor':
         sala.cantosenmano.boolContraFlor = true;
-        sala.cantosenmano.boolTruco = false;
         break;
       case 'truco':
         sala.cantosenmano.boolTruco = true;
