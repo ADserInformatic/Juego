@@ -68,6 +68,9 @@ nav .set{
     background: #000000d5;
     color: #fff;
 }
+.forms .user h3{
+    text-transform: capitalize;
+}
 .form-block{
     margin-top: 15px;
     display: flex;

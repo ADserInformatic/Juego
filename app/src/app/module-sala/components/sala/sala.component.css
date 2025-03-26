@@ -99,9 +99,19 @@ nav .set{
     border: solid .3px #fff;
     text-align: center;
 }
+.nombre h5{
+    display: flex;
+    justify-content: center;
+}
+.nombre h5 p{
+    text-transform: capitalize;
+}
 .tantos .h4{
     width: 100%;
     text-align: center;
+}
+.tantos .puntos h4{
+    text-transform: capitalize;
 }
 .cards{
     margin-top: -120px;
@@ -186,6 +196,7 @@ nav .set{
     top: 0;
     height: 100%;
 }
+
 .titulo{
     padding: 10px 0px;
     display: flex;
