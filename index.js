@@ -16,10 +16,7 @@ const cors = require('cors');
 app.use(cors())
 // Conexión a Base de datos
 const porcentajePremio = 0.85
-mongoose.connect(process.env.uri, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true
-})
+mongoose.connect(process.env.uri)
   .then(() => console.log('Base de datos conectada'))
   .catch(e => console.log('error db:', e))
 
@@ -1400,10 +1397,11 @@ io.on('connection', (socket) => {
             mostrarPuntos.usuarios[ganador].jugada.push(cartaParaAgregar)
           }
         })
-        await mostrarPuntos.save()
+
 
 
       }
+      await mostrarPuntos.save()
       setTimeout(() => {
         io.to(res.sala).emit('muestra', mostrarPuntos)
       }, 2000); //reparte a los 5 segundos
