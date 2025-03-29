@@ -24,6 +24,7 @@ export class SalaComponent implements OnInit {
     canto: '',
     tantos: 0,
     puedeFlor: false,
+    mano: false,
     creditos: 0,
     valores: [{ name: '', valor: 0 }]
   };
@@ -161,7 +162,7 @@ export class SalaComponent implements OnInit {
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
-      }, 5000)
+      }, 2000)
       this.resetSala(res.sala)
       this.cantoConf = false
     })
@@ -188,6 +189,7 @@ export class SalaComponent implements OnInit {
     })
   }
   resetSala(res: any) {
+    console.log(res)
     if (this.time > 1) { this.time = 0 };
     this.sala = res;
     this.envido = res.cantosenmano.boolEnvido

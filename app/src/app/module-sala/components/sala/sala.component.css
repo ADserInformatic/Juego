@@ -131,6 +131,16 @@ nav .set{
     width: 15%;
     margin-right: 5px;
 }
+.mano{
+    margin-top: 5px;
+    margin-right: -10%;
+}
+.mano1{
+    position: absolute;
+    bottom: 20%;
+    left: 10%;
+    
+}
 .tantos .puntos{
     margin-top: 5px;
     display: flex;
@@ -432,6 +442,9 @@ nav .set{
     }
     .cantos{
         width: 100%;
+    }
+    .jugoC{
+        width: 25%;
     }
 }
 @media(max-width: 380px) {

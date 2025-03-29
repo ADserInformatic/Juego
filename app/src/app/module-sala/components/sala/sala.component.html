@@ -63,6 +63,11 @@
     </div>
     <div *ngIf="sala?.usuarios" class="jugadores">
         <div class="cardsCot">
+            <div *ngIf="jugadorCont.mano" class="mano">
+                <span class="material-symbols-outlined">
+                    front_hand
+                    </span>
+            </div>
             <div class="cardCont">
                 <img *ngFor="let valor of jugadorCont?.valores" src="../../../../assets/trasera.jpg" alt="">
             </div>
@@ -81,6 +86,11 @@
             </div>
         </div>
 
+    </div>
+    <div *ngIf="jugador.mano" class="mano1">
+        <span class="material-symbols-outlined">
+            front_hand
+            </span>
     </div>
     <div class="cards" *ngIf="jugador.juega && !faltaResp">
         <button [disabled]="!jugador.juega || faltaResp" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
