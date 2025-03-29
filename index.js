@@ -181,6 +181,20 @@ io.on('connection', (socket) => {
       users[1].debeResponder = false;
       users[0].realizoCanto = false;
       users[1].realizoCanto = false;
+      //recorro usuarios y me aseguro que no haya mas de 1 carta tirada de diferencia por si tira 2 seguidas
+      let CantCartasQuienTiro, CantCartasQuienEspera
+      users.forEach(async (element) => {
+        if (jugada.idUser === element.id.toHexString()) {
+          CantCartasQuienTiro = element.jugada.length //cantidad de cartas jugadas anteriormente por quien tiro ahora
+        } else { CantCartasQuienEspera = element.jugada.length }//cantidad de cartas tiradas de quien estaba esperando
+      })
+      if (CantCartasQuienTiro - CantCartasQuienEspera >= 1) {//si el que tira ya tiene 1 mas tirada que el anterior, ni sumo la nueva q tira y retorno
+        await salaM.findByIdAndUpdate({ _id: salaOn._id }, { $set: { usuarios: users } }) //actualizo lo de responder y realizo canto y muestro
+        let paraMostrar = await salaM.findOne({ _id: salaOn._id })
+        io.to(salaOn.name).emit('muestra', paraMostrar)
+        return
+      }
+
 
 
       let idUltimoTiro;
