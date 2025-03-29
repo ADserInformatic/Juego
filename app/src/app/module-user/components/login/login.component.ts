@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class LoginComponent implements OnInit {
   public formUser!: FormGroup;
   private token!: string;
+  audio: any;
 
   constructor(
     private servLogin: AuthService,
@@ -32,6 +33,7 @@ export class LoginComponent implements OnInit {
       alert('Revisa los campos')
       return
     }
+
     this.servLogin.login(this.formUser.value).subscribe(res => {
       if (res.mensaje) {
         alert(res.mensaje)
@@ -54,5 +56,9 @@ export class LoginComponent implements OnInit {
     })
 
   }
-
+  otraForma() {
+    this.audio = document.getElementById('audio');
+    this.audio.muted = false; // Desactiva el silencio
+    this.audio.play(); // Inicia la reproducción
+  }
 }
