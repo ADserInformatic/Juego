@@ -63,6 +63,12 @@ const sala = new Schema({
         ganoPrimera: { type: Boolean, default: false }, //quien gano primera 
 
     }]
+    /* ,
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        expires: '5m' // Esto eliminará el documento automáticamente después de 5 minutos si no se actualiza 
+    } */
 
 })
 

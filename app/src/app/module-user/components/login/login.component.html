@@ -1,4 +1,4 @@
-<div class="body" >
+<div class="body">
     <nav>
         <div class="titulo">
             <h4>ADser Truco</h4>
@@ -27,8 +27,10 @@
                 </div>
                 <label for="pass">Contraseña</label>
                 <input (keydown.enter)="userSend()" formControlName="passInput" type="password" id="pass">
-                <div class="error" >
-                    <i *ngIf="formUser.get('passInput')?.invalid && formUser.get('passInput')?.errors?.['minlength'] && formUser.get('passInput')?.touched">Ingrese una contraseña válida.</i>
+                <div class="error">
+                    <i
+                        *ngIf="formUser.get('passInput')?.invalid && formUser.get('passInput')?.errors?.['minlength'] && formUser.get('passInput')?.touched">Ingrese
+                        una contraseña válida.</i>
                 </div>
                 <button [disabled]="formUser.invalid" (click)="userSend()">Ingresar</button>
             </div>
@@ -36,4 +38,22 @@
     </div>
 </div>
 
+<footer style="background-color: black;">
+    <audio id="audio" controls loop loop>
+        <source src="assets/tango.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+</footer>
 
+
+<script>
+    // Obtener el elemento de audio
+    var audio = document.getElementById('audio');
+    // Agregar un evento de clic al documento
+    document.addEventListener('click', function () {
+        console.log("hizo click")
+        // Reproducir música si no está en reproducción
+        audio.muted = false; // Desactiva el silencio
+        audio.play(); // Inicia la reproducción
+    });
+</script>

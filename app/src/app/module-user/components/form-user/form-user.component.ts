@@ -68,7 +68,7 @@ export class FormUserComponent implements OnInit {
 
   }
   traeSalas() {
-    this.servCons.getSalas().subscribe(res => {
+    this.servCons.getSalas(this.user.id).subscribe(res => {
       this.salas = res.data
     })
   }
@@ -97,6 +97,7 @@ export class FormUserComponent implements OnInit {
     }
     this.servCons.createSala(datos).subscribe(res => {
       this.datosSala(res)
+
     })
 
   }
@@ -181,8 +182,4 @@ export class FormUserComponent implements OnInit {
     })
   }
 
-  // search(){
-  //   this.searchSalas = this.salas.filter(e=> e.name.toUpperCase().includes(this.form.value.texto.toUpperCase()))
-  //   console.log(this.searchSalas)
-  // }
 }

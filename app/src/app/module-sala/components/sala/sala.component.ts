@@ -118,7 +118,6 @@ export class SalaComponent implements OnInit {
       this.mensaje = ''
     })
     this.socket.on('cantando', (res: any) => {
-      console.log(res)
       if (this.time > 1) { this.time = 0 };
       this.cantoI = res.canto
       res.jugador = this.jugadorCont
@@ -158,7 +157,6 @@ export class SalaComponent implements OnInit {
       confirm(`Tu oponente dice ${res}`)
     })
     this.socket.on('resultadoDeCanto', (res: any) => {
-      console.log(res)
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
@@ -187,9 +185,23 @@ export class SalaComponent implements OnInit {
       this.mentira = this.envido || this.realEnvido || this.faltaEnvido
       this.btnMentiras = this.jugador.valores.length > 2 && !this.mentira
     })
+
+    setTimeout(async () => {
+      if (this.sala.usuarios.length === 1) {
+        this.mensaje = "Sala expirada...redirigiendo al lobby"
+        setTimeout(() => {
+          this.mensaje = ''
+          this.router.navigate(['/appTruco'])
+        }, 3000)
+      }
+    }, 305000); // 5 min
+
+
+
+
+
   }
   resetSala(res: any) {
-    console.log(res)
     if (this.time > 1) { this.time = 0 };
     this.sala = res;
     this.envido = res.cantosenmano.boolEnvido
@@ -313,7 +325,6 @@ export class SalaComponent implements OnInit {
     if (this.time > 1) { this.time = 0 };
     if (this.truco && resp === 'primEnvido') {
       if (this.selected.nativeElement.value === 'El envido va primero') {
-        console.log('El envido va primero')
         return
       }
       let data = {

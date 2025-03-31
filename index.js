@@ -16,10 +16,7 @@ const cors = require('cors');
 app.use(cors())
 // Conexión a Base de datos
 const porcentajePremio = 0.85
-mongoose.connect(process.env.uri, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true
-})
+mongoose.connect(process.env.uri)
   .then(() => console.log('Base de datos conectada'))
   .catch(e => console.log('error db:', e))
 
@@ -59,35 +56,16 @@ const path = require('path');
 
 // Sirve los archivos estáticos de la aplicación Angular
 
-app.use(express.static(path.join(__dirname, '../public_html')));
+app.use(express.static(path.join(__dirname, '../../public_html')));
 
 
 // Maneja todas las rutas no definidas y redirige a index.html
 
 app.get('*', (req, res) => {
 
-  res.sendFile(path.join(__dirname, '../public_html/index.html'));
+  res.sendFile(path.join(__dirname, '../../public_html/index.html'));
 
 });
-
-/* 
-app.get('/', (req, res) => {
-  const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="es">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Página de Ejemplo</title>
-      </head>
-      <body>
-          <h1>Hola, bienvenido a mi API!</h1>
-          <p>Este es un ejemplo de cómo mostrar HTML desde una API de Node.js.</p>
-      </body>
-      </html>
-  `;
-  res.send(htmlContent); // Enviar el contenido HTML como respuesta
-}); */
 
 
 //Wwbsocket
@@ -241,29 +219,34 @@ io.on('connection', (socket) => {
         //SI TERMINO LA MANO PREGUNTO SI TERMINO EL JUEGO
         let terminoJuego = await terminar(salaOn) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
         if (!terminoJuego) { //si el resultado de la funcion terminar es falso, se sigue el juego y se reparte, solo termino una mano
-          const mostrarPuntos = await salaM.findOne({ name: salaOn.name })
-          if (mostrarPuntos.cantosenmano.mostrarPuntos) {
-            let ganador = mostrarPuntos.cantosenmano.posGanMentira
-            mostrarPuntos.usuarios[ganador].cartasAMostrar.forEach(element => {
-              let tirada = mostrarPuntos.usuarios[ganador].jugada.find(e => e.carta === element.name)
-              if (!tirada) {
+          const mostrarPuntos = await salaM.findOne({ name: salaOn.name })//traigo actualizada la sala
+          if (mostrarPuntos.cantosenmano.mostrarPuntos) {//si esta en true que hay que mostrar puntos entro en el bloque
+            let ganador = mostrarPuntos.cantosenmano.posGanMentira //me fijo quien gano la mentira que es de quien debo mostrar cartas
+            mostrarPuntos.usuarios[ganador].cartasAMostrar.forEach(element => {  //me fijo en las cartas a mostrar si es que ya no esta tirada
+              let tirada = mostrarPuntos.usuarios[ganador].jugada.find(e => e.carta === element.name)  //me fijo si esta tirada
+              if (!tirada) { // si no esta tirada la agrego
                 let cartaParaAgregar = {
                   sala: mostrarPuntos.name,
                   valor: element.valor,
                   carta: element.name,
                   idUser: mostrarPuntos.usuarios[ganador].id.toHexString()
                 }
-                mostrarPuntos.usuarios[ganador].jugada.push(cartaParaAgregar)
+                mostrarPuntos.usuarios[ganador].jugada.push(cartaParaAgregar) //si no esta tirada la pongo en las tiradas para mostrarla
               }
             })
             await mostrarPuntos.save()
+            setTimeout(() => {
+              io.to(salaOn.name).emit('muestra', mostrarPuntos)
+            }, 2000); //reparte a los 5 segundos
+            setTimeout(() => {
+              repartir(mostrarPuntos)
+            }, 5000); //reparte a los 5 segundos
+          } else { // si no hay cartas para mostrar solo  reparto esperando 2 segundos
+            setTimeout(() => {
+              repartir(mostrarPuntos)
+            }, 2000); //reparte a los 2 segundos
           }
-          setTimeout(() => {
-            io.to(salaOn.name).emit('muestra', mostrarPuntos)
-          }, 2000); //reparte a los 5 segundos
-          setTimeout(() => {
-            repartir(mostrarPuntos)
-          }, 5000); //reparte a los 5 segundos
+
         } else {
           let winner;
           if (users[0].tantos > users[1].tantos) {
@@ -434,7 +417,13 @@ io.on('connection', (socket) => {
                 if (users[0].puntosMentira > users[1].puntosMentira) {
                   users[0].tantos += 2
                   sala.cantosenmano.posGanMentira = 0;
-                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                  if (users[0].mano) {
+                    mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                  } else {
+                    mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos y el mano tiene ${users[1].puntosMentira} puntos`
+                  }
+
+
                   winner = users[0].id
                   sala.cantosenmano.posGanMentira = 0;
 
@@ -443,20 +432,24 @@ io.on('connection', (socket) => {
                 if (users[0].puntosMentira < users[1].puntosMentira) {
                   users[1].tantos += 2
                   winner = users[1].id
-                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                  if (users[1].mano) {
+                    mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                  } else {
+                    mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos y el mano tiene ${users[0].puntosMentira} puntos`
+                  }
                   sala.cantosenmano.posGanMentira = 1;
 
                 }
                 if (users[0].puntosMentira == users[1].puntosMentira) {
                   if (users[1].mano == true) {
                     users[1].tantos += 2;
-                    mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
+                    mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
                     winner = users[1].id
                     sala.cantosenmano.posGanMentira = 1;
 
                   } else {
                     users[0].tantos += 2;
-                    mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
+                    mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
                     winner = users[0].id
                     sala.cantosenmano.posGanMentira = 0;
 
@@ -524,25 +517,33 @@ io.on('connection', (socket) => {
                 sala.cantosenmano.posGanMentira = 0;
                 users[0].tantos += 4
                 winner = users[0].id
-                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                if (users[0].mano) {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                } else {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos y el mano tiene ${users[1].puntosMentira} puntos`
+                }
               }
               if (users[0].puntosMentira < users[1].puntosMentira) {
                 sala.cantosenmano.posGanMentira = 1
                 users[1].tantos += 4
                 winner = users[1].id
-                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                if (users[1].mano) {
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                } else {
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos y el mano tiene ${users[0].puntosMentira} puntos`
+                }
               }
               if (users[0].puntosMentira == users[1].puntosMentira) {
                 if (users[1].mano == true) {
                   sala.cantosenmano.posGanMentira = 1
                   users[1].tantos += 4;
                   winner = users[1].id
-                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos `
                 } else {
                   sala.cantosenmano.posGanMentira = 0
                   winner = users[0].id
                   users[0].tantos += 4;
-                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos `
                 }
               }
               await sala.save()
@@ -618,7 +619,11 @@ io.on('connection', (socket) => {
                 }
                 sala.cantosenmano.posGanMentira = 0
                 winner = users[0].id
-                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                if (users[1].mano) {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                } else {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos y el mano tiene ${users[1].puntosMentira} puntos`
+                }
               }
               if (users[0].puntosMentira < users[1].puntosMentira) {
                 sala.cantosenmano.posGanMentira = 1
@@ -637,7 +642,11 @@ io.on('connection', (socket) => {
                   }
                 }//solo se cantó real envido}
                 winner = users[1].id
-                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                if (users[1].mano) {
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                } else {
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos y el mano tiene ${users[0].puntosMentira} puntos`
+                }
               }
               if (users[0].puntosMentira == users[1].puntosMentira) {
                 if (users[0].mano) { //gana usuario 0 de mano
@@ -747,7 +756,11 @@ io.on('connection', (socket) => {
               if (users[0].puntosMentira > users[1].puntosMentira) {
                 sala.cantosenmano.posGanMentira = 0
                 winner = users[0].id
-                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                if (users[1].mano) {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                } else {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos y el mano tiene ${users[1].puntosMentira} puntos`
+                }
                 if (sala.unaFalta) {
                   users[0].tantos += 30 - users[1].tantos;
                 } else {
@@ -765,7 +778,11 @@ io.on('connection', (socket) => {
               } else {
                 if (users[1].puntosMentira > users[0].puntosMentira) {
                   sala.cantosenmano.posGanMentira = 1
-                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                  if (users[1].mano) {
+                    mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                  } else {
+                    mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos y el mano tiene ${users[0].puntosMentira} puntos`
+                  }
                   winner = users[1].id
                   if (sala.unaFalta) {
                     users[1].tantos += 30 - users[0].tantos;
@@ -784,7 +801,7 @@ io.on('connection', (socket) => {
                   if (users[0].puntosMentira == users[1].puntosMentira) {
                     if (users[0].mano) {
                       sala.cantosenmano.posGanMentira = 0
-                      mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos POR MANO`
+                      mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
                       winner = users[0].id
                       if (sala.unaFalta) {
                         users[0].tantos += 30 - users[1].tantos;
@@ -800,7 +817,7 @@ io.on('connection', (socket) => {
                       }
                     } else {
                       sala.cantosenmano.posGanMentira = 1
-                      mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos POR MANO`
+                      mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
                       winner = users[1].id
                       if (sala.unaFalta) {
                         users[1].tantos += 30 - users[0].tantos;
@@ -936,7 +953,7 @@ io.on('connection', (socket) => {
                   await terminar(sala)
                   setTimeout(() => {
                     repartir(sala)
-                  }, 4000); //reparte a los 5 segundos
+                  }, 2000); //reparte a los 2 segundos
                 }
               }
 
@@ -985,7 +1002,7 @@ io.on('connection', (socket) => {
                   await terminar(sala)
                   setTimeout(() => {
                     repartir(sala)
-                  }, 5000); //reparte a los 5 segundos
+                  }, 2000); //reparte a los 5 segundos
                 }
               }
 
@@ -1044,7 +1061,7 @@ io.on('connection', (socket) => {
                   await terminar(sala)
                   setTimeout(() => {
                     repartir(sala)
-                  }, 5000); //reparte a los 5 segundos
+                  }, 2000); //reparte a los 5 segundos
                 }
               }
               break;
@@ -1095,12 +1112,20 @@ io.on('connection', (socket) => {
               if (users[0].puntosMentira > users[1].puntosMentira) {
                 users[0].tantos += 6
                 winner = users[0].id
-                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                if (users[1].mano) {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                } else {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos y el mano tiene ${users[1].puntosMentira} puntos`
+                }
                 sala.cantosenmano.posGanMentira = 0
               }
               if (users[0].puntosMentira < users[1].puntosMentira) {
                 users[1].tantos += 6
-                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                if (users[1].mano) {
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                } else {
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos y el mano tiene ${users[0].puntosMentira} puntos`
+                }
                 winner = users[1].id
                 sala.cantosenmano.posGanMentira = 1
               }
@@ -1108,12 +1133,12 @@ io.on('connection', (socket) => {
                 if (users[1].mano == true) {
                   winner = users[1].id
                   users[1].tantos += 6;
-                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
                   sala.cantosenmano.posGanMentira = 1
                 } else {
                   winner = users[0].id
                   users[0].tantos += 6;
-                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
                   sala.cantosenmano.posGanMentira = 0
                 }
               }
@@ -1206,25 +1231,33 @@ io.on('connection', (socket) => {
               if (users[0].puntosMentira > users[1].puntosMentira) {
                 users[0].tantos += 30
                 winner = users[0].id
-                mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                if (users[1].mano) {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
+                } else {
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos y el mano tiene ${users[1].puntosMentira} puntos`
+                }
                 sala.cantosenmano.posGanMentira = 0
               }
               if (users[0].puntosMentira < users[1].puntosMentira) {
                 users[1].tantos += 30
                 winner = users[1].id
-                mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                if (users[1].mano) {
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
+                } else {
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos y el mano tiene ${users[0].puntosMentira} puntos`
+                }
                 sala.cantosenmano.posGanMentira = 1
               }
               if (users[0].puntosMentira == users[1].puntosMentira) {
                 if (users[1].mano == true) {
                   winner = users[1].id
                   users[1].tantos += 30;
-                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos por mano`
+                  mensaje = `Gana ${users[1].name} con ${users[1].puntosMentira} puntos`
                   sala.cantosenmano.posGanMentira = 1
                 } else {
                   winner = users[0].id
                   users[0].tantos += 30;
-                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos por mano`
+                  mensaje = `Gana ${users[0].name} con ${users[0].puntosMentira} puntos`
                   sala.cantosenmano.posGanMentira = 0
                 }
               }
@@ -1364,18 +1397,20 @@ io.on('connection', (socket) => {
             mostrarPuntos.usuarios[ganador].jugada.push(cartaParaAgregar)
           }
         })
-        await mostrarPuntos.save()
+
+
+
       }
+      await mostrarPuntos.save()
       setTimeout(() => {
         io.to(res.sala).emit('muestra', mostrarPuntos)
       }, 2000); //reparte a los 5 segundos
-
 
       let terminoJuego = await terminar(mostrarPuntos) //vuelve a repartir y suma partidas pero si ya termino el juego devuelve true o false
       if (!terminoJuego) { //si el resultado de la funcion terminar es falso, se sigue el juego y se reparte, solo termino una mano
         setTimeout(() => {
           repartir(mostrarPuntos)
-        }, 5000); //reparte a los 5 segundos
+        }, 4000); //reparte a los 5 segundos
       } else {
         let winner;
         if (users[0].tantos > users[1].tantos) {

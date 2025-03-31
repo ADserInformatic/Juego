@@ -2,18 +2,42 @@ const sala = require("../modelos/sala")
 const user = require('../modelos/user')
 
 
+
 const getSalas = async (req, res) => {
 
     try {
-        const salas = await sala.find({})
-        if (salas) {
+        const id = req.params.id //guardo el id del que consulta salas
+
+        const salas = await sala.find({}) //guardo todas las salas...
+        if (salas.length > 0) {
+            let retornarSalas = [];
+            let participa = [];
+            let hayLugar = [];
+            await salas.forEach(async (element) => {
+                if (element.usuarios.length == 2) {
+                    element.usuarios.forEach(async (u) => {
+                        if (u.id.toHexString() == id) {
+                            participa.push(element);
+                        }
+                    })
+                }
+                else {
+                    if (element.usuarios.length < 2) {
+                        hayLugar.push(element)
+                    }
+                }
+            })
+            retornarSalas = participa.concat(hayLugar)
             res.json({
                 error: false,
-                data: salas,
+                data: retornarSalas,
                 mensaje: 'La solicitud se resolvió de forma exitosa'
             })
         } else {
-            console.log("salas esta vacio: ", salas)
+            res.json({
+                error: true,
+                mensaje: `el array salas esta vacio`
+            })
         }
     } catch (e) {
         res.json({
@@ -24,41 +48,61 @@ const getSalas = async (req, res) => {
 }
 
 const saveSala = async (req, res) => {
-    const { name, apuesta, usuarios } = req.body
-    const salaExiste = await sala.findOne({ name })
-    if (salaExiste) {
-        return res.json({
-            error: false,
-            data: salaExiste,
-            denegado: true,
-            mensaje: 'No pueden existir dos salas con el mismo nombre'
-        })
-    }
-    const usuario = await user.findOne({ _id: usuarios[0].id })
-    if (usuario.credito < apuesta) {
-        res.json({
-            error: true,
-            mensaje: `El crédito es insuficiente`
-        })
-    }
-
-
-    usuario.credito -= apuesta;
-    await usuario.save();
-    usuarios[0].name = usuario.name
-    usuarios[0].creditos = usuario.credito
-    const creado = await sala.create({ name, apuesta, usuarios })
-
     try {
+        const { name, apuesta, usuarios } = req.body
+        const salaExiste = await sala.findOne({ name })
+        if (salaExiste) {
+            return res.json({
+                error: false,
+                data: salaExiste,
+                denegado: true,
+                mensaje: 'No pueden existir dos salas con el mismo nombre'
+            })
+        }
+        const usuario = await user.findOne({ _id: usuarios[0].id })
+        if (usuario.credito < apuesta) {
+            res.json({
+                error: true,
+                mensaje: `El crédito es insuficiente`
+            })
+        }
+
+
+        usuario.credito -= apuesta;
+        await usuario.save();
+        usuarios[0].name = usuario.name
+        usuarios[0].creditos = usuario.credito
+        const creado = await sala.create({ name, apuesta, usuarios })
+
+
         res.json({
             error: false,
             data: creado,
             mensaje: 'La solicitud se resolvió de forma exitosa'
         })
+        setTimeout(async () => {
+            try {
+                const salaActualizada = await sala.findOne({ name })
+                if (salaActualizada && salaActualizada.usuarios.length === 1) {
+                    let creador = await user.findOne({ name: salaActualizada.usuarios[0].name })
+                    if (creador) {
+                        creador.credito += salaActualizada.apuesta;
+                        await creador.save()
+                        await sala.findByIdAndDelete({ _id: salaActualizada._id })
+                    }
+                }
+            } catch (e) {
+                console.log("algo malio sal en settimeout expirar y fue: ", e.message)
+
+            }
+        }, 300000); // 5 minutos 300000
+
+
+
     } catch (e) {
         res.json({
             error: true,
-            mensaje: `El servidor responde con el siguiente error: ${e}`
+            mensaje: `El servidor responde con el siguiente error: ${e.message}`
         })
     }
 }
@@ -110,6 +154,14 @@ const addUser = async (req, res) => {
     if (buscar) {
         //Una vez que se sabe que existe el usuario se busca la sala a la que quiere ingresar
         const actual = await sala.findOne({ _id: id })
+        if (!actual) {
+            return res.json({
+                error: false,
+                data: "",
+                mensaje: 'Ya no esta disponible la sala',
+                denegado: true
+            })
+        }
         //Si en la sala ya hay 2 jugadores y el que está intentando ingresar es distinto al primer jugador retorna un error
         if (actual.usuarios.length > 1 && actual.usuarios[0].id.toHexString() !== buscar._id.toHexString()) {
             if (actual.usuarios[1]) {
