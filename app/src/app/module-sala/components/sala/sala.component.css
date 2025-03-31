@@ -68,6 +68,7 @@ nav .set{
 }
 .body{
     max-width: 1240px;
+    position: relative;
     margin: auto;
     min-height: 100vh;
     text-align: center;
@@ -137,8 +138,8 @@ nav .set{
 }
 .mano1{
     position: absolute;
-    bottom: 20%;
-    left: 10%;
+    bottom: 30%;
+    left: 25px;
     
 }
 .tantos .puntos{

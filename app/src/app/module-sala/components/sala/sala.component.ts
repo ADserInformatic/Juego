@@ -162,7 +162,7 @@ export class SalaComponent implements OnInit {
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
-      }, 2000)
+      }, 2500)
       this.resetSala(res.sala)
       this.cantoConf = false
     })
