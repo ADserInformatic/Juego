@@ -20,6 +20,7 @@ export class FormUserComponent implements OnInit {
   public cambiarPass: boolean = false;
   public isAdmin: any;
   public passChanged: any;
+  public audio: any;
 
 
   constructor(
@@ -189,6 +190,11 @@ export class FormUserComponent implements OnInit {
       this.cookie.delete('jugador')
       this.route.navigate(['/'])
     })
+  }
+  otraForma() {
+    this.audio = document.getElementById('audio');
+    this.audio.muted = false; // Desactiva el silencio
+    this.audio.play(); // Inicia la reproducción
   }
 
 }

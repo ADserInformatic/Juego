@@ -1,4 +1,4 @@
-<div class="body" >
+<div class="body">
     <nav>
         <div class="titulo">
             <h4>ADser Truco</h4>
@@ -30,10 +30,13 @@
                 <label for="apuesta">Apuesta:</label>
                 <input (keydown.enter)="createSala()" formControlName="apuesta" type="number">
                 <div class="error">
-                    <p *ngIf="formSala.get('apuesta')?.value > 499">Cada jugador apuesta {{formSala.get('apuesta')?.value | currency}}. El ganador recibe {{(formSala.get('apuesta')?.value * 2) * 0.85 | currency}}</p>
+                    <p *ngIf="formSala.get('apuesta')?.value > 499">Cada jugador apuesta
+                        {{formSala.get('apuesta')?.value | currency}}. El ganador recibe
+                        {{(formSala.get('apuesta')?.value * 2) * 0.85 | currency}}</p>
                 </div>
                 <div class="error">
-                    <i  *ngIf="formSala.get('apuesta')?.invalid && formSala.get('apuesta')?.touched">Apuesta es requerido.</i>
+                    <i *ngIf="formSala.get('apuesta')?.invalid && formSala.get('apuesta')?.touched">Apuesta es
+                        requerido.</i>
                 </div>
                 <button [disabled]="formSala.invalid" class="crear" (click)="createSala()">Crear</button>
             </div>
@@ -42,13 +45,13 @@
                 <div class="reload">
                     <div class="buscador" [formGroup]="form">
                         <div class="inpu">
-                          <input #inp type="text" formControlName="texto" placeholder="Buscar...">
-                          <span class="material-symbols-outlined">
-                            search
-                          </span>
+                            <input #inp type="text" formControlName="texto" placeholder="Buscar...">
+                            <span class="material-symbols-outlined">
+                                search
+                            </span>
                         </div>
-                      </div>
-                    
+                    </div>
+
                     <button title="Recargar salas" (click)="reload()">
                         <span class="material-symbols-outlined">
                             update
@@ -74,7 +77,7 @@
                     <div class="salaItem">
                         <button title="Ingresar a {{item.name}}" (click)="sala(item)">{{item.name}}</button>
                         <span *ngIf="item.usuarios.length > 1"><span class="material-symbols-outlined llena">
-                            block
+                                block
                             </span></span>
                         <p>{{item.apuesta | currency}}</p>
                         <button *ngIf="isAdmin" title="Eliminar sala" (click)="deleteSala(item._id)">
@@ -95,28 +98,56 @@
             <button class="cerrar" (click)="cerrar()">
                 <span class="material-symbols-outlined">
                     cancel
-                    </span>
+                </span>
             </button>
             <h1>Cambiar contraseña</h1>
             <div [formGroup]="formPass" class="form-block">
                 <label for="passOld">Contraseña</label>
                 <input formControlName="passOld" type="password" id="passOld">
-                <div class="error" >
-                    <i *ngIf="formPass.get('passOld')?.invalid && formPass.get('passOld')?.errors?.['minlength'] && formPass.get('passOld')?.touched">Ingrese una contraseña válida.</i>
+                <div class="error">
+                    <i
+                        *ngIf="formPass.get('passOld')?.invalid && formPass.get('passOld')?.errors?.['minlength'] && formPass.get('passOld')?.touched">Ingrese
+                        una contraseña válida.</i>
                 </div>
                 <label for="passNew">Nueva contraseña:</label>
                 <input formControlName="passNew" type="password" id="passNew">
-                <div class="error" >
-                    <i *ngIf="formPass.get('passNew')?.invalid && formPass.get('passNew')?.errors?.['minlength'] && formPass.get('passNew')?.touched">Ingrese una contraseña válida.</i>
+                <div class="error">
+                    <i
+                        *ngIf="formPass.get('passNew')?.invalid && formPass.get('passNew')?.errors?.['minlength'] && formPass.get('passNew')?.touched">Ingrese
+                        una contraseña válida.</i>
                 </div>
                 <label for="pass">Confirmar contraseña</label>
                 <input formControlName="passConf" type="password" id="pass">
-                <div class="error" >
-                    <i *ngIf="formPass.get('passConf')?.invalid && formPass.get('passConf')?.errors?.['minlength'] && formPass.get('passConf')?.touched">Ingrese una contraseña válida.</i>
-                    <i *ngIf="formPass.get('passConf')?.value !== formPass.get('passNew')?.value && formPass.get('passConf')?.touched">La nueva contraseña debe coinsidir con la confirmación.</i>
+                <div class="error">
+                    <i
+                        *ngIf="formPass.get('passConf')?.invalid && formPass.get('passConf')?.errors?.['minlength'] && formPass.get('passConf')?.touched">Ingrese
+                        una contraseña válida.</i>
+                    <i
+                        *ngIf="formPass.get('passConf')?.value !== formPass.get('passNew')?.value && formPass.get('passConf')?.touched">La
+                        nueva contraseña debe coinsidir con la confirmación.</i>
                 </div>
                 <button [disabled]="formPass.invalid" (click)="sendPass()">Cambiar</button>
             </div>
         </div>
     </div>
 </div>
+
+
+<footer style="background-color: black;">
+    <audio id="audio" controls loop loop>
+        <source src="assets/tango.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+</footer>
+
+
+<script>
+    // Obtener el elemento de audio
+    var audio = document.getElementById('audio');
+    // Agregar un evento de clic al documento
+    document.addEventListener('click', function () {
+        // Reproducir música si no está en reproducción
+        audio.muted = false; // Desactiva el silencio
+        audio.play(); // Inicia la reproducción
+    });
+</script>

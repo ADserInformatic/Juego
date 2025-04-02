@@ -57,9 +57,5 @@ export class LoginComponent implements OnInit {
     })
 
   }
-  otraForma() {
-    this.audio = document.getElementById('audio');
-    this.audio.muted = false; // Desactiva el silencio
-    this.audio.play(); // Inicia la reproducción
-  }
+
 }
