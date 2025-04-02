@@ -237,10 +237,10 @@ io.on('connection', (socket) => {
             await mostrarPuntos.save()
             setTimeout(() => {
               io.to(salaOn.name).emit('muestra', mostrarPuntos)
-            }, 2000); //reparte a los 5 segundos
+            }, 1200); //muestra a los 1.2 segundos
             setTimeout(() => {
               repartir(mostrarPuntos)
-            }, 5000); //reparte a los 5 segundos
+            }, 4000); //reparte a los 5 segundos
           } else { // si no hay cartas para mostrar solo  reparto esperando 2 segundos
             setTimeout(() => {
               repartir(mostrarPuntos)
@@ -953,7 +953,7 @@ io.on('connection', (socket) => {
                   await terminar(sala)
                   setTimeout(() => {
                     repartir(sala)
-                  }, 2000); //reparte a los 2 segundos
+                  }, 3000); //reparte a los 2 segundos
                 }
               }
 
@@ -1002,7 +1002,7 @@ io.on('connection', (socket) => {
                   await terminar(sala)
                   setTimeout(() => {
                     repartir(sala)
-                  }, 2000); //reparte a los 5 segundos
+                  }, 3000); //reparte a los 5 segundos
                 }
               }
 
@@ -1061,7 +1061,7 @@ io.on('connection', (socket) => {
                   await terminar(sala)
                   setTimeout(() => {
                     repartir(sala)
-                  }, 2000); //reparte a los 5 segundos
+                  }, 3000); //reparte a los 5 segundos
                 }
               }
               break;
