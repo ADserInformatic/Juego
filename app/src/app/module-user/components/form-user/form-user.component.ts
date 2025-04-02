@@ -34,8 +34,17 @@ export class FormUserComponent implements OnInit {
     this.isAdmin = this.cookie.get('isAMadafaka?')
 
     this.user.id = this.cookie.get('jugador')
-
+    if (!this.user.id) {
+      this.servLogin.logout()
+      this.cookie.delete('jugador')
+      if (this.cookie.get('isAMadafaka?')) {
+        this.cookie.delete('isAMadafaka?')
+      }
+      this.route.navigate(['/'])
+      return;
+    }
     this.servCons.getUser(this.user.id).subscribe(res => {
+
       this.user.name = res.data.name
       this.user.credito = res.data.credito
       this.passChanged = res.data.passChanged
