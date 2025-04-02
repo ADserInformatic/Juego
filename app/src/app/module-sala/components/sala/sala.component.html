@@ -64,9 +64,7 @@
     <div *ngIf="sala?.usuarios" class="jugadores">
         <div class="cardsCot">
             <div *ngIf="jugadorCont.mano" class="mano">
-                <span class="material-symbols-outlined">
-                    front_hand
-                    </span>
+                <img src="assets/hand.png" alt="">
             </div>
             <div class="cardCont">
                 <img *ngFor="let valor of jugadorCont?.valores" src="../../../../assets/trasera.jpg" alt="">
@@ -87,21 +85,21 @@
         </div>
 
     </div>
-    <div *ngIf="jugador.mano" class="mano1">
-        <span class="material-symbols-outlined">
-            front_hand
-            </span>
-    </div>
-    <div class="cards" *ngIf="jugador.juega && !faltaResp">
-        <button [disabled]="!jugador.juega || faltaResp" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
-            <img src="../../../../assets/{{valor.name}}.jpg" alt="">
-        </button>
-    </div>
-    <!-- -->
-    <div class="cards" *ngIf="!jugador.juega || faltaResp">
-        <button [disabled]="!jugador.juega || faltaResp" class="card" *ngFor="let valor of jugador?.valores">
-            <img src="../../../../assets/{{valor.name}}.jpg" alt="">
-        </button>
+    <div class="yoJugador">
+        <div *ngIf="jugador.mano" class="mano1">
+            <img src="assets/hand.png" alt="">
+        </div>
+        <div class="cards" *ngIf="jugador.juega && !faltaResp">
+            <button [disabled]="!jugador.juega || faltaResp" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
+                <img src="../../../../assets/{{valor.name}}.jpg" alt="">
+            </button>
+        </div>
+        <!-- -->
+        <div class="cards" *ngIf="!jugador.juega || faltaResp">
+            <button [disabled]="!jugador.juega || faltaResp" class="card" *ngFor="let valor of jugador?.valores">
+                <img src="../../../../assets/{{valor.name}}.jpg" alt="">
+            </button>
+        </div>
     </div>
     <!-- <button (click)="repartir()">Repartir</button> -->
     <div class="botonesCanto">

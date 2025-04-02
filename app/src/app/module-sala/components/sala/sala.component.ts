@@ -288,6 +288,11 @@ export class SalaComponent implements OnInit {
   }
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
+      // let audio = new Audio();
+      // audio.src = "../../../assets/pick.mp3";
+      // audio.load();
+      // audio.play();
+
     const data: Jugada = {
       sala: this.nameSala,
       valor: val.valor,

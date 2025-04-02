@@ -135,12 +135,19 @@ nav .set{
 .mano{
     margin-top: 5px;
     margin-right: -10%;
+    width: 50px;
+}
+.yoJugador{
+    position: relative;
 }
 .mano1{
     position: absolute;
-    bottom: 30%;
-    left: 25px;
-    
+    top: -20px;
+    width: 50px;
+}
+.mano1 img, .mano img{
+    filter: invert(1);
+    width: 100%;
 }
 .tantos .puntos{
     margin-top: 5px;
@@ -401,6 +408,7 @@ nav .set{
     outline: none;
     padding: 10px;
     background: #dfa403;
+    text-transform: capitalize;
 }
 
 @media screen and (max-width: 900px) {
@@ -445,7 +453,13 @@ nav .set{
         width: 100%;
     }
     .jugoC{
-        width: 25%;
+        width: 30%;
+    }
+    .mano1{
+        width: 30px;
+    }
+    .mano{
+        width: 20px;
     }
 }
 @media(max-width: 380px) {
