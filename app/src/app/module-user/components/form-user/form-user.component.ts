@@ -20,7 +20,7 @@ export class FormUserComponent implements OnInit {
   public cambiarPass: boolean = false;
   public isAdmin: any;
   public passChanged: any;
-  public audio: any;
+  public audio = new Audio();
 
 
   constructor(
@@ -75,6 +75,9 @@ export class FormUserComponent implements OnInit {
       }
     })
     this.traeSalas()
+    //this.audio.src = "../../../assets/tango.mp3";
+    //this.audio.load();
+    //this.audio.play();
 
   }
   traeSalas() {
@@ -82,6 +85,7 @@ export class FormUserComponent implements OnInit {
       this.salas = res.data
     })
   }
+
 
   createSala() {
     if (this.formSala.invalid) {
@@ -144,6 +148,7 @@ export class FormUserComponent implements OnInit {
       user: this.user
     }
     if (res.denegado) { return }
+    //this.audio.pause()
     this.route.navigate(['/sala', datos])
   }
 
@@ -191,10 +196,10 @@ export class FormUserComponent implements OnInit {
       this.route.navigate(['/'])
     })
   }
-  otraForma() {
-    this.audio = document.getElementById('audio');
-    this.audio.muted = false; // Desactiva el silencio
-    this.audio.play(); // Inicia la reproducción
-  }
+  // otraForma() {
+  //   this.audio = document.getElementById('audio');
+  //   this.audio.muted = false; // Desactiva el silencio
+  //   this.audio.play(); // Inicia la reproducción
+  // }
 
 }
