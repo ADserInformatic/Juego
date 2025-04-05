@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'ADserTruco';
 const { getSalas, getSala, saveSala, deleteSala, addUser } = require('../controlers/sala')
 
-router.get('', authenticateToken, getSalas)
+router.get('/S/:id', authenticateToken, getSalas)
 
 router.get('/:id', authenticateToken, getSala)
 

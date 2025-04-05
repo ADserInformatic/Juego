@@ -1,4 +1,4 @@
-<div class="body" >
+<div class="body">
     <nav>
         <div class="titulo">
             <h4>ADser Truco</h4>
@@ -27,13 +27,13 @@
                 </div>
                 <label for="pass">Contraseña</label>
                 <input (keydown.enter)="userSend()" formControlName="passInput" type="password" id="pass">
-                <div class="error" >
-                    <i *ngIf="formUser.get('passInput')?.invalid && formUser.get('passInput')?.errors?.['minlength'] && formUser.get('passInput')?.touched">Ingrese una contraseña válida.</i>
+                <div class="error">
+                    <i
+                        *ngIf="formUser.get('passInput')?.invalid && formUser.get('passInput')?.errors?.['minlength'] && formUser.get('passInput')?.touched">Ingrese
+                        una contraseña válida.</i>
                 </div>
                 <button [disabled]="formUser.invalid" (click)="userSend()">Ingresar</button>
             </div>
         </div>
     </div>
 </div>
-
-

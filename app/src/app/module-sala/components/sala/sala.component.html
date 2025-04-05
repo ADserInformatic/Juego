@@ -57,12 +57,15 @@
             </div>
         </div>
         <div class="nombre">
-            <h5>USUARIO: {{jugador.name}}</h5>
+            <h5>USUARIO: <p> {{jugador.name}}</p> </h5>
             <h5>CREDITOS: {{jugador.creditos}}</h5>
         </div>
     </div>
     <div *ngIf="sala?.usuarios" class="jugadores">
         <div class="cardsCot">
+            <div *ngIf="jugadorCont.mano" class="mano">
+                <img src="assets/hand.png" alt="">
+            </div>
             <div class="cardCont">
                 <img *ngFor="let valor of jugadorCont?.valores" src="../../../../assets/trasera.jpg" alt="">
             </div>
@@ -82,10 +85,21 @@
         </div>
 
     </div>
-    <div class="cards">
-        <button [disabled]="!jugador.juega || faltaResp" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
-            <img src="../../../../assets/{{valor.name}}.jpg" alt="">
-        </button>
+    <div class="yoJugador">
+        <div *ngIf="jugador.mano" class="mano1">
+            <img src="assets/hand.png" alt="">
+        </div>
+        <div class="cards" *ngIf="jugador.juega && !faltaResp">
+            <button [disabled]="!jugador.juega || faltaResp" class="card" *ngFor="let valor of jugador?.valores" (click)="juega(valor)">
+                <img src="../../../../assets/{{valor.name}}.jpg" alt="">
+            </button>
+        </div>
+        <!-- -->
+        <div class="cards" *ngIf="!jugador.juega || faltaResp">
+            <button [disabled]="!jugador.juega || faltaResp" class="card" *ngFor="let valor of jugador?.valores">
+                <img src="../../../../assets/{{valor.name}}.jpg" alt="">
+            </button>
+        </div>
     </div>
     <!-- <button (click)="repartir()">Repartir</button> -->
     <div class="botonesCanto">
@@ -95,10 +109,14 @@
                 <button *ngIf="truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp || envido"  [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp" 
                 [ngClass]="{'noPuede': !btnMentiras}">Envido</button>
                 <!---->
-            <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
+            <button *ngIf="btnMentiras && !truco && jugador.juega && !flor && !jugador.puedeFlor && !faltaResp && !realEnvido" [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
                 [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('realEnvido')">Real envido</button>
-            <button [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
+                <button *ngIf="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp || realEnvido" [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
+                [ngClass]="{'noPuede': !btnMentiras}" >Real envido</button>
+                <!---->
+            <button *ngIf="btnMentiras && !truco && jugador.juega && !flor && !jugador.puedeFlor && !faltaResp && !faltaEnvido" [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
                 [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
+<<<<<<< HEAD
             
                 <button *ngIf="!truco && jugador.puedeCantar && jugador.juega && !faltaResp" [disabled]="!jugador.puedeCantar || !jugador.juega || faltaResp"
                 (click)="canto('truco')">Truco</button>
@@ -106,9 +124,26 @@
                 >Truco</button>
 
             <button *ngIf="truco" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp"
+=======
+                <button *ngIf="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp || faltaEnvido"  [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
+                [ngClass]="{'noPuede': !btnMentiras}">Falta envido</button>
+                <!---->
+            <button *ngIf="!truco && jugador.puedeCantar && jugador.juega && !faltaResp" [disabled]="!jugador.puedeCantar || !jugador.juega || faltaResp"
+                (click)="canto('truco')">Truco</button>
+                <button *ngIf="!truco && (!jugador.puedeCantar || !jugador.juega || faltaResp)" [disabled]="!jugador.puedeCantar || !jugador.juega || faltaResp"
+                >Truco</button>
+
+            <button *ngIf="truco && jugador.puedeCantar && !valeCuatro && jugador.juega && !faltaResp" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp"
+>>>>>>> c5e778b04034ec1e81832a4b390193683e8dfb94
                 (click)="contestarCanto(cantoActual, false)">{{cantoActual}}</button>
-            <button [disabled]="truco || !btnMentiras || !jugador.puedeFlor || flor || !jugador.juega || faltaResp"
+                <button *ngIf="truco && (!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp)" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp"
+                >{{cantoActual}}</button>
+                <!---->
+            <button *ngIf="!truco && btnMentiras && jugador.puedeFlor && !flor && jugador.juega && !faltaResp" [disabled]="truco || !btnMentiras || !jugador.puedeFlor || flor || !jugador.juega || faltaResp"
                 (click)="canto('flor')">Flor</button>
+                <button *ngIf="truco || !btnMentiras || !jugador.puedeFlor || flor || !jugador.juega || faltaResp" [disabled]="truco || !btnMentiras || !jugador.puedeFlor || flor || !jugador.juega || faltaResp"
+                >Flor</button>
+                <!---->
             <button title="Irse al maso" [disabled]="!jugador.juega || faltaResp" (click)="alMazo()">Mazo</button>
         </div>
     </div>

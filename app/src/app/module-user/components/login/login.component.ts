@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class LoginComponent implements OnInit {
   public formUser!: FormGroup;
   private token!: string;
+  audio: any;
 
   constructor(
     private servLogin: AuthService,
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
     this.formUser = this.fb.group({
       name: ['', [Validators.required]],
       passInput: ['', [Validators.required, Validators.minLength(3)]]
@@ -32,6 +34,7 @@ export class LoginComponent implements OnInit {
       alert('Revisa los campos')
       return
     }
+
     this.servLogin.login(this.formUser.value).subscribe(res => {
       if (res.mensaje) {
         alert(res.mensaje)

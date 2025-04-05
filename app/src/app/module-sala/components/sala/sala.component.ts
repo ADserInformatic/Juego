@@ -24,6 +24,7 @@ export class SalaComponent implements OnInit {
     canto: '',
     tantos: 0,
     puedeFlor: false,
+    mano: false,
     creditos: 0,
     valores: [{ name: '', valor: 0 }]
   };
@@ -122,7 +123,6 @@ export class SalaComponent implements OnInit {
       this.mensaje = ''
     })
     this.socket.on('cantando', (res: any) => {
-      console.log(res)
       if (this.time > 1) { this.time = 0 };
       this.cantoI = res.canto
       res.jugador = this.jugadorCont
@@ -162,11 +162,10 @@ export class SalaComponent implements OnInit {
       confirm(`Tu oponente dice ${res}`)
     })
     this.socket.on('resultadoDeCanto', (res: any) => {
-      console.log(res)
       this.mensaje = res.mensaje
       setTimeout(() => {
         this.mensaje = ''
-      }, 5000)
+      }, 3000)
       this.resetSala(res.sala)
       this.cantoConf = false
     })
@@ -191,6 +190,21 @@ export class SalaComponent implements OnInit {
       this.mentira = this.envido || this.realEnvido || this.faltaEnvido
       this.btnMentiras = this.jugador.valores.length > 2 && !this.mentira
     })
+
+    setTimeout(async () => {
+      if (this.sala.usuarios.length === 1) {
+        this.mensaje = "Sala expirada...redirigiendo al lobby"
+        setTimeout(() => {
+          this.mensaje = ''
+          this.router.navigate(['/appTruco'])
+        }, 3000)
+      }
+    }, 305000); // 5 min
+
+
+
+
+
   }
   resetSala(res: any) {
     if (this.time > 1) { this.time = 0 };
@@ -279,6 +293,11 @@ export class SalaComponent implements OnInit {
   }
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
+      // let audio = new Audio();
+      // audio.src = "../../../assets/pick.mp3";
+      // audio.load();
+      // audio.play();
+
     const data: Jugada = {
       sala: this.nameSala,
       valor: val.valor,
@@ -316,7 +335,6 @@ export class SalaComponent implements OnInit {
     if (this.time > 1) { this.time = 0 };
     if (this.truco && resp === 'primEnvido') {
       if (this.selected.nativeElement.value === 'El envido va primero') {
-        console.log('El envido va primero')
         return
       }
       let data = {
