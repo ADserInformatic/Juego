@@ -116,15 +116,6 @@
                 <!---->
             <button *ngIf="btnMentiras && !truco && jugador.juega && !flor && !jugador.puedeFlor && !faltaResp && !faltaEnvido" [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
                 [ngClass]="{'noPuede': !btnMentiras}" (click)="canto('faltaEnvido')">Falta envido</button>
-<<<<<<< HEAD
-            
-                <button *ngIf="!truco && jugador.puedeCantar && jugador.juega && !faltaResp" [disabled]="!jugador.puedeCantar || !jugador.juega || faltaResp"
-                (click)="canto('truco')">Truco</button>
-                <button *ngIf="!truco" [disabled]="!jugador.puedeCantar || !jugador.juega || faltaResp"
-                >Truco</button>
-
-            <button *ngIf="truco" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp"
-=======
                 <button *ngIf="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp || faltaEnvido"  [disabled]="!btnMentiras || truco || !jugador.juega || flor || jugador.puedeFlor || faltaResp"
                 [ngClass]="{'noPuede': !btnMentiras}">Falta envido</button>
                 <!---->
@@ -134,7 +125,6 @@
                 >Truco</button>
 
             <button *ngIf="truco && jugador.puedeCantar && !valeCuatro && jugador.juega && !faltaResp" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp"
->>>>>>> c5e778b04034ec1e81832a4b390193683e8dfb94
                 (click)="contestarCanto(cantoActual, false)">{{cantoActual}}</button>
                 <button *ngIf="truco && (!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp)" [disabled]="!jugador.puedeCantar || valeCuatro || !jugador.juega || faltaResp"
                 >{{cantoActual}}</button>
