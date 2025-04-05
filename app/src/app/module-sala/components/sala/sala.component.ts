@@ -87,8 +87,13 @@ export class SalaComponent implements OnInit {
       this.socket.emit('sala', res.idSala)
     })
     this.socket.on('sala', (res: any) => {
+<<<<<<< HEAD
       console.log(res)
       this.resetSala(res)
+=======
+      if (res.error) { this.router.navigate(['/appTruco']) }
+      this.resetSala(res.sala)
+>>>>>>> 34f4b1a798afe7572dfa21c2efa6924e536145d3
     })
     this.socket.on('muestra', (res: any) => {
       if (res.finish && res.rivalAlMazo) {
@@ -153,6 +158,7 @@ export class SalaComponent implements OnInit {
       this.cantora = `El jugador ${res.jugador.name} dice: ${this.cantoI}`
     })
     this.socket.on('respuestaCanto', (res: any) => {
+      this.resetSala(res.sala)
       confirm(`Tu oponente dice ${res}`)
     })
     this.socket.on('resultadoDeCanto', (res: any) => {
@@ -161,7 +167,6 @@ export class SalaComponent implements OnInit {
       setTimeout(() => {
         this.mensaje = ''
       }, 5000)
-
       this.resetSala(res.sala)
       this.cantoConf = false
     })
@@ -198,7 +203,7 @@ export class SalaComponent implements OnInit {
     this.florFlor = res.cantosenmano.boolFlorFlor;
     this.contraFlor = res.cantosenmano.boolContraFlor;
     this.florMeachico = res.cantosenmano.boolFlorMeAchico;
-    this.truco = res.cantosenmano.boolTruco    ;
+    this.truco = res.cantosenmano.boolTruco;
     this.reTruco = res.cantosenmano.boolReTruco;
     this.valeCuatro = res.cantosenmano.boolValeCuatro;
     this.cantoI = res.cantosenmano.canto
