@@ -17,6 +17,8 @@ const getCards = async (req, res) => {
     }
 }
 
+
+
 const saveCard = async (req, res) => {
     const { name, valor } = req.body
     const guardar = await carta.create({ name, valor })

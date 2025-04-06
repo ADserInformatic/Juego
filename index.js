@@ -936,24 +936,50 @@ io.on('connection', (socket) => {
               })
               sala.finish = true;
               await sala.save();
-
               await salaM.findOneAndUpdate({ name: res.sala }, { $set: { usuarios: users, finish: true } })
               terminado = await terminar(sala)
               if (terminado) {
                 await juegoTerminado(sala, winner)
 
               } else {
+
                 datos = {
                   mensaje,
                   jugador: res.jugador,
                   sala
                 }
                 io.to(res.sala).emit('resultadoDeCanto', datos)
-                if (sala.finish) {
-                  await terminar(sala)
+                const mostrarPuntos = await salaM.findOne({ name: sala.name })//traigo actualizada la sala
+                if (mostrarPuntos.cantosenmano.mostrarPuntos) {//si esta en true que hay que mostrar puntos entro en el bloque
+                  let ganador = mostrarPuntos.cantosenmano.posGanMentira //me fijo quien gano la mentira que es de quien debo mostrar cartas
+                  mostrarPuntos.usuarios[ganador].cartasAMostrar.forEach(element => {  //me fijo en las cartas a mostrar si es que ya no esta tirada
+                    let tirada = mostrarPuntos.usuarios[ganador].jugada.find(e => e.carta === element.name)  //me fijo si esta tirada
+                    if (!tirada) { // si no esta tirada la agrego
+                      let cartaParaAgregar = {
+                        sala: mostrarPuntos.name,
+                        valor: element.valor,
+                        carta: element.name,
+                        idUser: mostrarPuntos.usuarios[ganador].id.toHexString()
+                      }
+                      mostrarPuntos.usuarios[ganador].jugada.push(cartaParaAgregar) //si no esta tirada la pongo en las tiradas para mostrarla
+                    }
+                  })
+                  await mostrarPuntos.save()
                   setTimeout(() => {
-                    repartir(sala)
-                  }, 3000); //reparte a los 2 segundos
+                    io.to(sala.name).emit('muestra', mostrarPuntos)
+                  }, 1200); //muestra a los 1.2 segundos
+                  setTimeout(() => {
+                    repartir(mostrarPuntos)
+                  }, 3000); //reparte a los 5 segundos
+
+
+                  /*               if (sala.finish) {
+
+                                  await terminar(sala)
+                                  setTimeout(() => {
+                                    repartir(sala)
+                                  }, 3000); //reparte a los 2 segundos
+                                } */
                 }
               }
 
@@ -998,16 +1024,39 @@ io.on('connection', (socket) => {
                   sala
                 }
                 io.to(res.sala).emit('resultadoDeCanto', datos)
-                if (sala.finish) {
-                  await terminar(sala)
+                const mostrarPuntos = await salaM.findOne({ name: sala.name })//traigo actualizada la sala
+                if (mostrarPuntos.cantosenmano.mostrarPuntos) {//si esta en true que hay que mostrar puntos entro en el bloque
+                  let ganador = mostrarPuntos.cantosenmano.posGanMentira //me fijo quien gano la mentira que es de quien debo mostrar cartas
+                  mostrarPuntos.usuarios[ganador].cartasAMostrar.forEach(element => {  //me fijo en las cartas a mostrar si es que ya no esta tirada
+                    let tirada = mostrarPuntos.usuarios[ganador].jugada.find(e => e.carta === element.name)  //me fijo si esta tirada
+                    if (!tirada) { // si no esta tirada la agrego
+                      let cartaParaAgregar = {
+                        sala: mostrarPuntos.name,
+                        valor: element.valor,
+                        carta: element.name,
+                        idUser: mostrarPuntos.usuarios[ganador].id.toHexString()
+                      }
+                      mostrarPuntos.usuarios[ganador].jugada.push(cartaParaAgregar) //si no esta tirada la pongo en las tiradas para mostrarla
+                    }
+                  })
+                  await mostrarPuntos.save()
                   setTimeout(() => {
-                    repartir(sala)
+                    io.to(sala.name).emit('muestra', mostrarPuntos)
+                  }, 1200); //muestra a los 1.2 segundos
+                  setTimeout(() => {
+                    repartir(mostrarPuntos)
                   }, 3000); //reparte a los 5 segundos
+
+
+                  /*               if (sala.finish) {
+
+                                  await terminar(sala)
+                                  setTimeout(() => {
+                                    repartir(sala)
+                                  }, 3000); //reparte a los 2 segundos
+                                } */
                 }
               }
-
-
-
 
 
               break;
@@ -1056,12 +1105,37 @@ io.on('connection', (socket) => {
                   sala
                 }
                 io.to(res.sala).emit('resultadoDeCanto', datos)
-
-                if (sala.finish) {
-                  await terminar(sala)
+                const mostrarPuntos = await salaM.findOne({ name: sala.name })//traigo actualizada la sala
+                if (mostrarPuntos.cantosenmano.mostrarPuntos) {//si esta en true que hay que mostrar puntos entro en el bloque
+                  let ganador = mostrarPuntos.cantosenmano.posGanMentira //me fijo quien gano la mentira que es de quien debo mostrar cartas
+                  mostrarPuntos.usuarios[ganador].cartasAMostrar.forEach(element => {  //me fijo en las cartas a mostrar si es que ya no esta tirada
+                    let tirada = mostrarPuntos.usuarios[ganador].jugada.find(e => e.carta === element.name)  //me fijo si esta tirada
+                    if (!tirada) { // si no esta tirada la agrego
+                      let cartaParaAgregar = {
+                        sala: mostrarPuntos.name,
+                        valor: element.valor,
+                        carta: element.name,
+                        idUser: mostrarPuntos.usuarios[ganador].id.toHexString()
+                      }
+                      mostrarPuntos.usuarios[ganador].jugada.push(cartaParaAgregar) //si no esta tirada la pongo en las tiradas para mostrarla
+                    }
+                  })
+                  await mostrarPuntos.save()
                   setTimeout(() => {
-                    repartir(sala)
+                    io.to(sala.name).emit('muestra', mostrarPuntos)
+                  }, 1200); //muestra a los 1.2 segundos
+                  setTimeout(() => {
+                    repartir(mostrarPuntos)
                   }, 3000); //reparte a los 5 segundos
+
+
+                  /*               if (sala.finish) {
+
+                                  await terminar(sala)
+                                  setTimeout(() => {
+                                    repartir(sala)
+                                  }, 3000); //reparte a los 2 segundos
+                                } */
                 }
               }
               break;
@@ -1181,6 +1255,7 @@ io.on('connection', (socket) => {
                   sala
                 }
                 io.to(res.sala).emit('resultadoDeCanto', datos)
+
               }
               break;
             default:
@@ -1291,10 +1366,28 @@ io.on('connection', (socket) => {
                   sala
                 }
                 io.to(res.sala).emit('resultadoDeCanto', datos)
+                const mostrarPuntos = await salaM.findOne({ name: sala.name })//traigo actualizada la sala
+                if (mostrarPuntos.cantosenmano.mostrarPuntos) {//si esta en true que hay que mostrar puntos entro en el bloque
+                  let ganador = mostrarPuntos.cantosenmano.posGanMentira //me fijo quien gano la mentira que es de quien debo mostrar cartas
+                  mostrarPuntos.usuarios[ganador].cartasAMostrar.forEach(element => {  //me fijo en las cartas a mostrar si es que ya no esta tirada
+                    let tirada = mostrarPuntos.usuarios[ganador].jugada.find(e => e.carta === element.name)  //me fijo si esta tirada
+                    if (!tirada) { // si no esta tirada la agrego
+                      let cartaParaAgregar = {
+                        sala: mostrarPuntos.name,
+                        valor: element.valor,
+                        carta: element.name,
+                        idUser: mostrarPuntos.usuarios[ganador].id.toHexString()
+                      }
+                      mostrarPuntos.usuarios[ganador].jugada.push(cartaParaAgregar) //si no esta tirada la pongo en las tiradas para mostrarla
+                    }
+                  })
+                  await mostrarPuntos.save()
+                  io.to(sala.name).emit('muestra', mostrarPuntos)
+
+                }
+
               }
               break;
-
-
           }
 
       }
@@ -2293,7 +2386,52 @@ const sumaPts = (carta1, carta2, valor1, valor2, num) => {
     return
   }
 }
-
+/* const cartas = [
+  { name: "11e", valor: 6 },
+  { name: "11c", valor: 6 },
+  { name: "11o", valor: 6 },
+  { name: "11b", valor: 6 },
+  { name: "12e", valor: 7 },
+  { name: "12c", valor: 7 },
+  { name: "12o", valor: 6 },
+  { name: "12b", valor: 6 },
+  { name: "10e", valor: 5 },
+  { name: "10o", valor: 5 },
+  { name: "10c", valor: 5 },
+  { name: "10b", valor: 5 },
+  { name: "7e", valor: 12 },
+  { name: "7o", valor: 11 },
+  { name: "7c", valor: 4 },
+  { name: "7b", valor: 4 },
+  { name: "6e", valor: 3 },
+  { name: "6o", valor: 3 },
+  { name: "6c", valor: 3 },
+  { name: "6b", valor: 3 },
+  { name: "5e", valor: 2 },
+  { name: "5o", valor: 2 },
+  { name: "5c", valor: 2 },
+  { name: "5b", valor: 2 },
+  { name: "4e", valor: 1 },
+  { name: "4o", valor: 1 },
+  { name: "4c", valor: 1 },
+  { name: "4b", valor: 1 },
+  { name: "3e", valor: 10 },
+  { name: "3o", valor: 10 },
+  { name: "3c", valor: 10 },
+  { name: "3b", valor: 10 },
+  { name: "2e", valor: 9 },
+  { name: "2o", valor: 9 },
+  { name: "2c", valor: 9 },
+  { name: "2b", valor: 9 },
+  { name: "1e", valor: 14 },
+  { name: "1o", valor: 8 },
+  { name: "1c", valor: 8 },
+  { name: "1b", valor: 13 },
+]
+cartas.forEach(async element => {
+  await cartaM.create(element)
+})
+ */
 
 
 

@@ -88,9 +88,16 @@ export class SalaComponent implements OnInit {
       this.socket.emit('sala', res.idSala)
     })
     this.socket.on('sala', (res: any) => {
-      if (res.error) { this.router.navigate(['/appTruco']) }
-      this.resetSala(res.sala)
-    })
+      if (res.error) {
+        this.router.navigate(['/appTruco']);
+      } else if (res.sala === undefined) {
+        console.error('La sala es undefined');
+        // Aquí puedes manejar el caso de undefined, por ejemplo:
+        // this.router.navigate(['/errorPage']);
+      } else {
+        this.resetSala(res.sala);
+      }
+    });
     this.socket.on('muestra', (res: any) => {
       if (res.finish && res.rivalAlMazo) {
         if (res.cantosenmano.florNegada) {
@@ -288,10 +295,10 @@ export class SalaComponent implements OnInit {
   }
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
-      // let audio = new Audio();
-      // audio.src = "../../../assets/pick.mp3";
-      // audio.load();
-      // audio.play();
+    // let audio = new Audio();
+    // audio.src = "../../../assets/pick.mp3";
+    // audio.load();
+    // audio.play();
 
     const data: Jugada = {
       sala: this.nameSala,
