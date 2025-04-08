@@ -88,7 +88,6 @@ export class SalaComponent implements OnInit {
       this.socket.emit('sala', res.idSala)
     })
     this.socket.on('sala', (res: any) => {
-
       if (res.error) {
         this.router.navigate(['/appTruco']);
       } else if (res.sala === undefined) {
@@ -99,7 +98,6 @@ export class SalaComponent implements OnInit {
         this.resetSala(res.sala);
       }
     });
-
     this.socket.on('muestra', (res: any) => {
       if (res.finish && res.rivalAlMazo) {
         if (res.cantosenmano.florNegada) {
@@ -127,6 +125,8 @@ export class SalaComponent implements OnInit {
       this.mensaje = ''
     })
     this.socket.on('cantando', (res: any) => {
+      this.sonido(res.canto)
+      console.log(res)
       if (this.time > 1) { this.time = 0 };
       this.cantoI = res.canto
       res.jugador = this.jugadorCont
@@ -297,11 +297,15 @@ export class SalaComponent implements OnInit {
   }
   //Acá armo el objeto que va para atrás cada vez que se tira una carta: el valor de la carta que viene en el parámetro, el nombre de la sala en la que está el usuario y el id del usuario.
   juega(val: any) {
+<<<<<<< HEAD
     // let audio = new Audio();
     // audio.src = "../../../assets/pick.mp3";
     // audio.load();
     // audio.play();
 
+=======
+      this.sonido('tira')
+>>>>>>> 840da2d3b5bef760d9450acbdc25de8ba1fdee04
     const data: Jugada = {
       sala: this.nameSala,
       valor: val.valor,
@@ -314,6 +318,7 @@ export class SalaComponent implements OnInit {
     this.socket.emit('repartir', this.sala)
   }
   canto(canto: string) {
+    this.sonido(canto)
     this.faltaResp = true
     if (this.time > 1) { this.time = 0 };
     if (this.truco && canto === 'envido') {
@@ -341,6 +346,7 @@ export class SalaComponent implements OnInit {
       if (this.selected.nativeElement.value === 'El envido va primero') {
         return
       }
+      this.sonido(this.selected.nativeElement.value)
       let data = {
         sala: this.nameSala,
         jugador: this.jugador,
@@ -350,6 +356,7 @@ export class SalaComponent implements OnInit {
       this.cantoConf = !this.cantoConf
       return
     }
+    this.sonido(resp)
     if (resp === 'reTruco') {
       this.reTruco = true
       this.jugador.juega = false
@@ -377,6 +384,7 @@ export class SalaComponent implements OnInit {
     }
   }
   alMazo() {
+    this.sonido('alMazo')
     let data = {
       sala: this.sala.name,
       jugador: this.jugador
@@ -404,5 +412,12 @@ export class SalaComponent implements OnInit {
         this.mensaje = ""
       }, 3000)
     }
+  }
+  sonido(sound: string) {
+    let audio = new Audio();
+    audio.src = `../../../assets/sonidos/${sound}.mp3`;
+    audio.load();
+    audio.play();
+
   }
 }

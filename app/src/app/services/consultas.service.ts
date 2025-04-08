@@ -32,7 +32,6 @@ export class ConsultasService {
   }
 
   addUserToSala(id: string, dato: any): Observable<any> {
-    console.log(dato)
     return this.http.put(`${this.uri}/sala/${id}`, dato)
   }
 
