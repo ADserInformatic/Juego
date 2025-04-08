@@ -99,6 +99,7 @@ nav .set{
     padding: 5px 10px;
     border: solid .3px #fff;
     text-align: center;
+    text-transform: capitalize;
 }
 .nombre h5{
     display: flex;

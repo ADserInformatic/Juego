@@ -88,6 +88,7 @@ export class SalaComponent implements OnInit {
       this.socket.emit('sala', res.idSala)
     })
     this.socket.on('sala', (res: any) => {
+
       if (res.error) {
         this.router.navigate(['/appTruco']);
       } else if (res.sala === undefined) {
@@ -98,6 +99,7 @@ export class SalaComponent implements OnInit {
         this.resetSala(res.sala);
       }
     });
+
     this.socket.on('muestra', (res: any) => {
       if (res.finish && res.rivalAlMazo) {
         if (res.cantosenmano.florNegada) {
