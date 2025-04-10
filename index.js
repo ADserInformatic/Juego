@@ -481,7 +481,7 @@ io.on('connection', (socket) => {
                   sala.cantosenmano.posGanMentira = users.indexOf(us);
 
                 } else {
-                  mensaje = `${us.name} no quiere`
+                  mensaje = `${us.name} no quiero`
                 }
               })
               await sala.save()
@@ -573,7 +573,7 @@ io.on('connection', (socket) => {
                   winner = us.id
 
                 } else {
-                  mensaje = `${us.name} no quiere`
+                  mensaje = `${us.name} no quiero`
                 }
               })
               await sala.save()
@@ -724,7 +724,7 @@ io.on('connection', (socket) => {
                     }
                   }//solo se cantó real envido
                 } else {
-                  mensaje = `${us.name} no quiere`
+                  mensaje = `${us.name} no quiero`
                 }
               })
               await sala.save()
@@ -895,7 +895,7 @@ io.on('connection', (socket) => {
                       }
                     }
                   }
-                } else { mensaje = `${us.name} no quiere` }
+                } else { mensaje = `${us.name} no quiero` }
                 //solo se cantó real envido
               })
               await sala.save()
@@ -1244,7 +1244,7 @@ io.on('connection', (socket) => {
                   winner = element.id
                   element.tantos += 4;
                 } else {
-                  mensaje = mensaje = `${element.name} no quiere`
+                  mensaje = mensaje = `${element.name} no quiero`
                 }
               })
               await sala.save()
@@ -1354,7 +1354,7 @@ io.on('connection', (socket) => {
                   us.tantos += 4
                   winner = us.id
                 } else {
-                  mensaje = `${us.name} no quiere`
+                  mensaje = `${us.name} no quiero`
                 }
               })
               await sala.save()
