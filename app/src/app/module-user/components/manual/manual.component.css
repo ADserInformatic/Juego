@@ -1,0 +1,97 @@
+.body{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background: #0000005d;
+}
+.body .info{
+    position: relative;
+    max-width: 700px;
+    height: 100%;
+    margin: auto;
+    border: groove 2px var(--bordeBajo);
+    border-radius: 5px;
+    background: #000000ec;
+    overflow: auto;
+}
+.info .closed{
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    color: #fff;
+    font-size: 20px;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+    border: none;
+}
+.container-texto{
+    color: #fff;
+    margin: 20px 15px;
+    /* text-align: justify; */
+    font-size: 20px;
+}
+.container-texto .titulo{
+    width: 100%;
+    text-align: center;
+}
+
+.segundo-apartado, .tercer-apartado, .cuarto-apartado, .quinto-apartado, .sexto-apartado, .septimo-apartado, .octavo-apartado{
+    margin: 10px 0px;
+}
+.segundo-apartado .textoImg, .tercer-apartado .textoImg, .cuarto-apartado .textoImg1, .cuarto-apartado .textoImg2 li, .sexto-apartado .textoImg, .septimo-apartado .textoImg, .octavo-apartado .textoImg{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.segundo-apartado .img, .tercer-apartado .img, .cuarto-apartado .img, .sexto-apartado .img, .septimo-apartado .img, .octavo-apartado .img{
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+}
+.octavo-apartado .navImg{
+    width: 100%;
+    text-align: center;
+}
+.octavo-apartado .navImg img{
+    border: solid .2px #fff;
+}
+.img img, .navImg img{
+    width: 80%;
+    border: solid .2px #fff;
+}
+.cuarto-apartado .textoImg1 .img img{
+    height: 300px;
+    object-fit: fill;
+}
+.btnAceptar{
+    width: 100%;
+    margin: 10px 0px;
+    display: flex;
+    text-align: center;
+}
+.btnAceptar button{
+    width: 90%;
+    padding: 10px 0px;
+    color: #fff;
+    background: #000;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin: auto;
+    box-shadow: 1px 1px 3px #ffffff62,
+                -1px -1px 3px #ffffff57;
+}
+
+@media screen and (max-width: 600px) {
+    .segundo-apartado .textoImg, .tercer-apartado .textoImg, .cuarto-apartado .textoImg1, .sexto-apartado .textoImg, .cuarto-apartado .textoImg2 li, .septimo-apartado .textoImg, .octavo-apartado .textoImg{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+}

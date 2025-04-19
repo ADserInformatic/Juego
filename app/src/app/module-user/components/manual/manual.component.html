@@ -1,0 +1,183 @@
+<div class="body">
+    <div class="info">
+        <button (click)="closed()" class="closed">
+            <span class="material-symbols-outlined">cancel</span>
+        </button>
+        <div class="container-texto">
+            <div class="titulo">
+                <h1>ADT</h1>
+                <br>
+            </div>
+            <div class="primer-apartado">
+                <h3>¿Qué es ADT?</h3>
+                <br>
+                <div class="texto">
+                    <p>Es una plataforma virtual en la que se juega al famoso juego de cartas argentino “El truco”. Esta plataforma es multijugador, lo que significa que para jugar es necesario que al menos sean 2 personas (y por ahora ese es el límite).</p>
+                </div>
+            </div>
+            <div class="segundo-apartado">
+                <h3>¿Cómo ingresar?</h3>
+                <br>
+                <div class="textoImg">
+                    <div class="texto">
+                        <p>Para ingresar debes seguir los siguientes pasos:</p>
+                        <br>
+                        <p>-Solicitar un usuario al administrador indicándole el nombre que deseas tener como usuario (1: este botón te contactará con el administrador). El nombre de usuario es único, por lo tanto es posible combinar letras y números.</p>
+                        <br>
+                        <p>-Una vez que el administrador crea tu usuario con una contraseña asociada a este usuario ya puedes ingresar.</p>
+                        <br>
+                        <p>-Ve al login, coloca tu nombre de usuario en el primer campo (2) y la contraseña en el segundo (3), haz click en ingresar y ¡listo!</p>
+                    </div>
+                    <div class="img">
+                        <img src="assets/imgsManual/Login.jpeg" alt="">
+                    </div>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="tercer-apartado">
+                <h3>Ingresando por primera vez…</h3>
+                <br>
+                <div class="textoImg">
+                    <div class="texto">
+                        <p>Al ingresar la primera vez, la plataforma te solicitará que cambies la contraseña. Esto es sobre todo para que tus datos permanezcan más seguros bajo una contraseña que sólo tú conocerás. En el primer campo (1) colocas la contraseña actual, es decir la que te otorgó el admin; en el segundo (2), la nueva contraseña y en el tercero (3) vuelves a colocar la nueva contraseña para corroborar.</p>
+                        <p>Luego de cambiar la contraseña, deberás ingresar de nuevo, pero esta vez con la nueva contraseña. De esta forma habrás ingresado con una contraseña propia y podrás crear alguna sala o unirte a una ya existente.</p>
+                    </div>
+                    <div class="img">
+                        <img src="assets/imgsManual/CambiarPass.jpeg" alt="">
+                    </div>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="cuarto-apartado">
+                <h3>Creación o ingreso a una sala</h3>
+                <br>
+                <u>En el espacio de las salas encontrarás la siguiente interfaz:</u>
+                <div class="textoImg1">
+                    <div class="texto">
+                        <br>
+                        <p>Arriba se encuentra tu nombre de usuario y el crédito que tienes disponible (1).</p>
+                        <p> Debajo de esos datos, el formulario que aparece es específicamente para la <b>creación de una sala (2)</b>. Más abajo te encontrarás con la <b>lista de salas creadas (3)</b>.</p>
+                    </div>
+                    <div class="img">
+                        <img src="assets/imgsManual/FormListaSalas.jpeg" alt="">
+                    </div>
+                </div>
+                <hr>
+                <br>
+                <div class="textoImg2">
+                    <ul>
+                        <li>
+                            <div class="img">
+                                <img src="assets/imgsManual/FormSalas.jpeg" alt="">
+                            </div>
+                            <div class="texto">
+                                <p>•	<b>Creación de una sala:</b> para crear una sala deberás colocar un nombre (1) y el crédito que deseas apostar (2). El nombre de cada sala es único, por lo tanto no debe coincidir con ninguno de los nombres de las salas que aparecen en la <i>lista de salas</i>. El monto mínimo de apesta es 500 créditos por jugador. Tanto el jugador que crea la sala como el que ingresa como rival deben contar con un crédito igual o superior al de la apuesta. Una vez colocado el nombre y el monto a apostar, das click en el botón crear (3) y la plataforma te devolverá un mensaje con el resultado de la solicitud. Si todo está bien, se te dará ingreso a la sala y te encontrarás con un cartel con la siguiente leyenda <i>“Esperando rival…”</i>. Una vez que ingrese tu contrincante el cartel desaparecerá y se iniciará el juego. </p>
+                            </div>
+                        </li>
+                        <br>
+                        <li>
+                            <div class="img">
+                                <img src="assets/imgsManual/ListaSalas.jpeg" alt="">
+                            </div>
+                            <div class="texto">
+                                <p>•	<b>Lista de salas:</b> en la lista de salas te encontrarás con los nombres de las salas (1) y el monto que se está apostando (2). En las salas en las que aparece el símbolo de prohibido (3) no se puede ingresar, ya que en dicha sala ya hay dos jugadores. En las salas en las que no se encuentra este símbolo es dónde se espera un rival y es allí donde puedes ingresar para jugar.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="quinto-apartado">
+                <div class="texto">
+                    <h4>Consideraciones a tener en cuenta al crear o ingresar a una sala:</h4>
+                    <br>
+                    <ul>
+                        <li>•	Una vez que se crea la sala sólo se encuentra en ella el usuario que la creo (usuario creador).</li>
+                        <li>•	En caso de que pasen 5 minutos sin que ingrese algún rival, la sala se cerrará devolviéndole el crédito correspondiente al usuario creador. </li>
+                        <li>•	Si al momento de crear la sala se detecta que hay una sala donde hay alguien esperando un rival y la apuesta coincide con la de la sala que se está creando se desviará al usuario creador a esa sala. </li>
+                        <li>•	Para ingresar a jugar a una sala simplemente se debe presionar sobre el nombre de la sala.</li>
+                        <li>•	Si hay alguna sala creada a la que desea ingresar pero que no aparece en la lista, puede actualizar haciendo click en el botón que se encuentra arriba de la lista a la derecha.</li>
+                    </ul>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="sexto-apartado">
+                <h3>¡A jugar!</h3>
+                <br>
+                <p>Una vez que ya hay dos jugadores en la sala se reparten las cartas y comienza el juego.</p>
+                <p>Cada partida será a 30 tantos (15 malas y 15 buenas). El jugador que alcance primero este puntaje ganará, se le acreditará el premio y se eliminará la sala. Si los jugadores lo desean podrán volver a jugar creando una nueva sala (en este caso podrán usar el mismo nombre).</p>
+                <br>
+                <div class="textoImg">
+                    <div class="texto">
+                        <p><u>Datos de la sala:</u></p>
+                        <br>
+                        <p>1.	Nombre de la sala y el crédito que recibirá el ganador de la partida.</p>
+                        <p>2.	Tantos de los dos jugadores.</p>
+                        <p>3.	Nombre del usuario y el crédito con el que cuenta.</p>
+                        <p>4.	Ícono que indica quien es mano.</p>
+                    </div>
+                    <div class="img">
+                        <img src="assets/imgsManual/Sala2.jpeg" alt="">
+                    </div>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="septimo-apartado">
+                <h3>Algunas preguntas...</h3>
+                <br>
+                <div class="textoImg">
+                    <div class="texto">
+                        <p><u>¿Y si mi rival no juega?</u></p>
+                        <p>Cada jugador cuenta con un minuto en cada jugada. Luego de cada interacción con el juego (carta jugada o canto) se inicia una cuenta regresiva de 1 minuto (el cartel (1) solo aparecerá cuando queden 30 segundos). Si se agota este tiempo, se darán los puntos correspondientes al usuario que realizó la última interacción y se vuelve a repartir. Si se repite 2 veces seguidas esta inacción por parte del mismo jugador, se dará por ganada la partida al usuario que realizó la última interacción.  </p>
+                    </div>
+                    <div class="img">
+                        <img src="assets/imgsManual/Segundos.jpeg" alt="">
+                    </div>
+                </div>
+                <br>
+                <div class="texto">
+                    <p><u>¿Cuánto gano?</u></p>
+                    <p>El jugador que gane, se llevará el 170% tomando como referencia su apuesta. Ejemplo: si la apuesta es de 100.000 créditos, quien gane se llevará 170.000 de crédito, pudiendo retirarlo cuando lo desee.</p>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="octavo-apartado">
+                <h3>Salir de la sala</h3>
+                <br>
+                <p>En la parte superior de la página, a la derecha, aparece un ícono que, al presionarlo, despliega un menú de opciones:</p>
+                <br>
+                <div class="navImg">
+                    <img src="assets/imgsManual/Nav.jpg" alt="">
+                </div>
+                <br>
+                <div class="textoImg">
+                    <div class="texto">
+                        <p><u>Abandonar la partida (1):</u></p>
+                        <p>Si alguno de los dos jugadores abandona la partida, este perderá su apuesta dando como ganador a su rival y autoeliminandose la sala. Está opción saca al usuario de la sala actual para que pueda crear una nueva o para ingresar a alguna sala disponible.</p>
+                        <br>
+                        <p><u>Cerrar sesión (2):</u></p>
+                        <p>Al cerrar sesión sin terminar la partida el usuario perderá su apuesta dando como ganador a su rival y autoeliminandose la sala. Esta opción no sólo lo sacará de la sala, sino que lo sacará de la plataforma, obligándolo a logearse nuevamente si desea volver a jugar.</p>
+                    </div>
+                    <div class="img">
+                        <img src="assets/imgsManual/MenuSalir.jpg" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="btnAceptar">
+                <button (click)="closed()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>

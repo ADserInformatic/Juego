@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class LoginComponent implements OnInit {
   public formUser!: FormGroup;
+  public manual: boolean = false;
   private token!: string;
   audio: any;
 
@@ -22,7 +23,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
+    this.manual = true
     this.formUser = this.fb.group({
       name: ['', [Validators.required]],
       passInput: ['', [Validators.required, Validators.minLength(3)]]
@@ -56,6 +57,13 @@ export class LoginComponent implements OnInit {
       }
     })
 
+  }
+
+  cerrar(){
+    this.manual = false
+  }
+  manualOpen(){
+    this.manual = true
   }
 
 }

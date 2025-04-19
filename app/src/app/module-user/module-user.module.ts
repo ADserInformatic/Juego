@@ -4,6 +4,7 @@ import { FormUserComponent } from './components/form-user/form-user.component';
 import { UserRoutingModule } from './user-routing.module';
 import { ReactiveFormsModule } from "@angular/forms";
 import { LoginComponent } from './components/login/login.component';
+import { ManualComponent } from './components/manual/manual.component';
 
 
 
@@ -11,7 +12,8 @@ import { LoginComponent } from './components/login/login.component';
 @NgModule({
   declarations: [
     FormUserComponent,
-    LoginComponent
+    LoginComponent,
+    ManualComponent
   ],
   imports: [
     CommonModule,
