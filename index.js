@@ -1741,8 +1741,6 @@ const corregirPuntos = async (idLLega, nameSala) => {
   }
 }
 
-
-
 // Detener el intervalo después de 5 segundos
 
 //ESTA FUNCION ES PARA CUANDO UN USUARIO GANO por lo que sea y debo repartir premio 
@@ -2436,5 +2434,27 @@ cartas.forEach(async element => {
 })
  */
 
+async function salaSola() {
+  try{
+    const salas= await salaM.find({})
+    const salasOneGamer=[];
+    salas.forEach((sala) => {
+      const haceMasDe5Minutos = (Date.now() - sala.createdAt) > (5 * 60 * 1000);
+      sala.usuarios.length < 2 && haceMasDe5Minutos ? salaOneGamer.push(sala) : null;
+
+    })
+    salasOneGamer.forEach(async (sala) => { 
+      const creador=await userM.findOne({name:sala.usuarios[0].name})
+      creador.credito+=sala.apuesta
+      await creador.save()
+      await salaM.deleteOne({ _id: sala._id });
+      await salaM.save()
 
 
+    })
+  }catch(e){
+    console.log("error dentro de salaSola y el error es: ", e.message)
+  }
+
+}
+setInterval(salaSola, 300000); // 300000 milisegundos = 5 minutos

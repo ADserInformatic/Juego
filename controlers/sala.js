@@ -60,6 +60,12 @@ const saveSala = async (req, res) => {
             })
         }
         const usuario = await user.findOne({ _id: usuarios[0].id })
+        if (!usuario) {
+            return res.json({
+                error: true,
+                mensaje: 'No se encontró ningún usuario con el ID proporcionado',
+            });
+        } 
         if (usuario.credito < apuesta) {
             res.json({
                 error: true,
@@ -68,6 +74,27 @@ const saveSala = async (req, res) => {
         }
 
 
+        const salaDisponible = await sala.findOne({
+            apuesta: apuesta,
+            $expr: {
+                $lt: [{ $size: "$usuarios" }, 2] // Verifica que el tamaño de usuarios sea menor que 2
+            }
+        });
+
+if (salaDisponible) {
+            // Agregar el usuario a la sala existente
+            const reqAddUser = {
+                params: {
+                    id: salaDisponible._id // ID de la sala existente
+                },
+                body: {
+                    id: usuarios[0].id, // ID del usuario que se va a agregar
+                }
+            };
+            // Llamar a la función addUser
+            return await addUser(reqAddUser, res); // Pasar res tal como está
+
+        } else {   
         usuario.credito -= apuesta;
         await usuario.save();
         usuarios[0].name = usuario.name
@@ -80,24 +107,8 @@ const saveSala = async (req, res) => {
             data: creado,
             mensaje: 'La solicitud se resolvió de forma exitosa'
         })
-        setTimeout(async () => {
-            try {
-                const salaActualizada = await sala.findOne({ name })
-                if (salaActualizada && salaActualizada.usuarios.length === 1) {
-                    let creador = await user.findOne({ name: salaActualizada.usuarios[0].name })
-                    if (creador) {
-                        creador.credito += salaActualizada.apuesta;
-                        await creador.save()
-                        await sala.findByIdAndDelete({ _id: salaActualizada._id })
-                    }
-                }
-            } catch (e) {
-                console.log("algo malio sal en settimeout expirar y fue: ", e.message)
-
-            }
-        }, 300000); // 5 minutos 300000
-
-
+            
+        }
 
     } catch (e) {
         res.json({
