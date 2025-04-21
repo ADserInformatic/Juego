@@ -3,10 +3,15 @@
         <div class="titulo">
             <h4>ADser Truco</h4>
         </div>
-        <div class="logo">
-            <img src="assets/Logotruco.png" alt="">
+        <div class="manual">
+            <button *ngIf="!manual" (click)="manualOpen()">
+                <span class="material-symbols-outlined">article</span>
+            </button>
         </div>
-        <!-- <div class="solicitar">
+        <!-- <div class="logo">
+            <img src="assets/Logotruco.png" alt="">
+        </div> -->
+        <div class="solicitar">
             <a title="Solicitar registro"
                 href="https://wa.me/123456789?text=Hola,%20quisiera%20registrarme%20en%20ADser%20Truco!"
                 target="_blank"><p>Solicitar registro</p>
@@ -14,7 +19,7 @@
                     speaker_notes
                 </span>
             </a>
-        </div> -->
+        </div>
     </nav>
     <div class="forms">
         <div class="form-user">
@@ -36,4 +41,5 @@
             </div>
         </div>
     </div>
+    <app-manual *ngIf="manual" (manualEvent)="cerrar()"></app-manual>
 </div>
