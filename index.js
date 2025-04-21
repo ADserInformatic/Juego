@@ -2438,9 +2438,12 @@ async function salaSola() {
   try{
     const salas= await salaM.find({})
     const salasOneGamer=[];
+    const salasSinActividad=[]
+    const admin = await adminA.findOne({})
     salas.forEach((sala) => {
       const haceMasDe5Minutos = (Date.now() - sala.createdAt) > (5 * 60 * 1000);
       sala.usuarios.length < 2 && haceMasDe5Minutos ? salaOneGamer.push(sala) : null;
+      sala.usuarios.length ==2 && haceMasDe5Minutos ? salasSinActividad.push(sala) : null;
 
     })
     salasOneGamer.forEach(async (sala) => { 
@@ -2449,8 +2452,16 @@ async function salaSola() {
       await creador.save()
       await salaM.deleteOne({ _id: sala._id });
       await salaM.save()
-
-
+    })
+      salasSinActividad.forEach(async (sala) => { 
+      const ganador=await userM.findOne({name:sala.ultimoUsuarioActivo.name})
+      ganador.creditos += 2 * sala.apuesta * porcentajePremio
+      admin.earning += 2 * sala.apuesta * (1 - porcentajePremio)
+      ganador.credito+=sala.apuesta
+      await ganador.save()
+      await salaM.deleteOne({ _id: sala._id });
+      await salaM.save()
+      await admin.save()
     })
   }catch(e){
     console.log("error dentro de salaSola y el error es: ", e.message)

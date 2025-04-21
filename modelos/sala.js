@@ -64,9 +64,12 @@ const sala = new Schema({
 
     }]
      ,
-    createdAt: {type: Date, default: Date.now,
+    ultimaActividad: {type: Date, default: Date.now,
         // expires: '5m' // Esto eliminará el documento automáticamente después de 5 minutos si no se actualiza 
-    } 
+    },
+    ultimoUsuarioActivo: {name: { type: String },
+        id: { type: Schema.ObjectId, ref: user },                    
+        }
 
 })
 
